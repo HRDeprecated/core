@@ -39,7 +39,7 @@ define(function(args) {
 
                 /* Config for loader "http" */
                 "http": {
-                    "prefix": "/static/templates/",
+                    "prefix": "templates/",
                     "extension": ".html"
                 }
             }

@@ -35,6 +35,7 @@ require([
 
     // Configure yapp
     yapp.configure(args, {
+        "baseUrl": "/yapp.js/",
         "templates": {
             "loader": "yapp/templates/loaders/http"
         }

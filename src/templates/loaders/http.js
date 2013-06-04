@@ -3,8 +3,9 @@ define([
     "yapp/configs",
     "yapp/utils/logger",
     "yapp/utils/requests",
+    "yapp/utils/urls",
     "yapp/utils/cache"
-], function(_, configs, Logger, Requests, Cache) {
+], function(_, configs, Logger, Requests, Urls, Cache) {
     /*
      *  This template loader load templates using http requests
      *  Store templates in application cache
@@ -14,10 +15,10 @@ define([
 
     return function(tplname, callback) {
         var content = null;
-        tplname = [
+        tplurl = Urls.static([
             configs.templates.loaders.http.prefix,
             tplname,
-            configs.templates.loaders.http.extension].join("");
+            configs.templates.loaders.http.extension].join(""));
         
         // Check application cache
         var content = cache.get(tplname);
@@ -25,7 +26,7 @@ define([
 
         // Get template using requests
         Logger.logging.debug("Load template using http ", tplname);
-        Requests.get(tplname, {}, function(content) {
+        Requests.get(tplurl, {}, function(content) {
             if (content == null) Logger.logging.error("Error loading template using http : ", tplname);
             cache.set(tplname, content);
             callback(content);

@@ -14,8 +14,8 @@ var index_html_template = '<!DOCTYPE html> \
     <head> \
         <meta charset="utf-8"> \
         <title>%s</title> \
-        <link rel="stylesheet" href="/%s"> \
-        <script type="text/javascript" src="/%s"></script> \
+        <link rel="stylesheet" href="%s"> \
+        <script type="text/javascript" src="%s"></script> \
     </head> \
     <body></body> \
 </html>';
@@ -228,11 +228,13 @@ module.exports = {
             log("run", "");
 
             var server = express();
-            server.use('/'+configs.staticBase, express.static(path.resolve(configs.build, configs.staticBase)));
-            server.get('*', function(req, res){
+            server.use('/yapp.js/'+configs.staticBase,  express.static(path.resolve(configs.build, configs.staticBase)));
+            server.get('/yapp.js/*', function(req, res){
                 res.sendfile(path.resolve(configs.build, "index.html"));
             });
-
+            server.get('*', function(req, res){
+                res.redirect('/yapp.js/');
+            });
 
             server.listen(process.env.PORT || 5000);
         };
