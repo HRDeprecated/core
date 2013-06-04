@@ -1,0 +1,11 @@
+<div>
+    <h1><%- category.title %></h1>
+
+    <% if (category.admin) { %>
+        <%= view.component("category/post", category) %>
+    <% } %>
+
+    <% _.each(articles, function(article) { %>
+        <%= view.component("article", article) %>
+    <% }); %>
+</div>

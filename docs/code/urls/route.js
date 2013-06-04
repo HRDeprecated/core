@@ -1,0 +1,1 @@
+alert(yapp.Urls.route("article/:id", {id: 1234}));

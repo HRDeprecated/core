@@ -1,0 +1,1 @@
+alert(yapp.Urls.static("favicon.png"));

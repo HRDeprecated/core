@@ -1,0 +1,8 @@
+<% _.each(photos, function(photo) { %>
+    <a href="<%- yapp.urls.static("images", photo.Id, "1024.jpg") %>">
+        <img src="<%- yapp.urls.static("images", photo.Id, "128.jpg") %>" />
+    </a>
+    <a href="<%- yapp.urls.route("photos/comments/:Id", photo) %>">
+        <%- photo.comments %> Comments
+    </a>
+<% }); %>

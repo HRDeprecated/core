@@ -1,0 +1,1 @@
+nobody.on("change:firstname change:lastname", function() { ... });
