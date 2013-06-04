@@ -84,7 +84,7 @@
             <article id="template/components">
                 <h3>Components</h3>
                 <p>Components in <b>template</b> is a great way to manage child views.</p>
-                <p>Template components have to been registrated using <a href="view/registerComponent"><code>yapp.View.Template.registerComponent</code></a></p>
+                <p>Template components have to been registrated using <a href="<%- yapp.urls.route("view/registerComponent") %>"><code>yapp.View.Template.registerComponent</code></a></p>
                 <%= view.component("code", {code: "template/components.html"}) %>
                 <p>You can after that easily access to components views in your view :</p>
                 <%= view.component("code", {code: "template/components.js"}) %>
