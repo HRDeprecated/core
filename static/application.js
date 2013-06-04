@@ -23914,7 +23914,7 @@ Logger, Requests, Urls, Storage, Cache, Template) {
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1370375593958}; });
+define('yapp/args',[],function() { return {"revision":1370376563168}; });
 require([
     "yapp/yapp"
 ], function(yapp) {
@@ -24389,6 +24389,7 @@ require([
 
     // Configure yapp
     yapp.configure(args, {
+        "baseUrl": "/yapp.js/",
         "templates": {
             "loader": "yapp/templates/loaders/http"
         }
