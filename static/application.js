@@ -12153,25 +12153,10 @@ define('yapp/configs',['require'],function(args) {
             "mode": "hashs" //"html5" or "hashs"
         },
 
-        // Configurations for templating
-        "templates": {
-            /* Default module for template loading */
-            "loader": "yapp/templates/loaders/http",
-
-            "loaders": {
-                /* Config for loader "require" */
-                "require": {
-                    "prefix": "templates/",
-                    "mode": "text!",
-                    "extension": ".html"
-                },
-
-                /* Config for loader "http" */
-                "http": {
-                    "prefix": "templates/",
-                    "extension": ".html"
-                }
-            }
+        // Configurations for ressources loading
+        "ressources": {
+            /* Default loader */
+            "loader": "http"
         },
 
         extend: function() {
@@ -22472,48 +22457,48 @@ define('yapp/utils/logger',[
          */
         initialize: function() {
             this.handler = this.options.handler || console;
+            this.namespace = this.options.namespace || "base";
+
+            if (_.isFunction(this.handler)) {
+                this.handler = {};
+                _.each(Logger.levels, function(level, tag) {
+                    this.handler[tag] = this.options.handler;
+                }, this);
+            }
+
+            _.each(Logger.levels, function(level, tag) {
+                this.addMethod(tag);
+            }, this);
             return this;
         },
 
         /*
          *  Print informations
-         *  @section : section for the log
          *  @type : debug, error, warning
          *  @*args : data to be log
          */
-        printLog: function(section, type) {
-            var args = Array.prototype.slice.call(arguments, 2);
+        printLog: function(type) {
+            var args = Array.prototype.slice.call(arguments, 1);
             if (this.logLevel(type) < this.logLevel(configs.logLevel)) {
                 return this;
             }
-            args.splice(0, 0, "[" + section + "] [" + type + "]");
+            args.splice(0, 0, "[" + this.namespace + "] [" + type + "]");
             var logMethod = Function.prototype.bind.call(this.handler[type], this.handler);
             logMethod.apply(this.handler[type], args);
         },
 
         /*
-         *  Add log type
-         *  @section : section for the log method
-         *  @type for he log method
+         *  Add log method
+         *  @type for the log method
          */
-        addType: function(section, type) {
-            if (type == null) {
-                this[section] = {};
-                _.each(Logger.levels, function(level, tag) {
-                    this.addType(section, tag);
-                }, this);
-                return this[section];
-            }
-
+        addMethod: function(type) {
             var name = type;
-            this[section] = this[section] || {};
-            this[section][name] = _.bind(function() {
+            this[type] = _.bind(function() {
                 var args = Array.prototype.slice.call(arguments, 0);
-                args.splice(0, 0, section);
-                args.splice(1, 0, type);
+                args.splice(0, 0, type);
                 return this.printLog.apply(this, args);
             }, this);
-            return this[section][name];
+            return this[type];
         },
 
         /*
@@ -22525,20 +22510,33 @@ define('yapp/utils/logger',[
             return Logger.levels[type] || 0;
         }
     }, {
+        namespaces: {},
+        logging: null,
         levels: {
             "log": 0,
             "debug": 1,
             "warn": 2,
             "error": 3,
             "none": 4
-        }
+        },
+
+        /*
+         *  Add log namespace
+         *  @namespace : namespace name for the logger
+         */
+        addNamespace: function(namespace, handler) {
+            if (Logger.namespaces[namespace] == null) {
+                Logger.namespaces[namespace] = new Logger({
+                    namespace: namespace,
+                    handler: handler
+                });
+            }
+            return Logger.namespaces[namespace];
+        },
     });
 
     // Create default logger
-    Logger.logging = new Logger();
-    _.each(Logger.levels, function(level, tag) {
-        Logger.logging[tag] = Logger.logging.addType("base", tag);
-    });
+    Logger.logging = Logger.addNamespace("base");
 
     return Logger;
 });
@@ -22599,118 +22597,15 @@ define('yapp/utils/urls',[
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });
-            if (configs.router.mode == "hashs") url = "#/"+url;
-            return Urls.base(url);
+            if (configs.router.mode == "hashs") {
+                return Urls.base("") + "#/"+url;
+            } else {
+                return Urls.base(url);
+            }
         }
     };
 
     return Urls;
-});
-define('yapp/templates/loaders/require',[
-    "Underscore",
-    "yapp/configs",
-    "yapp/utils/logger"
-], function(_, configs, Logger) {
-    /*
-     *  This template loader load templates from the application source code using require.js
-     *  you need to include your template to your application source code.
-     */
-    return function(tplname, callback) {
-        var content = null;
-        tplname = [
-            configs.templates.loaders.require.mode,
-            configs.templates.loaders.require.prefix,
-            tplname,
-            configs.templates.loaders.require.extension].join("");
-        
-        Logger.logging.debug("Load template using require ", tplname);
-        try {
-            content = require(tplname);
-        } catch(err) {
-            Logger.logging.error("Error loading template using require : ", tplname, err.message);
-        }
-        callback(content);
-    };
-});
-define('yapp/utils/requests',[
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger"
-], function(configs, Class, Logger) {
-    
-    var logging = Logger.logging.addType("requests");
-
-    var Requests = Class.extend({
-        defaults: {
-            url: null,
-            method: "GET",
-            params: {},
-            dataType: "text"
-        },
-
-        /*
-         *  Execute the request
-         */
-        execute: function() {
-            this.xhr = $.ajax({
-                "type":     this.options.method,
-                "url":      this.options.url,
-                "data":     this.options.params,
-                "dataType": this.options.dataType,
-                "context":  this,
-                "success":  function(data) {
-                    logging.debug("Result for request ", this.options);
-                    this.trigger("done", data);
-                },
-                "error": function() {
-                    logging.error("Error for request ", this.options);
-                    this.trigger("error");
-                }
-            });
-            return this;
-        }
-    }, {
-        /*
-         *  Execute a request
-         */
-        _execute: function(url, callback, options, defaults) {
-            options = options || {};
-            options = _.extend(options, defaults, {
-                "url": url
-            });
-            var r = new Requests(options);
-            r.on("done", callback);
-            r.on("error", _.partial(callback, null));
-            return r.execute();
-        },
-
-        /*
-         *  Method for a GET method
-         *  @url : url to request 
-         *  @args : arguments for GET
-         *  @callback : callback for results
-         */
-        get: function(url, args, callback, options) {
-            return Requests._execute(url, callback, options, {
-                method: "GET",
-                params: args
-            });
-        },
-
-        /*
-         *  Method for a POST method
-         *  @url : url to request 
-         *  @args : arguments for POST
-         *  @callback : callback for results
-         */
-        post: function(url, args, callback, options) {
-            return Requests._execute(url, callback, options, {
-                method: "POST",
-                params: args
-            });
-        }
-    });
-    return Requests;
 });
 define('yapp/utils/storage',[
     "Underscore",
@@ -22718,7 +22613,7 @@ define('yapp/utils/storage',[
     "yapp/utils/logger"
 ], function(_, configs, Logger) {
 
-    var logging = Logger.logging.addType("storage");
+    var logging = Logger.addNamespace("storage");
 
     var Storage = {
         /*
@@ -22812,7 +22707,7 @@ define('yapp/utils/cache',[
     "yapp/utils/storage"
 ], function(_, configs, Logger, Storage) {
 
-    var logging = Logger.logging.addType("cache");
+    var logging = Logger.addNamespace("cache");
     var cache_methods = ["get", "set", "remove"];
 
     var Cache = {
@@ -22913,62 +22808,342 @@ define('yapp/utils/cache',[
 
     return Cache;
 });
-define('yapp/templates/loaders/http',[
+define('yapp/utils/deferred',[
+    "Underscore",
+    "yapp/core/class",
+], function(_, Class) {
+    /* 
+    * Deferred is an implementation of the Promise pattern, which allows
+    * for asynchronous events to be handled in a unified way across an
+    * application. Deferred's are like callbacks on steroids.
+    *
+    * Rather than passing around callback functions, Deferred objects 
+    * are passed around. Deferreds contain a queue of callback functions
+    * and manage the state of the asychronous event.
+    *
+    * When calling an asynchronous function, all functions should return a 
+    * Deferred object. The caller function, having received the Deferred
+    * and having done whatever it wants to do, should also return that 
+    * same Deferred when it exits, so that other parties have a chance to
+    * interact with it.
+    *
+    * The Deferred object represents the completed state of a future event.
+    * Interested parties can add a callback function to the Deferred that
+    * will be called when the Deferred event is deemed complete.
+    * 
+    * When an asynchronous event is deemed completed, all the callbacks that
+    * were added to the Deferred will be called in serial order. The return 
+    * value of each callback is passed as a parameter to the next callback.
+    * i.e., callback3(callback2(callback1( trigger(o) )))
+    *
+    * After the event is deemed completed and all the callbacks are called,
+    * further callbacks which are added to the Deferred at a later stage 
+    * will be executed immediately.
+    */
+    var Deferred = Class.extend({
+        err: 0,
+        x: 0,
+
+        /* Constructor */
+        initialize: function() {
+            this.callbacks = [];
+            return this;
+        },
+
+        /* Bind methods */
+        _bind: function(arr) {
+            this.callbacks.push(arr);
+            this.x == 2 && this._call(this.o);
+            return this
+        },
+
+        done: function(cb) {
+            return this._bind([cb, 0])
+        },
+
+        fail: function(cb) {
+            return this._bind([0, cb])
+        },
+
+        always: function(cb) {
+            return this._bind([0, 0, cb])
+        },
+
+        then: function(cb, err) {
+            return this._bind([cb, err])
+        },
+
+
+        /* Calls methods */
+        reject: function(obj) {
+            this.x || (this.err = 1, this._call(obj));
+            return this
+        },
+
+        resolve: function(obj) {
+            this.x || this._call(obj);
+            return this
+        },
+
+        _call: function(obj) {
+            this.x = 1;
+            for(var state = this.err, cb = this.callbacks, method = cb.shift(), value = obj; method; ) {
+                try {
+                    while(method) {
+                        (method = method[2] || (state ? method[1] : method[0])) && (value = method(value || obj));
+                        if(value instanceof Deferred) {
+                            var that = this;
+                            value.always(function(v) {that._call(v || obj); return v});
+                            return
+                        }
+                        method = cb.shift()
+                    }
+                } catch(e) {
+                    state && (method = cb.shift()), this.err = state = 1
+                }
+            }
+            this.o = value || obj;
+            this.x = 2
+        },
+    }, {
+        when: function(m, args) {
+            if(!args) return m;
+
+            args = [].slice.call(arguments);
+            m = new Deferred;
+
+            var i = args.length,
+            n = i,
+            res = [],
+            done = function(j) {return function(v) {res[j] = v; --n || m.resolve(res)}},
+            fail = function(v) {m.reject(v)};
+
+            while(i--) args[i].then(done(i), fail);
+            return m
+        }
+    });
+
+    return Deferred;
+});
+define('yapp/utils/requests',[
+    "yapp/configs",
+    "yapp/core/class",
+    "yapp/utils/logger",
+    "yapp/utils/deferred"
+], function(configs, Class, Logger, Deferred) {
+    
+    var logging = Logger.addNamespace("requests");
+
+    var Requests = Class.extend({
+        defaults: {
+            url: null,
+            method: "GET",
+            params: {},
+            dataType: "text"
+        },
+
+        /*
+         *  Execute the request
+         */
+        execute: function() {
+            this.xhr = $.ajax({
+                "type":     this.options.method,
+                "url":      this.options.url,
+                "data":     this.options.params,
+                "dataType": this.options.dataType,
+                "context":  this,
+                "success":  function(data) {
+                    logging.debug("Result for request ", this.options);
+                    this.trigger("done", data);
+                },
+                "error": function() {
+                    logging.error("Error for request ", this.options);
+                    this.trigger("error");
+                }
+            });
+            return this;
+        }
+    }, {
+        /*
+         *  Execute a request
+         */
+        _execute: function(url, options, defaults) {
+            var d = new Deferred();
+            options = options || {};
+            options = _.extend(options, defaults, {
+                "url": url
+            });
+            var r = new Requests(options);
+            r.on("done", function(content) {
+                d.resolve(content);
+            });
+            r.on("error", function() {
+                d.reject();
+            });
+
+            r.execute();
+            return d;
+        },
+
+        /*
+         *  Method for a GET method
+         *  @url : url to request 
+         *  @args : arguments for GET
+         *  @callback : callback for results
+         */
+        get: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "GET",
+                params: args
+            });
+        },
+
+        /*
+         *  Method for a GET method, suing JSONP
+         *  @url : url to request 
+         *  @args : arguments for GET
+         *  @callback : callback for results
+         */
+        getJSON: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "GET",
+                params: args,
+                dataType: "json"
+            });
+        },
+
+        /*
+         *  Method for a POST method
+         *  @url : url to request 
+         *  @args : arguments for POST
+         *  @callback : callback for results
+         */
+        post: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "POST",
+                params: args
+            });
+        }
+    });
+    return Requests;
+});
+define('yapp/utils/ressources',[
     "Underscore",
     "yapp/configs",
     "yapp/utils/logger",
+    "yapp/utils/cache",
     "yapp/utils/requests",
     "yapp/utils/urls",
-    "yapp/utils/cache"
-], function(_, configs, Logger, Requests, Urls, Cache) {
-    /*
-     *  This template loader load templates using http requests
-     *  Store templates in application cache
-     */
+    "yapp/utils/deferred",
+], function(_, configs, Logger, Cache, Requests, Urls, Deferred) {
 
-    var cache = Cache.namespace("templates");
+    var logging = Logger.addNamespace("ressources");
+    var cache = Cache.namespace("ressources");
 
-    return function(tplname, callback) {
-        var content = null;
-        tplurl = Urls.static([
-            configs.templates.loaders.http.prefix,
-            tplname,
-            configs.templates.loaders.http.extension].join(""));
+    var Ressources = {
+        loaders: {},
+        namespaces: {},
+
+        /*
+         *  Load a ressource
+         */
+        load: function(namespace, ressource) {
+            var d = new Deferred();
+            var namespace_configs = Ressources.namespaces[namespace] || {};
+            var loader = namespace_configs.loader || configs.ressources.loader;
+            
+            if (Ressources.loaders[loader] == null) {
+                logging.error("Loader doesn't exists ", loader, "namespace=",namespace);
+                d.reject();
+                return d;
+            }
+            Ressources.loaders[loader](ressource, d, namespace_configs);
+            return d;
+        },
+
+        /*
+         *  Add loader
+         *  @name : loader name
+         *  @loader : loader function
+         */
+        addLoader: function(name, loader) {
+            Ressources.loaders[name] = loader;
+        },
+
+        /*
+         *  Add namespace
+         *  @name : namespace name
+         *  @config : namespace configuration
+         */
+        addNamespace: function(name, config) {
+            config = config || {};
+            config = _.defaults(config, {
+                loader: configs.ressources.loader
+            });
+            config = _.extend(config, {
+                namespace: name
+            });
+            Ressources.namespaces[name] = config;
+        }
+    };
+
+    // Require loader
+    Ressources.addLoader("require", function(ressourcename, callback, config) {  
+        _.defaults(config, {
+            mode: "text",
+            base: ""
+        });
+        ressourcename = config.mode+"!"+Urls.join(config.base, ressourcename);
+        
+        logging.debug("Load using require ", ressourcename);
+        try {
+            var content = require(ressourcename);
+            callback.resolve(content);
+        } catch(err) {
+            logging.error("Error loading using require : ", ressourcename, err.message);
+            callback.reject(null);
+        }
+    });
+
+    // HTTP loader
+    Ressources.addLoader("http", function(ressourcename, callback, config) {
+        _.defaults(config, {
+            base: "./"
+        });
+        ressourceurl = Urls.static(config.base, ressourcename);
         
         // Check application cache
-        var content = cache.get(tplname);
-        if (content != null) { callback(content); return; }
+        var content = cache.get(ressourcename);
+        if (content != null) { callback.resolve(content); return; }
 
-        // Get template using requests
-        Logger.logging.debug("Load template using http ", tplname);
-        Requests.get(tplurl, {}, function(content) {
-            if (content == null) Logger.logging.error("Error loading template using http : ", tplname);
-            cache.set(tplname, content);
-            callback(content);
+        // Get ressource using requests
+        logging.debug("Load ressource using http ", ressourcename);
+        Requests.get(ressourceurl).then(function(content) {
+            cache.set(ressourcename, content);
+            callback.resolve(content);
+        }, function() {
+            logging.error("Error loading using http : ", ressourcename);
+            callback.reject(null);
         });
+    });
 
-    };
+    return Ressources;
 });
-define('yapp/templates/base',[
+define('yapp/utils/template',[
     "Underscore",
     "yapp/configs",
     "yapp/core/class",
     "yapp/utils/logger",
     "yapp/utils/urls",
-
-    "yapp/templates/loaders/require",
-    "yapp/templates/loaders/http"
-], function(_, configs, Class, Logger, Urls) {
+    "yapp/utils/ressources"
+], function(_, configs, Class, Logger, Urls, Ressources) {
     var Template = Class.extend({
         defaults: {
             /* Template id */
             template: null,
 
             /* Context givent to template generation */
-            args: {},
-
-            /* Loader for the template */
-            loader: configs.templates.loader
+            args: {}
         },
 
 
@@ -22983,12 +23158,6 @@ define('yapp/templates/base',[
 
             // Related view
             this.view = this.options.view || null;
-
-            // Create loader method
-            this.loader = this.options.loader || function(tpl, callback) { callback(null); };
-            if (!_.isFunction(this.loader)) {
-                this.loader = require(this.loader);
-            }
 
             // Init template context
             _.extend(this.args, {
@@ -23042,13 +23211,13 @@ define('yapp/templates/base',[
         load: function(template) {
             var self = this;
             this.template = template || this.template;
-
-            var callback = function(content) {
+            Ressources.load("templates", this.template).then(function(content) {
                 self.setContent(content);
                 self.trigger("loaded");
-            };
-
-            this.loader(this.template, callback);
+            }, function() {
+                self.setContent(null);
+                self.trigger("error");
+            });
             return this;
         },
 
@@ -23087,7 +23256,7 @@ define('yapp/core/view',[
     "jQuery",
     "Underscore",
     "yapp/core/class",
-    "yapp/templates/base"
+    "yapp/utils/template"
 ], function($, _, Class, Template) {
 
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -23309,6 +23478,21 @@ define('yapp/core/view',[
         Template: Template
     });
 
+
+    /*
+     *  This view is a simple component for importing template
+     *  in a template.
+     *  <%= view.component("template", {name: "mytemplate", args: {}}) %>
+     */
+    View.Template.registerComponent("template", View.extend({
+        template: function() {
+            return this.options.template;
+        },
+        templateContext: function() {
+            return this.options.args;
+        },
+    }));
+
     return View;
 });
 define('yapp/core/head',[
@@ -23425,7 +23609,7 @@ define('yapp/core/history',[
     "yapp/utils/logger",
 ], function($, _, configs, Class, Logger) {
 
-    var logging = Logger.logging.addType("history");
+    var logging = Logger.addNamespace("history");
 
     var History = new (Class.extend({   
         /*
@@ -23557,7 +23741,7 @@ define('yapp/core/router',[
 ], function($, _, Class, History, Logger) {
 
     // Add specifif logs handler
-    var logging = Logger.logging.addType("routing");
+    var logging = Logger.addNamespace("routing");
 
     // Cached regular expressions for matching named param parts and splatted
     // parts of route strings.
@@ -23654,7 +23838,7 @@ define('yapp/core/application',[
     "yapp/utils/logger"
 ], function($, _, View, Head, Router, Logger) {
 
-    var logging = Logger.logging.addType("application");
+    var logging = Logger.addNamespace("application");
 
     var Application = View.extend({
         el: $("body"),
@@ -23735,31 +23919,6 @@ define('yapp/core/application',[
     });
 
     return Application;
-});
-define('yapp/templates/view',[
-    "Underscore",
-    "yapp/configs",
-    "yapp/core/view",
-], function(_, configs, View, Logger) {
-    /*
-     *  This view is a simple component for importing template
-     *  in a template.
-     *  <%= view.component("template", {name: "mytemplate", args: {}}) %>
-     */
-    var TemplateView = View.extend({
-        template: function() {
-            return this.options.template;
-        },
-
-        templateContext: function() {
-            return this.options.args;
-        },
-    });
-
-    /* Register template component */
-    View.Template.registerComponent("template", TemplateView);
-
-    return TemplateView;
 });
 define('yapp/vendors/underscore-more',[
     "Underscore"
@@ -23877,14 +24036,14 @@ define('yapp/yapp',[
     "yapp/utils/urls",
     "yapp/utils/storage",
     "yapp/utils/cache",
-
-    "yapp/templates/base",
-    "yapp/templates/view",
+    "yapp/utils/template",
+    "yapp/utils/ressources",
+    "yapp/utils/deferred",
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
 Class, View, Application, Head, Router,
-Logger, Requests, Urls, Storage, Cache, Template) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
     return {
         configs: configs,
         Class: Class,
@@ -23898,10 +24057,13 @@ Logger, Requests, Urls, Storage, Cache, Template) {
         Cache: Cache,
         Requests: Requests,
         Urls: Urls,
-
         Template: Template,
+        Ressources: Ressources,
+        Deferred: Deferred,
 
         configure: function(args, options) {
+            options = options || {};
+            args = args || {};
             if (args.revision == null) {
                 Logger.logging.error("Error invalid configuration for yapp");
                 return;
@@ -23909,13 +24071,13 @@ Logger, Requests, Urls, Storage, Cache, Template) {
 
             configs.extend(options, {
                 revision: args.revision,
-                args: args
+                args: args,
+                baseUrl: args.baseUrl || ""
             });
-            console.log(configs);
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1370377000659}; });
+define('yapp/args',[],function() { return {"revision":1370556752540,"baseUrl":"/yapp.js/"}; });
 require([
     "yapp/yapp"
 ], function(yapp) {
@@ -23927,7 +24089,7 @@ require([
     var CounterView = yapp.View.extend({
         tagName: "div",
         className: "component-counter",
-        template: "views/counter",
+        template: "views/counter.html",
 
         initialize: function() {
             var self = this;
@@ -23999,18 +24161,21 @@ require([
 
         initialize: function() {
             CodeView.__super__.initialize.apply(this, arguments);
-            this.code = require("text!code/"+this.options.code);
             return this;
         },
         render: function() {
-            this.$el.html(hljs.highlightAuto(this.code).value);
-
-            if (this.options.run) {
-                this.$el.append($("<div>", {
-                    "class": "run",
-                    "text": "Run"
-                }));
-            }
+            yapp.Ressources.load("codes", this.options.code).always(_.bind(function(content) {
+                this.code = content;
+                this.$el.html(hljs.highlightAuto(this.code).value);
+                if (this.options.run) {
+                    this.$el.append($("<div>", {
+                        "class": "run",
+                        "text": "Run"
+                    }));
+                }
+                this.ready();
+            }, this));
+            
             return this.ready();
         },
         run: function() {
@@ -24024,6 +24189,15 @@ require([
 });
 define("views/code", function(){});
 
+define('views/views',[
+    "yapp/yapp",
+
+    "views/counter",
+    "views/code",
+], function(yapp) {
+
+    return {}
+});
 /**
  * @license RequireJS text 1.0.0 Copyright (c) 2010-2011, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
@@ -24301,105 +24475,144 @@ define("views/code", function(){});
     });
 }());
 
-define('text!code/build/structure.txt',[],function () { return 'build/\nviews/\n    myview.js\nstylesheets/\n    imports.less\nvendors/\n    external_library.js\ntemplates/\n    views/\n        myview.html\n    main.html\nbuild.js';});
+define('text!ressources/code/build/structure.txt',[],function () { return 'build/\nviews/\n    myview.js\nmodels/\n    mymodel.js\nstylesheets/\n    imports.less\nvendors/\n    external_library.js\nressources/\n    templates/\n        views/\n            myview.html\n        main.html\n    images/\n        favicon.png\nbuild.js';});
 
-define('text!code/build/build.js',[],function () { return 'var yapp = require("yapp");\nvar path = require("path");\n\nyapp.Application(\n    // Base directory for the application\n    "base": __dirname,\n\n    // Application name\n    "name": "MyApplication",\n\n    // Mode debug\n    "debug": true,\n\n    // Main entry point for application\n    "main": "main",\n\n    // Build output directory\n    "build": path.resolve(__dirname, "build"),\n\n    // Static files mappage\n    "static": {\n        "templates": path.resolve(__dirname, "templates"),\n        "images": path.resolve(__dirname, "images")\n    },\n\n    // Stylesheet entry point\n    "style": path.resolve(__dirname, "stylesheets/imports.less"),\n});';});
+define('text!ressources/code/build/build.js',[],function () { return 'var yapp = require("yapp");\nvar path = require("path");\n\nyapp.Application(\n    // Base directory for the application\n    "base": __dirname,\n\n    // Application name\n    "name": "MyApplication",\n\n    // Mode debug\n    "debug": true,\n\n    // Main entry point for application\n    "main": "main",\n\n    // Build output directory\n    "build": path.resolve(__dirname, "build"),\n\n    // Static files mappage\n    "static": {\n        "templates": path.resolve(__dirname, "ressources", "templates"),\n        "images": path.resolve(__dirname, "ressources", "images")\n    },\n\n    // Stylesheet entry point\n    "style": path.resolve(__dirname, "stylesheets/imports.less"),\n});';});
 
-define('text!code/build/options.js',[],function () { return '{\n    // Base directory for the application\n    "base": null,\n\n    // Application name\n    "name": "untitled",\n\n    // Mode debug\n    // if debug is false then files are compressed for optimization\n    "debug": true,\n\n    // Main entry file for application\n    "main": null,\n\n    // Build directory for output\n    // directory is created if inexistant\n    "build": null,\n\n    // Output files\n    "out": {\n        "js":   "application.js",\n        "css":  "application.css",\n        "html": "index.html"\n    },\n\n    // Static files\n    // Map of {"directory": "absolute/path"}\n    "static": {},\n\n    // Index html\n    // if null : file is generated\n    // if non null : file is copying\n    "index": null,\n\n    // Stylesheets entry file\n    "style": null,\n\n    // Modules paths and shim for require\n    "paths": {},\n    "shim": {},\n\n    // Compilers\n    "compilers": {\n        "css": "lessc -x -O2 %s > %s",\n        "js":   "r.js -o %s"\n    }\n}';});
+define('text!ressources/code/build/options.js',[],function () { return '{\n    // Base directory for the application\n    "base": null,\n\n    // Base url for the application\n    "baseUrl": "",\n\n    // Arguments for application\n    "args": {},\n\n    // Application name\n    "name": "untitled",\n\n    // Mode debug\n    // if debug is false then files are compressed for optimization\n    "debug": true,\n\n    // Main entry file for application\n    "main": null,\n\n    // Build directory for output\n    // directory is created if inexistant\n    "build": null,\n\n    // Output files\n    "out": {\n        "js":   "application.js",\n        "css":  "application.css",\n        "html": "index.html"\n    },\n\n    // Static files\n    // Map of {"directory": "absolute/path"}\n    "static": {},\n\n    // Index html\n    // if null : file is generated\n    // if non null : file is copying\n    "index": null,\n\n    // Stylesheets entry file\n    "style": null,\n\n    // Modules paths and shim for require\n    "paths": {},\n    "shim": {},\n\n    // Compilers\n    "compilers": {\n        "css": "lessc -x -O2 %s > %s",\n        "js":   "r.js -o %s"\n    }\n}';});
 
-define('text!code/build/module.js',[],function () { return 'define([\n    "yapp/yapp",\n    "mymodule"\n], function(yapp, mymodule) {\n    var module = {};\n    return module;\n});';});
+define('text!ressources/code/build/module.js',[],function () { return 'define([\n    "yapp/yapp",\n    "mymodule"\n], function(yapp, mymodule) {\n    var module = {};\n    return module;\n});';});
 
-define('text!code/application/extend.js',[],function () { return 'require([\n    "yapp/yapp",\n    "yapp/args"\n], function(yapp, args) {\n    yapp.configure(args, {\n        // options for yapp\n    });\n\n    var Application = yapp.Application.extend({\n        name: "Test Application",\n        template: "main"\n    });\n\n    ...\n});';});
+define('text!ressources/code/application/extend.js',[],function () { return 'require([\n    "yapp/yapp",\n    "yapp/args"\n], function(yapp, args) {\n    yapp.configure(args, {\n        // options for yapp\n    });\n\n    var Application = yapp.Application.extend({\n        name: "Test Application",\n        template: "main"\n    });\n\n    ...\n});';});
 
-define('text!code/application/run.js',[],function () { return 'var app = new Application();\napp.run();';});
+define('text!ressources/code/application/run.js',[],function () { return 'var app = new Application();\napp.run();';});
 
-define('text!code/view/extend.js',[],function () { return 'var TestView = yapp.View.extend({\n    tagName: "div",\n\n    className: "component-testview",\n\n    template: "views/test",\n\n    events: {\n        "click .button": "open"\n    }\n});';});
+define('text!ressources/code/view/extend.js',[],function () { return 'var TestView = yapp.View.extend({\n    tagName: "div",\n\n    className: "component-testview",\n\n    template: "views/test",\n\n    events: {\n        "click .button": "open"\n    }\n});';});
 
-define('text!code/view/template.js',[],function () { return 'var ArticleView = yapp.View.extend({\n    template: "views/test",\n    templateContext: function() {\n        return {\n            votes: this.model.getVotes(),\n            article: this.model.attributes\n        }\n    }\n    \n    ...\n});';});
+define('text!ressources/code/view/template.js',[],function () { return 'var ArticleView = yapp.View.extend({\n    template: "views/test",\n    templateContext: function() {\n        return {\n            votes: this.model.getVotes(),\n            article: this.model.attributes\n        }\n    }\n    \n    ...\n});';});
 
-define('text!code/view/template_function.js',[],function () { return 'var ArticleView = yapp.View.extend({\n    template: function() {\n        if (this.model.get("type") == "video") {\n            return "views/article/video";\n        } else {\n            return "views/article/default";\n        }\n    }\n    ...\n});';});
+define('text!ressources/code/view/template_function.js',[],function () { return 'var ArticleView = yapp.View.extend({\n    template: function() {\n        if (this.model.get("type") == "video") {\n            return "views/article/video";\n        } else {\n            return "views/article/default";\n        }\n    }\n    ...\n});';});
 
-define('text!code/template/syntax.html',[],function () { return '<div>\n    <h1><%- title %></h1>\n    <% _.each(articles, function(article) { %>\n        <article>\n            <h2><%- article.title %></h2>\n            <p><%- article.content %></p>\n        </article>\n    <% }); %>\n</div>';});
+define('text!ressources/code/template/syntax.html',[],function () { return '<div>\n    <h1><%- title %></h1>\n    <% _.each(articles, function(article) { %>\n        <article>\n            <h2><%- article.title %></h2>\n            <p><%- article.content %></p>\n        </article>\n    <% }); %>\n</div>';});
 
-define('text!code/template/components.html',[],function () { return '<div>\n    <h1><%- category.title %></h1>\n\n    <% if (category.admin) { %>\n        <%= view.component("category/post", category) %>\n    <% } %>\n\n    <% _.each(articles, function(article) { %>\n        <%= view.component("article", article) %>\n    <% }); %>\n</div>';});
+define('text!ressources/code/template/components.html',[],function () { return '<div>\n    <h1><%- category.title %></h1>\n\n    <% if (category.admin) { %>\n        <%= view.component("category/post", category) %>\n    <% } %>\n\n    <% _.each(articles, function(article) { %>\n        <%= view.component("article", article) %>\n    <% }); %>\n</div>';});
 
-define('text!code/template/components.js',[],function () { return 'var CateogoryView = yapp.View.extend({\n    template: "views/category",\n    templateContext: function() {\n        return {\n            category: this.model.attributes,\n            articles: this.model.getArticles()\n        }\n    }\n    \n    templateUpdated: function() {\n        if (category.open) {\n            this.components["category/post"].open_editor();\n        }\n        \n        _.each(this.components.article, function(article) {\n            article.on("click_edit", function() {\n                this.components["category/post"].open_editor(article.model);\n            });\n        });\n    }\n});';});
+define('text!ressources/code/template/components.js',[],function () { return 'var CateogoryView = yapp.View.extend({\n    template: "views/category",\n    templateContext: function() {\n        return {\n            category: this.model.attributes,\n            articles: this.model.getArticles()\n        }\n    }\n    \n    templateUpdated: function() {\n        _.each(this.components.article, function(article) {\n            article.on("click_edit", function() {\n                this.components["category/post"].open_editor(article.model);\n            });\n        });\n    }\n});';});
 
-define('text!code/class/extend.js',[],function () { return 'var Animal = yapp.Class.extend({\n    ...\n});\n\nvar Chat = Animal.extend({\n    ...\n});';});
+define('text!ressources/code/class/extend.js',[],function () { return 'var Animal = yapp.Class.extend({\n    ...\n});\n\nvar Chat = Animal.extend({\n    ...\n});';});
 
-define('text!code/class/initialize.js',[],function () { return 'var Person = yapp.Class.extend({\n    defaults: {\n        firstname: "",\n        lastname: ""\n    },\n\n    get_fullname: function() {\n        return this.options.firstname + " " + this.options.lastname;\n    }\n});\n\nvar samy = new Person({\n    firstname: "Samy",\n    lastname: "Pesse"\n});\nalert(samy.get_fullname());';});
+define('text!ressources/code/class/initialize.js',[],function () { return 'var Person = yapp.Class.extend({\n    defaults: {\n        firstname: "",\n        lastname: ""\n    },\n\n    get_fullname: function() {\n        return this.options.firstname + " " + this.options.lastname;\n    }\n});\n\nvar samy = new Person({\n    firstname: "Samy",\n    lastname: "Pesse"\n});\nalert(samy.get_fullname());';});
 
-define('text!code/class/defaults.js',[],function () { return 'var Person = yapp.Class.extend({\n    defaults: {\n        firstname: "",\n        lastname: "nobody"\n    }\n});\n\nvar nobody = new Person();\nalert(nobody.options.lastname);';});
+define('text!ressources/code/class/defaults.js',[],function () { return 'var Person = yapp.Class.extend({\n    defaults: {\n        firstname: "",\n        lastname: "nobody"\n    }\n});\n\nvar nobody = new Person();\nalert(nobody.options.lastname);';});
 
-define('text!code/class/on.js',[],function () { return 'nobody.on("change:firstname change:lastname", function() { ... });';});
+define('text!ressources/code/class/on.js',[],function () { return 'nobody.on("change:firstname change:lastname", function() { ... });';});
 
-define('text!code/class/on_all.js',[],function () { return 'proxy.on("all", function(eventName) {\n    object.trigger(eventName);\n});';});
+define('text!ressources/code/class/on_all.js',[],function () { return 'proxy.on("all", function(eventName) {\n    object.trigger(eventName);\n});';});
 
-define('text!code/class/on_map.js',[],function () { return 'book.on({\n    "change:title": titleView.update,\n    "change:author": authorPane.update,\n    "destroy": bookView.remove\n});';});
+define('text!ressources/code/class/on_map.js',[],function () { return 'book.on({\n    "change:title": titleView.update,\n    "change:author": authorPane.update,\n    "destroy": bookView.remove\n});';});
 
-define('text!code/class/on_sub.js',[],function () { return 'var object = new yapp.Class();\n\nobject.on("parent", function() {\n    alert("event parent");\n});\nobject.on("parent:child", function() {\n    alert("event child");\n});\n\n// Trigger only "parent"\nobject.trigger("parent");\n\n// Trigger "parent:child" and "parent"\nobject.trigger("parent:child");';});
+define('text!ressources/code/class/on_sub.js',[],function () { return 'var object = new yapp.Class();\n\nobject.on("parent", function() {\n    alert("event parent");\n});\nobject.on("parent:child", function() {\n    alert("event child");\n});\n\n// Trigger only "parent"\nobject.trigger("parent");\n\n// Trigger "parent:child" and "parent"\nobject.trigger("parent:child");';});
 
-define('text!code/class/off.js',[],function () { return '// Removes just the `onChange` callback.\nobject.off("change", onChange);\n\n// Removes all "change" callbacks.\nobject.off("change");\n\n// Removes the `onChange` callback for all events.\nobject.off(null, onChange);\n\n// Removes all callbacks for `context` for all events.\nobject.off(null, null, context);\n\n// Removes all callbacks on `object`.\nobject.off();';});
+define('text!ressources/code/class/off.js',[],function () { return '// Removes just the `onChange` callback.\nobject.off("change", onChange);\n\n// Removes all "change" callbacks.\nobject.off("change");\n\n// Removes the `onChange` callback for all events.\nobject.off(null, onChange);\n\n// Removes all callbacks for `context` for all events.\nobject.off(null, null, context);\n\n// Removes all callbacks on `object`.\nobject.off();';});
 
-define('text!code/urls/base.js',[],function () { return 'alert(yapp.Urls.base("index.html"));';});
+define('text!ressources/code/requests/class.js',[],function () { return 'var r = new yapp.Requests({\n    url: yapp.Urls.static("templates/header.html"),\n\n    /*\n    Some others options with defaults values :\n        method: "GET",\n        params: {},\n        dataType: "text"\n    */\n});\nr.on("done", function(content) {\n    alert("content size is " + content.length);\n});\nr.on("error", function() {\n    alert("Error in the request!");\n})\nr.execute();';});
 
-define('text!code/urls/static.js',[],function () { return 'alert(yapp.Urls.static("favicon.png"));';});
+define('text!ressources/code/requests/get.js',[],function () { return 'yapp.Requests.get(Urls.static("templates/header.html")).then(function() {\n    alert("Nice requests !");\n}, function() {\n    alert("Error !");\n})';});
 
-define('text!code/urls/route.js',[],function () { return 'alert(yapp.Urls.route("article/:id", {id: 1234}));';});
+define('text!ressources/code/requests/getjson.js',[],function () { return 'yapp.Requests.getJSON("https://api.github.com/repos/FriendCode/yapp.js").then(function(data) {\n    alert("Yapp.js github repo has "+data.watchers_count+" watchers");\n}, function() {\n    alert("Error !");\n})';});
 
-define('text!code/urls/template.html',[],function () { return '<% _.each(photos, function(photo) { %>\n    <a href="<%- yapp.urls.static("images", photo.Id, "1024.jpg") %>">\n        <img src="<%- yapp.urls.static("images", photo.Id, "128.jpg") %>" />\n    </a>\n    <a href="<%- yapp.urls.route("photos/comments/:Id", photo) %>">\n        <%- photo.comments %> Comments\n    </a>\n<% }); %>';});
+define('text!ressources/code/requests/post.js',[],function () { return 'yapp.Requests.get("mybackend/test.php").then(function() {\n    alert("Weird ... it wasn\'t suppose to work");\n}, function() {\n    alert("Error ! (don\'t worry it\'s normal ;) )");\n})';});
 
-define('text!code/cache/key.js',[],function () { return '// Key and Value are strings\nyapp.Cache.set("test", "mykey", "myvalue");\n\n// Key is a number\nyapp.Cache.set("test", 4, "myvalue");\n\n// Value is a number\nyapp.Cache.set("test", "mykey2", 55);\n\n// Value is an object\nyapp.Cache.set("test", "me", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n});\n\n// Key is an object, Value is a Date\nyapp.Cache.set("lastconnexion", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n}, new Date(), 3600);';});
+define('text!ressources/code/logger/namespace.js',[],function () { return '// Namespace for a model : into navigator console\nvar log_user = yapp.Logger.addNamespace("users");\n\nlog_user.error("Invalid user (don\'t have \'name\') :", {\n    username: "Samy" \n});\n\n// Namespace for urgent logs\nvar log_urgent = yapp.Logger.addNamespace("urgent", function() {\n    var args = Array.prototype.slice.call(arguments);\n    alert(args.join(" "));\n});\n\nlog_urgent.warn("Error in rendering view \'user\'");\n\n';});
 
-define('text!code/cache/namespace.js',[],function () { return '// Create a first cache namespace for users\nvar users = yapp.Cache.namespace("users");\n\n// Create a second cache namespace for articles\nvar articles = yapp.Cache.namespace("articles");\n\nusers.set("samy", {\n    name: "Samy Pessé"\n});\narticles.set("samy", {\n    name: "Who is Samy?"\n});\n\nalert("User " + users.get("samy").name);\nalert("Article " + articles.get("samy").name);';});
+define('text!ressources/code/logger/logging.js',[],function () { return '// log message visible only when configuration "logLevel": "log"\nyapp.Logger.logging.log("a log message");\n\n// log message visible only when configuration "logLevel": "log" or "debug"\nyapp.Logger.logging.debug("a debug message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warning"\nyapp.Logger.logging.warning("a warning message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warning" or "error"\nyapp.Logger.logging.error("an error message");\n\n// if "logLevel": "none" => no log message are outputed';});
 
+define('text!ressources/code/urls/base.js',[],function () { return 'alert(yapp.Urls.base("index.html"));';});
+
+define('text!ressources/code/urls/static.js',[],function () { return 'alert(yapp.Urls.static("favicon.png"));';});
+
+define('text!ressources/code/urls/route.js',[],function () { return 'alert(yapp.Urls.route("article/:id", {id: 1234}));';});
+
+define('text!ressources/code/urls/template.html',[],function () { return '<% _.each(photos, function(photo) { %>\n    <a href="<%- yapp.urls.static("images", photo.Id, "1024.jpg") %>">\n        <img src="<%- yapp.urls.static("images", photo.Id, "128.jpg") %>" />\n    </a>\n    <a href="<%- yapp.urls.route("photos/comments/:Id", photo) %>">\n        <%- photo.comments %> Comments\n    </a>\n<% }); %>';});
+
+define('text!ressources/code/cache/key.js',[],function () { return '// Key and Value are strings\nyapp.Cache.set("test", "mykey", "myvalue");\n\n// Key is a number\nyapp.Cache.set("test", 4, "myvalue");\n\n// Value is a number\nyapp.Cache.set("test", "mykey2", 55);\n\n// Value is an object\nyapp.Cache.set("test", "me", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n});\n\n// Key is an object, Value is a Date\nyapp.Cache.set("lastconnexion", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n}, new Date(), 3600);';});
+
+define('text!ressources/code/cache/namespace.js',[],function () { return '// Create a first cache namespace for users\nvar users = yapp.Cache.namespace("users");\n\n// Create a second cache namespace for articles\nvar articles = yapp.Cache.namespace("articles");\n\nusers.set("samy", {\n    name: "Samy Pessé"\n});\narticles.set("samy", {\n    name: "Who is Samy?"\n});\n\nalert("User " + users.get("samy").name);\nalert("Article " + articles.get("samy").name);';});
+
+define('text!ressources/code/ressources/load.js',[],function () { return 'yapp.Ressources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
+
+define('text!ressources/code/ressources/namespace.js',[],function () { return '// Configure templates to use http loader\nyapp.Ressources.addNamespace("templates", {\n    loader: "http",\n    base: "templates"\n});\n\n// Configure i18n to use internal content for languages\nyapp.Ressources.addNamespace("i18n", {\n    loader: "require",\n    base: "ressources/i18n",\n    mode: "text"\n});\n\n// Add a other namespace for your application\nyapp.Ressources.addNamespace("codes", {\n    loader: "require",\n    base: "ressources/codes",\n    mode: "text"\n});\n\nyapp.Ressources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
+
+define('text!ressources/code/ressources/loader.js',[],function () { return '// Simple http loader using yahoo queries\n// for getting page content\nyapp.Ressources.addLoader("yql", function(query, callback, config) {\n    _.defaults(config, {\n        version: "v1",\n        server: "https://query.yahooapis.com"\n    });\n\n    query = encodeURIComponent(query);\n\n    var url = config.url || config.server+"/"+config.version+"/public/yql";\n    url = url+"?format=json&q="+query+"&callback=?";\n\n    yapp.Requests.getJSON(url).then(function(data) {\n        if (data.query == null || data.query.results == null) {\n            return callback.reject();\n        }\n        return callback.resolve(data.query.results);\n    }, function() {\n        return callback.reject();\n    })\n});\n\n// Add a simple namespace for external pages\nyapp.Ressources.addNamespace("query", {\n    loader: "yql",\n    version: "v1"\n});\n\n\n// ...\n// yql could now be use anywhere with ressource loader\n\n// For exemple : get weather\nyapp.Ressources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {\n    var city = result.channel.location.city;\n    var condition = result.channel.item.condition.text;\n    alert("Weather in "+city+" is "+condition);\n}, function() {\n    alert("error when loading page !");\n})\n';});
+
+define('ressources/ressources',[
+    "yapp/yapp",
+
+    "text!ressources/code/build/structure.txt",
+    "text!ressources/code/build/build.js",
+    "text!ressources/code/build/options.js",
+    "text!ressources/code/build/module.js",
+    "text!ressources/code/application/extend.js",
+    "text!ressources/code/application/run.js",
+    "text!ressources/code/view/extend.js",
+    "text!ressources/code/view/template.js",
+    "text!ressources/code/view/template_function.js",
+    "text!ressources/code/template/syntax.html",
+    "text!ressources/code/template/components.html",
+    "text!ressources/code/template/components.js",
+    "text!ressources/code/class/extend.js",
+    "text!ressources/code/class/initialize.js",
+    "text!ressources/code/class/defaults.js",
+    "text!ressources/code/class/on.js",
+    "text!ressources/code/class/on_all.js",
+    "text!ressources/code/class/on_map.js",
+    "text!ressources/code/class/on_sub.js",
+    "text!ressources/code/class/off.js",
+    "text!ressources/code/requests/class.js",
+    "text!ressources/code/requests/get.js",
+    "text!ressources/code/requests/getjson.js",
+    "text!ressources/code/requests/post.js",
+    "text!ressources/code/logger/namespace.js",
+    "text!ressources/code/logger/logging.js",
+    "text!ressources/code/urls/base.js",
+    "text!ressources/code/urls/static.js",
+    "text!ressources/code/urls/route.js",
+    "text!ressources/code/urls/template.html",
+    "text!ressources/code/cache/key.js",
+    "text!ressources/code/cache/namespace.js",
+    "text!ressources/code/ressources/load.js",
+    "text!ressources/code/ressources/namespace.js",
+    "text!ressources/code/ressources/loader.js",
+], function(yapp) {
+
+    yapp.Ressources.addNamespace("templates", {
+        loader: "http",
+        base: "templates"
+    });
+
+     yapp.Ressources.addNamespace("codes", {
+        loader: "require",
+        base: "ressources/code",
+        mode: "text"
+    });
+    return {}
+});
 require([
     "yapp/yapp",
     "yapp/args",
 
-    "views/counter",
-    "views/code",
-
-    "text!code/build/structure.txt",
-    "text!code/build/build.js",
-    "text!code/build/options.js",
-    "text!code/build/module.js",
-    "text!code/application/extend.js",
-    "text!code/application/run.js",
-    "text!code/view/extend.js",
-    "text!code/view/template.js",
-    "text!code/view/template_function.js",
-    "text!code/template/syntax.html",
-    "text!code/template/components.html",
-    "text!code/template/components.js",
-    "text!code/class/extend.js",
-    "text!code/class/initialize.js",
-    "text!code/class/defaults.js",
-    "text!code/class/on.js",
-    "text!code/class/on_all.js",
-    "text!code/class/on_map.js",
-    "text!code/class/on_sub.js",
-    "text!code/class/off.js",
-    "text!code/urls/base.js",
-    "text!code/urls/static.js",
-    "text!code/urls/route.js",
-    "text!code/urls/template.html",
-    "text!code/cache/key.js",
-    "text!code/cache/namespace.js",
+    "views/views",
+    "ressources/ressources"
 ], function(yapp, args) {
-
     // Configure yapp
     yapp.configure(args, {
-        "baseUrl": "/yapp.js/",
-        "templates": {
-            "loader": "yapp/templates/loaders/http"
-        }
+        "logLevel": "none"
     });
 
     // Define base application
-    var app = new (yapp.Application.extend({
+    var Application = yapp.Application.extend({
         name: "Yapp.js Documentation",
-        template: "main",
+        template: "main.html",
         metas: {
             "description": "Build large client-side application in a structured way.",
             "author": "Samy Pessé"
@@ -24417,6 +24630,19 @@ require([
             "search/:q": "search",
         },
 
+        initialize: function() {
+            Application.__super__.initialize.apply(this, arguments);
+            var throttled = _.throttle(_.bind(function() {
+                if ($(window).scrollTop() > this.components.header.$("header").height()) {
+                    this.components.header.$("header").addClass("close");
+                } else {
+                    this.components.header.$("header").removeClass("close");
+                }
+            }, this), 250);
+            $(window).scroll(throttled);
+            return this;
+        },
+
         search: function(e) {
             var self = this;
             if (_.isString(e)) {
@@ -24429,23 +24655,32 @@ require([
 
             this.$("header .menu").each(function() {
                 var n = 0;
+                $(this).removeClass("search-result");
+                $(this).removeClass("no-search-result");
+
                 $(this).find("li").each(function() {
-                    if ($(this).text().toLowerCase().indexOf(query) !== -1) {
-                        n = n + 1;
-                        $(this).show();
-                    } else {
-                        $(this).hide();
+                    $(this).removeClass("search-result");
+                    $(this).removeClass("no-search-result");
+                    if (query.length > 0) {
+                        if ($(this).text().toLowerCase().indexOf(query) !== -1) {
+                            n = n + 1;
+                            $(this).addClass("search-result");
+                        } else {
+                            $(this).addClass("no-search-result");
+                        } 
                     }
                 });
-                if ($(this).find("h3").text().toLowerCase().indexOf(query) !== -1) {
-                    n = 1;
-                    $(this).find("li").show();
-                }
+                if (query.length > 0) {
+                    if ($(this).find("h3").text().toLowerCase().indexOf(query) !== -1) {
+                        n = 1;
+                        $(this).find("li").removeClass("no-search-result").addClass("search-result");
+                    }
 
-                if (n > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
+                    if (n > 0) {
+                        $(this).addClass("search-result");
+                    } else {
+                        $(this).addClass("no-search-result");
+                    }
                 }
             });
         },
@@ -24463,8 +24698,9 @@ require([
                 scrollTop: this.$("*[id='"+section+"']").offset().top
             }, 1000);
         }
-    }));
+    });
 
+    var app = new Application();
     app.run();
 });
 define("application", function(){});
