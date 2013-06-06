@@ -48,6 +48,8 @@ module.exports = {
         _.defaults(configs, {
             // Base directory for the application
             "base": null,
+
+            // Base url for the application
             "baseUrl": "",
 
             // Application name

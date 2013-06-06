@@ -1,8 +1,9 @@
 define([
     "yapp/configs",
     "yapp/core/class",
-    "yapp/utils/logger"
-], function(configs, Class, Logger) {
+    "yapp/utils/logger",
+    "yapp/utils/deferred"
+], function(configs, Class, Logger, Deferred) {
     
     var logging = Logger.logging.addType("requests");
 
@@ -39,15 +40,22 @@ define([
         /*
          *  Execute a request
          */
-        _execute: function(url, callback, options, defaults) {
+        _execute: function(url, options, defaults) {
+            var d = new Deferred();
             options = options || {};
             options = _.extend(options, defaults, {
                 "url": url
             });
             var r = new Requests(options);
-            r.on("done", callback);
-            r.on("error", _.partial(callback, null));
-            return r.execute();
+            r.on("done", function(content) {
+                d.resolve(content);
+            });
+            r.on("error", function() {
+                d.reject();
+            });
+
+            r.execute();
+            return d;
         },
 
         /*
@@ -56,8 +64,8 @@ define([
          *  @args : arguments for GET
          *  @callback : callback for results
          */
-        get: function(url, args, callback, options) {
-            return Requests._execute(url, callback, options, {
+        get: function(url, args, options) {
+            return Requests._execute(url, options, {
                 method: "GET",
                 params: args
             });
@@ -69,8 +77,8 @@ define([
          *  @args : arguments for POST
          *  @callback : callback for results
          */
-        post: function(url, args, callback, options) {
-            return Requests._execute(url, callback, options, {
+        post: function(url, args, options) {
+            return Requests._execute(url, options, {
                 method: "POST",
                 params: args
             });

@@ -19,8 +19,8 @@ yapp.Application(
 
     // Static files mappage
     "static": {
-        "templates": path.resolve(__dirname, "templates"),
-        "images": path.resolve(__dirname, "images")
+        "templates": path.resolve(__dirname, "ressources", "templates"),
+        "images": path.resolve(__dirname, "ressources", "images")
     },
 
     // Stylesheet entry point

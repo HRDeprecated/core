@@ -2,6 +2,12 @@
     // Base directory for the application
     "base": null,
 
+    // Base url for the application
+    "baseUrl": "",
+
+    // Arguments for application
+    "args": {},
+
     // Application name
     "name": "untitled",
 

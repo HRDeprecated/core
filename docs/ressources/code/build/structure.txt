@@ -12,4 +12,6 @@ ressources/
         views/
             myview.html
         main.html
+    images/
+        favicon.png
 build.js

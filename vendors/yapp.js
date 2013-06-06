@@ -10667,86 +10667,6 @@ define('yapp/utils/cache',[
 
     return Cache;
 });
-define('yapp/utils/requests',[
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger"
-], function(configs, Class, Logger) {
-    
-    var logging = Logger.logging.addType("requests");
-
-    var Requests = Class.extend({
-        defaults: {
-            url: null,
-            method: "GET",
-            params: {},
-            dataType: "text"
-        },
-
-        /*
-         *  Execute the request
-         */
-        execute: function() {
-            this.xhr = $.ajax({
-                "type":     this.options.method,
-                "url":      this.options.url,
-                "data":     this.options.params,
-                "dataType": this.options.dataType,
-                "context":  this,
-                "success":  function(data) {
-                    logging.debug("Result for request ", this.options);
-                    this.trigger("done", data);
-                },
-                "error": function() {
-                    logging.error("Error for request ", this.options);
-                    this.trigger("error");
-                }
-            });
-            return this;
-        }
-    }, {
-        /*
-         *  Execute a request
-         */
-        _execute: function(url, callback, options, defaults) {
-            options = options || {};
-            options = _.extend(options, defaults, {
-                "url": url
-            });
-            var r = new Requests(options);
-            r.on("done", callback);
-            r.on("error", _.partial(callback, null));
-            return r.execute();
-        },
-
-        /*
-         *  Method for a GET method
-         *  @url : url to request 
-         *  @args : arguments for GET
-         *  @callback : callback for results
-         */
-        get: function(url, args, callback, options) {
-            return Requests._execute(url, callback, options, {
-                method: "GET",
-                params: args
-            });
-        },
-
-        /*
-         *  Method for a POST method
-         *  @url : url to request 
-         *  @args : arguments for POST
-         *  @callback : callback for results
-         */
-        post: function(url, args, callback, options) {
-            return Requests._execute(url, callback, options, {
-                method: "POST",
-                params: args
-            });
-        }
-    });
-    return Requests;
-});
 define('yapp/utils/deferred',[
     "Underscore",
     "yapp/core/class",
@@ -10843,10 +10763,114 @@ define('yapp/utils/deferred',[
             }
             this.o = value || obj;
             this.x = 2
+        },
+    }, {
+        when: function(m, args) {
+            if(!args) return m;
+
+            args = [].slice.call(arguments);
+            m = new Deferred;
+
+            var i = args.length,
+            n = i,
+            res = [],
+            done = function(j) {return function(v) {res[j] = v; --n || m.resolve(res)}},
+            fail = function(v) {m.reject(v)};
+
+            while(i--) args[i].then(done(i), fail);
+            return m
         }
     });
 
     return Deferred;
+});
+define('yapp/utils/requests',[
+    "yapp/configs",
+    "yapp/core/class",
+    "yapp/utils/logger",
+    "yapp/utils/deferred"
+], function(configs, Class, Logger, Deferred) {
+    
+    var logging = Logger.logging.addType("requests");
+
+    var Requests = Class.extend({
+        defaults: {
+            url: null,
+            method: "GET",
+            params: {},
+            dataType: "text"
+        },
+
+        /*
+         *  Execute the request
+         */
+        execute: function() {
+            this.xhr = $.ajax({
+                "type":     this.options.method,
+                "url":      this.options.url,
+                "data":     this.options.params,
+                "dataType": this.options.dataType,
+                "context":  this,
+                "success":  function(data) {
+                    logging.debug("Result for request ", this.options);
+                    this.trigger("done", data);
+                },
+                "error": function() {
+                    logging.error("Error for request ", this.options);
+                    this.trigger("error");
+                }
+            });
+            return this;
+        }
+    }, {
+        /*
+         *  Execute a request
+         */
+        _execute: function(url, options, defaults) {
+            var d = new Deferred();
+            options = options || {};
+            options = _.extend(options, defaults, {
+                "url": url
+            });
+            var r = new Requests(options);
+            r.on("done", function(content) {
+                d.resolve(content);
+            });
+            r.on("error", function() {
+                d.reject();
+            });
+
+            r.execute();
+            return d;
+        },
+
+        /*
+         *  Method for a GET method
+         *  @url : url to request 
+         *  @args : arguments for GET
+         *  @callback : callback for results
+         */
+        get: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "GET",
+                params: args
+            });
+        },
+
+        /*
+         *  Method for a POST method
+         *  @url : url to request 
+         *  @args : arguments for POST
+         *  @callback : callback for results
+         */
+        post: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "POST",
+                params: args
+            });
+        }
+    });
+    return Requests;
 });
 define('yapp/utils/ressources',[
     "Underscore",
@@ -10939,14 +10963,12 @@ define('yapp/utils/ressources',[
 
         // Get ressource using requests
         logging.debug("Load ressource using http ", ressourcename);
-        Requests.get(ressourceurl, {}, function(content) {
-            if (content == null) {
-                logging.error("Error loading using http : ", ressourcename);
-                callback.reject(null);
-            } else {
-                cache.set(ressourcename, content);
-                callback.resolve(content);
-            }
+        Requests.get(ressourceurl).then(function(content) {
+            cache.set(ressourcename, content);
+            callback.resolve(content);
+        }, function() {
+            logging.error("Error loading using http : ", ressourcename);
+            callback.reject(null);
         });
     });
 

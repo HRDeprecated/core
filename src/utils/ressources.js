@@ -89,14 +89,12 @@ define([
 
         // Get ressource using requests
         logging.debug("Load ressource using http ", ressourcename);
-        Requests.get(ressourceurl, {}, function(content) {
-            if (content == null) {
-                logging.error("Error loading using http : ", ressourcename);
-                callback.reject(null);
-            } else {
-                cache.set(ressourcename, content);
-                callback.resolve(content);
-            }
+        Requests.get(ressourceurl).then(function(content) {
+            cache.set(ressourcename, content);
+            callback.resolve(content);
+        }, function() {
+            logging.error("Error loading using http : ", ressourcename);
+            callback.reject(null);
         });
     });
 

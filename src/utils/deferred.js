@@ -94,7 +94,7 @@ define([
             }
             this.o = value || obj;
             this.x = 2
-        }
+        },
     }, {
         when: function(m, args) {
             if(!args) return m;

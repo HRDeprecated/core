@@ -240,5 +240,34 @@
                 <%= view.component("code", {code: "cache/namespace.js", run: true}) %>
             </article>
         </section>
+
+        <section id="ressources">
+            <h2>Ressources</h2>
+            <p>The module <b>Ressources</b> let you load ressources (such as templates, ...) in a standart way.</p>
+
+            <article id="ressources/load">
+                <h3>load <code>yapp.Ressources.load(namespace, ressource)</code></h3>
+                <p>Load a ressource in a namespace and return a <a href="<%- yapp.urls.route("deferred") %>"><code>Deferred</code></a>.</p>
+                <%= view.component("code", {code: "ressources/load.js", run: true}) %>
+            </article>
+
+            <article id="ressources/addNamespace">
+                <h3>addNamespace <code>yapp.Ressources.addNamespace(namespace, options)</code></h3>
+                <p>Add a namespaces for ressources with options for loading.</p>
+                <%= view.component("code", {code: "ressources/namespace.js", run: true}) %>
+            </article>
+
+            <article id="ressources/addLoader">
+                <h3>addLoader <code>yapp.Ressources.addLoader(name, handler)</code></h3>
+                <p>Add a new loader for loading ressources.</p>
+                <p>Base loader are :
+                    <ul>
+                        <li><b>http</b> : Load ressources using http requests and caching</li>
+                        <li><b>require</b> : Load ressources from application source code using require</li>
+                    </ul>
+                </p>
+                <%= view.component("code", {code: "ressources/loader.js", run: true}) %>
+            </article>
+        </section>
     </div>
 </div>

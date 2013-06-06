@@ -27,6 +27,9 @@ define([
     "text!ressources/code/urls/template.html",
     "text!ressources/code/cache/key.js",
     "text!ressources/code/cache/namespace.js",
+    "text!ressources/code/ressources/load.js",
+    "text!ressources/code/ressources/namespace.js",
+    "text!ressources/code/ressources/loader.js",
 ], function(yapp) {
 
     yapp.Ressources.addNamespace("templates", {
