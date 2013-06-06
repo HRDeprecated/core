@@ -10329,48 +10329,48 @@ define('yapp/utils/logger',[
          */
         initialize: function() {
             this.handler = this.options.handler || console;
+            this.namespace = this.options.namespace || "base";
+
+            if (_.isFunction(this.handler)) {
+                this.handler = {};
+                _.each(Logger.levels, function(level, tag) {
+                    this.handler[tag] = this.options.handler;
+                }, this);
+            }
+
+            _.each(Logger.levels, function(level, tag) {
+                this.addMethod(tag);
+            }, this);
             return this;
         },
 
         /*
          *  Print informations
-         *  @section : section for the log
          *  @type : debug, error, warning
          *  @*args : data to be log
          */
-        printLog: function(section, type) {
-            var args = Array.prototype.slice.call(arguments, 2);
+        printLog: function(type) {
+            var args = Array.prototype.slice.call(arguments, 1);
             if (this.logLevel(type) < this.logLevel(configs.logLevel)) {
                 return this;
             }
-            args.splice(0, 0, "[" + section + "] [" + type + "]");
+            args.splice(0, 0, "[" + this.namespace + "] [" + type + "]");
             var logMethod = Function.prototype.bind.call(this.handler[type], this.handler);
             logMethod.apply(this.handler[type], args);
         },
 
         /*
-         *  Add log type
-         *  @section : section for the log method
-         *  @type for he log method
+         *  Add log method
+         *  @type for the log method
          */
-        addType: function(section, type) {
-            if (type == null) {
-                this[section] = {};
-                _.each(Logger.levels, function(level, tag) {
-                    this.addType(section, tag);
-                }, this);
-                return this[section];
-            }
-
+        addMethod: function(type) {
             var name = type;
-            this[section] = this[section] || {};
-            this[section][name] = _.bind(function() {
+            this[type] = _.bind(function() {
                 var args = Array.prototype.slice.call(arguments, 0);
-                args.splice(0, 0, section);
-                args.splice(1, 0, type);
+                args.splice(0, 0, type);
                 return this.printLog.apply(this, args);
             }, this);
-            return this[section][name];
+            return this[type];
         },
 
         /*
@@ -10382,20 +10382,33 @@ define('yapp/utils/logger',[
             return Logger.levels[type] || 0;
         }
     }, {
+        namespaces: {},
+        logging: null,
         levels: {
             "log": 0,
             "debug": 1,
             "warn": 2,
             "error": 3,
             "none": 4
-        }
+        },
+
+        /*
+         *  Add log namespace
+         *  @namespace : namespace name for the logger
+         */
+        addNamespace: function(namespace, handler) {
+            if (Logger.namespaces[namespace] == null) {
+                Logger.namespaces[namespace] = new Logger({
+                    namespace: namespace,
+                    handler: handler
+                });
+            }
+            return Logger.namespaces[namespace];
+        },
     });
 
     // Create default logger
-    Logger.logging = new Logger();
-    _.each(Logger.levels, function(level, tag) {
-        Logger.logging[tag] = Logger.logging.addType("base", tag);
-    });
+    Logger.logging = Logger.addNamespace("base");
 
     return Logger;
 });
@@ -10472,7 +10485,7 @@ define('yapp/utils/storage',[
     "yapp/utils/logger"
 ], function(_, configs, Logger) {
 
-    var logging = Logger.logging.addType("storage");
+    var logging = Logger.addNamespace("storage");
 
     var Storage = {
         /*
@@ -10566,7 +10579,7 @@ define('yapp/utils/cache',[
     "yapp/utils/storage"
 ], function(_, configs, Logger, Storage) {
 
-    var logging = Logger.logging.addType("cache");
+    var logging = Logger.addNamespace("cache");
     var cache_methods = ["get", "set", "remove"];
 
     var Cache = {
@@ -10791,7 +10804,7 @@ define('yapp/utils/requests',[
     "yapp/utils/deferred"
 ], function(configs, Class, Logger, Deferred) {
     
-    var logging = Logger.logging.addType("requests");
+    var logging = Logger.addNamespace("requests");
 
     var Requests = Class.extend({
         defaults: {
@@ -10858,6 +10871,20 @@ define('yapp/utils/requests',[
         },
 
         /*
+         *  Method for a GET method, suing JSONP
+         *  @url : url to request 
+         *  @args : arguments for GET
+         *  @callback : callback for results
+         */
+        getJSON: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "GET",
+                params: args,
+                dataType: "json"
+            });
+        },
+
+        /*
          *  Method for a POST method
          *  @url : url to request 
          *  @args : arguments for POST
@@ -10882,7 +10909,7 @@ define('yapp/utils/ressources',[
     "yapp/utils/deferred",
 ], function(_, configs, Logger, Cache, Requests, Urls, Deferred) {
 
-    var logging = Logger.logging.addType("ressources");
+    var logging = Logger.addNamespace("ressources");
     var cache = Cache.namespace("ressources");
 
     var Ressources = {
@@ -11454,7 +11481,7 @@ define('yapp/core/history',[
     "yapp/utils/logger",
 ], function($, _, configs, Class, Logger) {
 
-    var logging = Logger.logging.addType("history");
+    var logging = Logger.addNamespace("history");
 
     var History = new (Class.extend({   
         /*
@@ -11586,7 +11613,7 @@ define('yapp/core/router',[
 ], function($, _, Class, History, Logger) {
 
     // Add specifif logs handler
-    var logging = Logger.logging.addType("routing");
+    var logging = Logger.addNamespace("routing");
 
     // Cached regular expressions for matching named param parts and splatted
     // parts of route strings.
@@ -11683,7 +11710,7 @@ define('yapp/core/application',[
     "yapp/utils/logger"
 ], function($, _, View, Head, Router, Logger) {
 
-    var logging = Logger.logging.addType("application");
+    var logging = Logger.addNamespace("application");
 
     var Application = View.extend({
         el: $("body"),

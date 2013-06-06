@@ -7,7 +7,7 @@ define([
 ], function($, _, Class, History, Logger) {
 
     // Add specifif logs handler
-    var logging = Logger.logging.addType("routing");
+    var logging = Logger.addNamespace("routing");
 
     // Cached regular expressions for matching named param parts and splatted
     // parts of route strings.

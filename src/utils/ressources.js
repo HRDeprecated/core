@@ -8,7 +8,7 @@ define([
     "yapp/utils/deferred",
 ], function(_, configs, Logger, Cache, Requests, Urls, Deferred) {
 
-    var logging = Logger.logging.addType("ressources");
+    var logging = Logger.addNamespace("ressources");
     var cache = Cache.namespace("ressources");
 
     var Ressources = {

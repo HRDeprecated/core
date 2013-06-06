@@ -10,7 +10,7 @@
             <h3>Introduction</h3>
         </div>
         <div class="menu">
-            <h3>Build system</h3>
+            <a href="<%- yapp.urls.route("build") %>"><h3>Build system</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("build/structure") %>">Structure</a></li>
                 <li><a href="<%- yapp.urls.route("build/application") %>">Defining the application</a></li>
@@ -19,7 +19,7 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>Application</h3>
+            <a href="<%- yapp.urls.route("application") %>"><h3>Application</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("application/extend") %>">extend</a></li>
                 <li><a href="<%- yapp.urls.route("application/run") %>">run</a></li>
@@ -28,7 +28,7 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>View</h3>
+            <a href="<%- yapp.urls.route("view") %>"><h3>View</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("view/extend") %>">extend</a></li>
                 <li><a href="<%- yapp.urls.route("view/template") %>">template</a></li>
@@ -39,14 +39,14 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>Templating</h3>
+            <a href="<%- yapp.urls.route("template") %>"><h3>Templating</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("template/syntax") %>">Syntax</a></li>
                 <li><a href="<%- yapp.urls.route("template/components") %>">Components</a></li>
             </ul>
         </div>
         <div class="menu">
-            <h3>Class</h3>
+            <a href="<%- yapp.urls.route("class") %>"><h3>Class</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("class/extend") %>">extend</a></li>
                 <li><a href="<%- yapp.urls.route("class/initialize") %>">initialize</a></li>
@@ -59,7 +59,7 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>Model</h3>
+            <a href="<%- yapp.urls.route("model") %>"><h3>Model</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("model/extend") %>">extend</a></li>
                 <li><a href="<%- yapp.urls.route("model/initialize") %>">initialize</a></li>
@@ -69,22 +69,23 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>Requests</h3>
+            <a href="<%- yapp.urls.route("requests") %>"><h3>Requests</h3></a>
             <ul>
-                <li><a href="<%- yapp.urls.route("requests/execute") %>">execute</a></li>
+                <li><a href="<%- yapp.urls.route("requests/class") %>">class</a></li>
                 <li><a href="<%- yapp.urls.route("requests/get") %>">get</a></li>
                 <li><a href="<%- yapp.urls.route("requests/post") %>">post</a></li>
+                <li><a href="<%- yapp.urls.route("requests/getJSON") %>">getJSON</a></li>
             </ul>
         </div>
         <div class="menu">
-            <h3>Logger</h3>
+            <a href="<%- yapp.urls.route("logger") %>"><h3>Logger</h3></a>
             <ul>
-                <li><a href="<%- yapp.urls.route("logger/addType") %>">addType</a></li>
+                <li><a href="<%- yapp.urls.route("logger/addNamespace") %>">addNamespace</a></li>
                 <li><a href="<%- yapp.urls.route("logger/logging") %>">logging</a></li>
             </ul>
         </div>
         <div class="menu">
-            <h3>Router</h3>
+            <a href="<%- yapp.urls.route("router") %>"><h3>Router</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("router/routes") %>">routes</a></li>
                 <li><a href="<%- yapp.urls.route("router/route") %>">route</a></li>
@@ -93,7 +94,7 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>Urls</h3>
+            <a href="<%- yapp.urls.route("urls") %>"><h3>Urls</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("urls/base") %>">base</a></li>
                 <li><a href="<%- yapp.urls.route("urls/static") %>">static</a></li>
@@ -101,7 +102,7 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>Storage</h3>
+            <a href="<%- yapp.urls.route("storage") %>"><h3>Storage</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("storage/get") %>">get</a></li>
                 <li><a href="<%- yapp.urls.route("storage/set") %>">set</a></li>
@@ -111,7 +112,7 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>Cache</h3>
+            <a href="<%- yapp.urls.route("cache") %>"><h3>Cache</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("cache/get") %>">get</a></li>
                 <li><a href="<%- yapp.urls.route("cache/set") %>">set</a></li>
@@ -121,7 +122,7 @@
             </ul>
         </div>
         <div class="menu">
-            <h3>Ressources</h3>
+            <a href="<%- yapp.urls.route("ressources") %>"><h3>Ressources</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("ressources/load") %>">load</a></li>
                 <li><a href="<%- yapp.urls.route("ressources/addNamespace") %>">addNamespace</a></li>

@@ -7,7 +7,7 @@ define([
     "yapp/utils/logger"
 ], function($, _, View, Head, Router, Logger) {
 
-    var logging = Logger.logging.addType("application");
+    var logging = Logger.addNamespace("application");
 
     var Application = View.extend({
         el: $("body"),

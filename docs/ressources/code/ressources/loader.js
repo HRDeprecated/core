@@ -11,7 +11,7 @@ yapp.Ressources.addLoader("yql", function(query, callback, config) {
     var url = config.url || config.server+"/"+config.version+"/public/yql";
     url = url+"?format=json&q="+query+"&callback=?";
 
-    yapp.Requests.get(url, {}, {dataType: "json"}).then(function(data) {
+    yapp.Requests.getJSON(url).then(function(data) {
         if (data.query == null || data.query.results == null) {
             return callback.reject();
         }

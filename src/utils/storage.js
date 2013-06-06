@@ -4,7 +4,7 @@ define([
     "yapp/utils/logger"
 ], function(_, configs, Logger) {
 
-    var logging = Logger.logging.addType("storage");
+    var logging = Logger.addNamespace("storage");
 
     var Storage = {
         /*

@@ -9,7 +9,7 @@ require([
     yapp.configure(args);
 
     // Define base application
-    var app = new (yapp.Application.extend({
+    var Application = yapp.Application.extend({
         name: "Yapp.js Documentation",
         template: "main.html",
         metas: {
@@ -29,6 +29,19 @@ require([
             "search/:q": "search",
         },
 
+        initialize: function() {
+            Application.__super__.initialize.apply(this, arguments);
+            var throttled = _.throttle(_.bind(function() {
+                if ($(window).scrollTop() > this.components.header.$("header").height()) {
+                    this.components.header.$("header").addClass("close");
+                } else {
+                    this.components.header.$("header").removeClass("close");
+                }
+            }, this), 250);
+            $(window).scroll(throttled);
+            return this;
+        },
+
         search: function(e) {
             var self = this;
             if (_.isString(e)) {
@@ -41,23 +54,32 @@ require([
 
             this.$("header .menu").each(function() {
                 var n = 0;
+                $(this).removeClass("search-result");
+                $(this).removeClass("no-search-result");
+
                 $(this).find("li").each(function() {
-                    if ($(this).text().toLowerCase().indexOf(query) !== -1) {
-                        n = n + 1;
-                        $(this).show();
-                    } else {
-                        $(this).hide();
+                    $(this).removeClass("search-result");
+                    $(this).removeClass("no-search-result");
+                    if (query.length > 0) {
+                        if ($(this).text().toLowerCase().indexOf(query) !== -1) {
+                            n = n + 1;
+                            $(this).addClass("search-result");
+                        } else {
+                            $(this).addClass("no-search-result");
+                        } 
                     }
                 });
-                if ($(this).find("h3").text().toLowerCase().indexOf(query) !== -1) {
-                    n = 1;
-                    $(this).find("li").show();
-                }
+                if (query.length > 0) {
+                    if ($(this).find("h3").text().toLowerCase().indexOf(query) !== -1) {
+                        n = 1;
+                        $(this).find("li").removeClass("no-search-result").addClass("search-result");
+                    }
 
-                if (n > 0) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
+                    if (n > 0) {
+                        $(this).addClass("search-result");
+                    } else {
+                        $(this).addClass("no-search-result");
+                    }
                 }
             });
         },
@@ -75,7 +97,8 @@ require([
                 scrollTop: this.$("*[id='"+section+"']").offset().top
             }, 1000);
         }
-    }));
+    });
 
+    var app = new Application();
     app.run();
 });

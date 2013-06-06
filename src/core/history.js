@@ -6,7 +6,7 @@ define([
     "yapp/utils/logger",
 ], function($, _, configs, Class, Logger) {
 
-    var logging = Logger.logging.addType("history");
+    var logging = Logger.addNamespace("history");
 
     var History = new (Class.extend({   
         /*

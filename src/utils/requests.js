@@ -5,7 +5,7 @@ define([
     "yapp/utils/deferred"
 ], function(configs, Class, Logger, Deferred) {
     
-    var logging = Logger.logging.addType("requests");
+    var logging = Logger.addNamespace("requests");
 
     var Requests = Class.extend({
         defaults: {
@@ -68,6 +68,20 @@ define([
             return Requests._execute(url, options, {
                 method: "GET",
                 params: args
+            });
+        },
+
+        /*
+         *  Method for a GET method, suing JSONP
+         *  @url : url to request 
+         *  @args : arguments for GET
+         *  @callback : callback for results
+         */
+        getJSON: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "GET",
+                params: args,
+                dataType: "json"
             });
         },
 

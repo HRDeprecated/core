@@ -5,7 +5,7 @@ define([
     "yapp/utils/storage"
 ], function(_, configs, Logger, Storage) {
 
-    var logging = Logger.logging.addType("cache");
+    var logging = Logger.addNamespace("cache");
     var cache_methods = ["get", "set", "remove"];
 
     var Cache = {
