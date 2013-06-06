@@ -9,7 +9,7 @@ require([
     var CounterView = yapp.View.extend({
         tagName: "div",
         className: "component-counter",
-        template: "views/counter",
+        template: "views/counter.html",
 
         initialize: function() {
             var self = this;

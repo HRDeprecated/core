@@ -48,6 +48,7 @@ module.exports = {
         _.defaults(configs, {
             // Base directory for the application
             "base": null,
+            "baseUrl": "",
 
             // Application name
             "name": "untitled",
@@ -154,7 +155,8 @@ module.exports = {
             // Generate arguments module
             var args_file = path.resolve(configs.base, "yapp-args.js");
             fs.writeFileSync(args_file , "define(function() { return "+JSON.stringify(_.extend(configs.args || {}, {
-                "revision": (new Date()).getTime()
+                "revision": (new Date()).getTime(),
+                "baseUrl": configs.baseUrl
             }))+"; });");
 
             // Generate application require build config file
@@ -228,13 +230,15 @@ module.exports = {
             log("run", "");
 
             var server = express();
-            server.use('/yapp.js/'+configs.staticBase,  express.static(path.resolve(configs.build, configs.staticBase)));
-            server.get('/yapp.js/*', function(req, res){
+            //, configs.staticBase
+            //, configs.staticBase
+            server.use(path.resolve(configs.baseUrl),  express.static(path.resolve(configs.build)));
+            /*server.get(path.resolve(configs.baseUrl, 'index.html'), function(req, res){
                 res.sendfile(path.resolve(configs.build, "index.html"));
-            });
-            server.get('*', function(req, res){
-                res.redirect('/yapp.js/');
-            });
+            });*/
+            /*server.get('*', function(req, res){
+                res.redirect(configs.baseUrl);
+            });*/
 
             server.listen(process.env.PORT || 5000);
         };

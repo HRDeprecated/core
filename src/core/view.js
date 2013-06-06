@@ -2,7 +2,7 @@ define([
     "jQuery",
     "Underscore",
     "yapp/core/class",
-    "yapp/templates/base"
+    "yapp/utils/template"
 ], function($, _, Class, Template) {
 
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -223,6 +223,21 @@ define([
     }, {
         Template: Template
     });
+
+
+    /*
+     *  This view is a simple component for importing template
+     *  in a template.
+     *  <%= view.component("template", {name: "mytemplate", args: {}}) %>
+     */
+    View.Template.registerComponent("template", View.extend({
+        template: function() {
+            return this.options.template;
+        },
+        templateContext: function() {
+            return this.options.args;
+        },
+    }));
 
     return View;
 });

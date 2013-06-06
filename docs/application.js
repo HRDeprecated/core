@@ -2,49 +2,16 @@ require([
     "yapp/yapp",
     "yapp/args",
 
-    "views/counter",
-    "views/code",
-
-    "text!code/build/structure.txt",
-    "text!code/build/build.js",
-    "text!code/build/options.js",
-    "text!code/build/module.js",
-    "text!code/application/extend.js",
-    "text!code/application/run.js",
-    "text!code/view/extend.js",
-    "text!code/view/template.js",
-    "text!code/view/template_function.js",
-    "text!code/template/syntax.html",
-    "text!code/template/components.html",
-    "text!code/template/components.js",
-    "text!code/class/extend.js",
-    "text!code/class/initialize.js",
-    "text!code/class/defaults.js",
-    "text!code/class/on.js",
-    "text!code/class/on_all.js",
-    "text!code/class/on_map.js",
-    "text!code/class/on_sub.js",
-    "text!code/class/off.js",
-    "text!code/urls/base.js",
-    "text!code/urls/static.js",
-    "text!code/urls/route.js",
-    "text!code/urls/template.html",
-    "text!code/cache/key.js",
-    "text!code/cache/namespace.js",
+    "views/views",
+    "ressources/ressources"
 ], function(yapp, args) {
-
     // Configure yapp
-    yapp.configure(args, {
-        "baseUrl": "/yapp.js/",
-        "templates": {
-            "loader": "yapp/templates/loaders/http"
-        }
-    });
+    yapp.configure(args);
 
     // Define base application
     var app = new (yapp.Application.extend({
         name: "Yapp.js Documentation",
-        template: "main",
+        template: "main.html",
         metas: {
             "description": "Build large client-side application in a structured way.",
             "author": "Samy Pessé"

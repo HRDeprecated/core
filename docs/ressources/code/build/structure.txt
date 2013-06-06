@@ -1,0 +1,15 @@
+build/
+views/
+    myview.js
+models/
+    mymodel.js
+stylesheets/
+    imports.less
+vendors/
+    external_library.js
+ressources/
+    templates/
+        views/
+            myview.html
+        main.html
+build.js

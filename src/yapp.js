@@ -11,14 +11,14 @@ define([
     "yapp/utils/urls",
     "yapp/utils/storage",
     "yapp/utils/cache",
-
-    "yapp/templates/base",
-    "yapp/templates/view",
+    "yapp/utils/template",
+    "yapp/utils/ressources",
+    "yapp/utils/deferred",
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
 Class, View, Application, Head, Router,
-Logger, Requests, Urls, Storage, Cache, Template) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
     return {
         configs: configs,
         Class: Class,
@@ -32,10 +32,13 @@ Logger, Requests, Urls, Storage, Cache, Template) {
         Cache: Cache,
         Requests: Requests,
         Urls: Urls,
-
         Template: Template,
+        Ressources: Ressources,
+        Deferred: Deferred,
 
         configure: function(args, options) {
+            options = options || {};
+            args = args || {};
             if (args.revision == null) {
                 Logger.logging.error("Error invalid configuration for yapp");
                 return;
@@ -43,9 +46,9 @@ Logger, Requests, Urls, Storage, Cache, Template) {
 
             configs.extend(options, {
                 revision: args.revision,
-                args: args
+                args: args,
+                baseUrl: args.baseUrl || ""
             });
-            console.log(configs);
         }
     }
 })

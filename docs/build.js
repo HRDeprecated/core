@@ -5,6 +5,9 @@ yapp.Application({
     // Base directory
     "base": __dirname,
 
+    // Base url for the application
+    "baseUrl": "/yapp.js/",
+
     // Application name
     "name": "Yapp Documentation",
 
@@ -19,8 +22,8 @@ yapp.Application({
 
     // Static files
     "static": {
-        "templates": path.resolve(__dirname, "templates"),
-        "images": path.resolve(__dirname, "images"),
+        "templates": path.resolve(__dirname, "ressources", "templates"),
+        "images": path.resolve(__dirname, "ressources", "images"),
     },
 
     // Stylesheets

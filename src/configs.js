@@ -24,25 +24,10 @@ define(function(args) {
             "mode": "hashs" //"html5" or "hashs"
         },
 
-        // Configurations for templating
-        "templates": {
-            /* Default module for template loading */
-            "loader": "yapp/templates/loaders/http",
-
-            "loaders": {
-                /* Config for loader "require" */
-                "require": {
-                    "prefix": "templates/",
-                    "mode": "text!",
-                    "extension": ".html"
-                },
-
-                /* Config for loader "http" */
-                "http": {
-                    "prefix": "templates/",
-                    "extension": ".html"
-                }
-            }
+        // Configurations for ressources loading
+        "ressources": {
+            /* Default loader */
+            "loader": "http"
         },
 
         extend: function() {

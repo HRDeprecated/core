@@ -4,20 +4,15 @@ define([
     "yapp/core/class",
     "yapp/utils/logger",
     "yapp/utils/urls",
-
-    "yapp/templates/loaders/require",
-    "yapp/templates/loaders/http"
-], function(_, configs, Class, Logger, Urls) {
+    "yapp/utils/ressources"
+], function(_, configs, Class, Logger, Urls, Ressources) {
     var Template = Class.extend({
         defaults: {
             /* Template id */
             template: null,
 
             /* Context givent to template generation */
-            args: {},
-
-            /* Loader for the template */
-            loader: configs.templates.loader
+            args: {}
         },
 
 
@@ -32,12 +27,6 @@ define([
 
             // Related view
             this.view = this.options.view || null;
-
-            // Create loader method
-            this.loader = this.options.loader || function(tpl, callback) { callback(null); };
-            if (!_.isFunction(this.loader)) {
-                this.loader = require(this.loader);
-            }
 
             // Init template context
             _.extend(this.args, {
@@ -91,13 +80,13 @@ define([
         load: function(template) {
             var self = this;
             this.template = template || this.template;
-
-            var callback = function(content) {
+            Ressources.load("templates", this.template).then(function(content) {
                 self.setContent(content);
                 self.trigger("loaded");
-            };
-
-            this.loader(this.template, callback);
+            }, function() {
+                self.setContent(null);
+                self.trigger("error");
+            });
             return this;
         },
 

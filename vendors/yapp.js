@@ -25,25 +25,10 @@ define('yapp/configs',['require'],function(args) {
             "mode": "hashs" //"html5" or "hashs"
         },
 
-        // Configurations for templating
-        "templates": {
-            /* Default module for template loading */
-            "loader": "yapp/templates/loaders/http",
-
-            "loaders": {
-                /* Config for loader "require" */
-                "require": {
-                    "prefix": "templates/",
-                    "mode": "text!",
-                    "extension": ".html"
-                },
-
-                /* Config for loader "http" */
-                "http": {
-                    "prefix": "templates/",
-                    "extension": ".html"
-                }
-            }
+        // Configurations for ressources loading
+        "ressources": {
+            /* Default loader */
+            "loader": "http"
         },
 
         extend: function() {
@@ -10471,118 +10456,15 @@ define('yapp/utils/urls',[
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });
-            if (configs.router.mode == "hashs") url = "#/"+url;
-            return Urls.base(url);
+            if (configs.router.mode == "hashs") {
+                return Urls.base("") + "#/"+url;
+            } else {
+                return Urls.base(url);
+            }
         }
     };
 
     return Urls;
-});
-define('yapp/templates/loaders/require',[
-    "Underscore",
-    "yapp/configs",
-    "yapp/utils/logger"
-], function(_, configs, Logger) {
-    /*
-     *  This template loader load templates from the application source code using require.js
-     *  you need to include your template to your application source code.
-     */
-    return function(tplname, callback) {
-        var content = null;
-        tplname = [
-            configs.templates.loaders.require.mode,
-            configs.templates.loaders.require.prefix,
-            tplname,
-            configs.templates.loaders.require.extension].join("");
-        
-        Logger.logging.debug("Load template using require ", tplname);
-        try {
-            content = require(tplname);
-        } catch(err) {
-            Logger.logging.error("Error loading template using require : ", tplname, err.message);
-        }
-        callback(content);
-    };
-});
-define('yapp/utils/requests',[
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger"
-], function(configs, Class, Logger) {
-    
-    var logging = Logger.logging.addType("requests");
-
-    var Requests = Class.extend({
-        defaults: {
-            url: null,
-            method: "GET",
-            params: {},
-            dataType: "text"
-        },
-
-        /*
-         *  Execute the request
-         */
-        execute: function() {
-            this.xhr = $.ajax({
-                "type":     this.options.method,
-                "url":      this.options.url,
-                "data":     this.options.params,
-                "dataType": this.options.dataType,
-                "context":  this,
-                "success":  function(data) {
-                    logging.debug("Result for request ", this.options);
-                    this.trigger("done", data);
-                },
-                "error": function() {
-                    logging.error("Error for request ", this.options);
-                    this.trigger("error");
-                }
-            });
-            return this;
-        }
-    }, {
-        /*
-         *  Execute a request
-         */
-        _execute: function(url, callback, options, defaults) {
-            options = options || {};
-            options = _.extend(options, defaults, {
-                "url": url
-            });
-            var r = new Requests(options);
-            r.on("done", callback);
-            r.on("error", _.partial(callback, null));
-            return r.execute();
-        },
-
-        /*
-         *  Method for a GET method
-         *  @url : url to request 
-         *  @args : arguments for GET
-         *  @callback : callback for results
-         */
-        get: function(url, args, callback, options) {
-            return Requests._execute(url, callback, options, {
-                method: "GET",
-                params: args
-            });
-        },
-
-        /*
-         *  Method for a POST method
-         *  @url : url to request 
-         *  @args : arguments for POST
-         *  @callback : callback for results
-         */
-        post: function(url, args, callback, options) {
-            return Requests._execute(url, callback, options, {
-                method: "POST",
-                params: args
-            });
-        }
-    });
-    return Requests;
 });
 define('yapp/utils/storage',[
     "Underscore",
@@ -10785,62 +10667,306 @@ define('yapp/utils/cache',[
 
     return Cache;
 });
-define('yapp/templates/loaders/http',[
+define('yapp/utils/requests',[
+    "yapp/configs",
+    "yapp/core/class",
+    "yapp/utils/logger"
+], function(configs, Class, Logger) {
+    
+    var logging = Logger.logging.addType("requests");
+
+    var Requests = Class.extend({
+        defaults: {
+            url: null,
+            method: "GET",
+            params: {},
+            dataType: "text"
+        },
+
+        /*
+         *  Execute the request
+         */
+        execute: function() {
+            this.xhr = $.ajax({
+                "type":     this.options.method,
+                "url":      this.options.url,
+                "data":     this.options.params,
+                "dataType": this.options.dataType,
+                "context":  this,
+                "success":  function(data) {
+                    logging.debug("Result for request ", this.options);
+                    this.trigger("done", data);
+                },
+                "error": function() {
+                    logging.error("Error for request ", this.options);
+                    this.trigger("error");
+                }
+            });
+            return this;
+        }
+    }, {
+        /*
+         *  Execute a request
+         */
+        _execute: function(url, callback, options, defaults) {
+            options = options || {};
+            options = _.extend(options, defaults, {
+                "url": url
+            });
+            var r = new Requests(options);
+            r.on("done", callback);
+            r.on("error", _.partial(callback, null));
+            return r.execute();
+        },
+
+        /*
+         *  Method for a GET method
+         *  @url : url to request 
+         *  @args : arguments for GET
+         *  @callback : callback for results
+         */
+        get: function(url, args, callback, options) {
+            return Requests._execute(url, callback, options, {
+                method: "GET",
+                params: args
+            });
+        },
+
+        /*
+         *  Method for a POST method
+         *  @url : url to request 
+         *  @args : arguments for POST
+         *  @callback : callback for results
+         */
+        post: function(url, args, callback, options) {
+            return Requests._execute(url, callback, options, {
+                method: "POST",
+                params: args
+            });
+        }
+    });
+    return Requests;
+});
+define('yapp/utils/deferred',[
+    "Underscore",
+    "yapp/core/class",
+], function(_, Class) {
+    /* 
+    * Deferred is an implementation of the Promise pattern, which allows
+    * for asynchronous events to be handled in a unified way across an
+    * application. Deferred's are like callbacks on steroids.
+    *
+    * Rather than passing around callback functions, Deferred objects 
+    * are passed around. Deferreds contain a queue of callback functions
+    * and manage the state of the asychronous event.
+    *
+    * When calling an asynchronous function, all functions should return a 
+    * Deferred object. The caller function, having received the Deferred
+    * and having done whatever it wants to do, should also return that 
+    * same Deferred when it exits, so that other parties have a chance to
+    * interact with it.
+    *
+    * The Deferred object represents the completed state of a future event.
+    * Interested parties can add a callback function to the Deferred that
+    * will be called when the Deferred event is deemed complete.
+    * 
+    * When an asynchronous event is deemed completed, all the callbacks that
+    * were added to the Deferred will be called in serial order. The return 
+    * value of each callback is passed as a parameter to the next callback.
+    * i.e., callback3(callback2(callback1( trigger(o) )))
+    *
+    * After the event is deemed completed and all the callbacks are called,
+    * further callbacks which are added to the Deferred at a later stage 
+    * will be executed immediately.
+    */
+    var Deferred = Class.extend({
+        err: 0,
+        x: 0,
+
+        /* Constructor */
+        initialize: function() {
+            this.callbacks = [];
+            return this;
+        },
+
+        /* Bind methods */
+        _bind: function(arr) {
+            this.callbacks.push(arr);
+            this.x == 2 && this._call(this.o);
+            return this
+        },
+
+        done: function(cb) {
+            return this._bind([cb, 0])
+        },
+
+        fail: function(cb) {
+            return this._bind([0, cb])
+        },
+
+        always: function(cb) {
+            return this._bind([0, 0, cb])
+        },
+
+        then: function(cb, err) {
+            return this._bind([cb, err])
+        },
+
+
+        /* Calls methods */
+        reject: function(obj) {
+            this.x || (this.err = 1, this._call(obj));
+            return this
+        },
+
+        resolve: function(obj) {
+            this.x || this._call(obj);
+            return this
+        },
+
+        _call: function(obj) {
+            this.x = 1;
+            for(var state = this.err, cb = this.callbacks, method = cb.shift(), value = obj; method; ) {
+                try {
+                    while(method) {
+                        (method = method[2] || (state ? method[1] : method[0])) && (value = method(value || obj));
+                        if(value instanceof Deferred) {
+                            var that = this;
+                            value.always(function(v) {that._call(v || obj); return v});
+                            return
+                        }
+                        method = cb.shift()
+                    }
+                } catch(e) {
+                    state && (method = cb.shift()), this.err = state = 1
+                }
+            }
+            this.o = value || obj;
+            this.x = 2
+        }
+    });
+
+    return Deferred;
+});
+define('yapp/utils/ressources',[
     "Underscore",
     "yapp/configs",
     "yapp/utils/logger",
+    "yapp/utils/cache",
     "yapp/utils/requests",
     "yapp/utils/urls",
-    "yapp/utils/cache"
-], function(_, configs, Logger, Requests, Urls, Cache) {
-    /*
-     *  This template loader load templates using http requests
-     *  Store templates in application cache
-     */
+    "yapp/utils/deferred",
+], function(_, configs, Logger, Cache, Requests, Urls, Deferred) {
 
-    var cache = Cache.namespace("templates");
+    var logging = Logger.logging.addType("ressources");
+    var cache = Cache.namespace("ressources");
 
-    return function(tplname, callback) {
-        var content = null;
-        tplurl = Urls.static([
-            configs.templates.loaders.http.prefix,
-            tplname,
-            configs.templates.loaders.http.extension].join(""));
+    var Ressources = {
+        loaders: {},
+        namespaces: {},
+
+        /*
+         *  Load a ressource
+         */
+        load: function(namespace, ressource) {
+            var d = new Deferred();
+            var namespace_configs = Ressources.namespaces[namespace] || {};
+            var loader = namespace_configs.loader || configs.ressources.loader;
+            
+            if (Ressources.loaders[loader] == null) {
+                logging.error("Loader doesn't exists ", loader, "namespace=",namespace);
+                d.reject();
+                return d;
+            }
+            Ressources.loaders[loader](ressource, d, namespace_configs);
+            return d;
+        },
+
+        /*
+         *  Add loader
+         *  @name : loader name
+         *  @loader : loader function
+         */
+        addLoader: function(name, loader) {
+            Ressources.loaders[name] = loader;
+        },
+
+        /*
+         *  Add namespace
+         *  @name : namespace name
+         *  @config : namespace configuration
+         */
+        addNamespace: function(name, config) {
+            config = config || {};
+            config = _.defaults(config, {
+                loader: configs.ressources.loader
+            });
+            config = _.extend(config, {
+                namespace: name
+            });
+            Ressources.namespaces[name] = config;
+        }
+    };
+
+    // Require loader
+    Ressources.addLoader("require", function(ressourcename, callback, config) {  
+        _.defaults(config, {
+            mode: "text",
+            base: ""
+        });
+        ressourcename = config.mode+"!"+Urls.join(config.base, ressourcename);
+        
+        logging.debug("Load using require ", ressourcename);
+        try {
+            var content = require(ressourcename);
+            callback.resolve(content);
+        } catch(err) {
+            logging.error("Error loading using require : ", ressourcename, err.message);
+            callback.reject(null);
+        }
+    });
+
+    // HTTP loader
+    Ressources.addLoader("http", function(ressourcename, callback, config) {
+        _.defaults(config, {
+            base: "./"
+        });
+        ressourceurl = Urls.static(config.base, ressourcename);
         
         // Check application cache
-        var content = cache.get(tplname);
-        if (content != null) { callback(content); return; }
+        var content = cache.get(ressourcename);
+        if (content != null) { callback.resolve(content); return; }
 
-        // Get template using requests
-        Logger.logging.debug("Load template using http ", tplname);
-        Requests.get(tplurl, {}, function(content) {
-            if (content == null) Logger.logging.error("Error loading template using http : ", tplname);
-            cache.set(tplname, content);
-            callback(content);
+        // Get ressource using requests
+        logging.debug("Load ressource using http ", ressourcename);
+        Requests.get(ressourceurl, {}, function(content) {
+            if (content == null) {
+                logging.error("Error loading using http : ", ressourcename);
+                callback.reject(null);
+            } else {
+                cache.set(ressourcename, content);
+                callback.resolve(content);
+            }
         });
+    });
 
-    };
+    return Ressources;
 });
-define('yapp/templates/base',[
+define('yapp/utils/template',[
     "Underscore",
     "yapp/configs",
     "yapp/core/class",
     "yapp/utils/logger",
     "yapp/utils/urls",
-
-    "yapp/templates/loaders/require",
-    "yapp/templates/loaders/http"
-], function(_, configs, Class, Logger, Urls) {
+    "yapp/utils/ressources"
+], function(_, configs, Class, Logger, Urls, Ressources) {
     var Template = Class.extend({
         defaults: {
             /* Template id */
             template: null,
 
             /* Context givent to template generation */
-            args: {},
-
-            /* Loader for the template */
-            loader: configs.templates.loader
+            args: {}
         },
 
 
@@ -10855,12 +10981,6 @@ define('yapp/templates/base',[
 
             // Related view
             this.view = this.options.view || null;
-
-            // Create loader method
-            this.loader = this.options.loader || function(tpl, callback) { callback(null); };
-            if (!_.isFunction(this.loader)) {
-                this.loader = require(this.loader);
-            }
 
             // Init template context
             _.extend(this.args, {
@@ -10914,13 +11034,13 @@ define('yapp/templates/base',[
         load: function(template) {
             var self = this;
             this.template = template || this.template;
-
-            var callback = function(content) {
+            Ressources.load("templates", this.template).then(function(content) {
                 self.setContent(content);
                 self.trigger("loaded");
-            };
-
-            this.loader(this.template, callback);
+            }, function() {
+                self.setContent(null);
+                self.trigger("error");
+            });
             return this;
         },
 
@@ -10959,7 +11079,7 @@ define('yapp/core/view',[
     "jQuery",
     "Underscore",
     "yapp/core/class",
-    "yapp/templates/base"
+    "yapp/utils/template"
 ], function($, _, Class, Template) {
 
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -11180,6 +11300,21 @@ define('yapp/core/view',[
     }, {
         Template: Template
     });
+
+
+    /*
+     *  This view is a simple component for importing template
+     *  in a template.
+     *  <%= view.component("template", {name: "mytemplate", args: {}}) %>
+     */
+    View.Template.registerComponent("template", View.extend({
+        template: function() {
+            return this.options.template;
+        },
+        templateContext: function() {
+            return this.options.args;
+        },
+    }));
 
     return View;
 });
@@ -11608,31 +11743,6 @@ define('yapp/core/application',[
 
     return Application;
 });
-define('yapp/templates/view',[
-    "Underscore",
-    "yapp/configs",
-    "yapp/core/view",
-], function(_, configs, View, Logger) {
-    /*
-     *  This view is a simple component for importing template
-     *  in a template.
-     *  <%= view.component("template", {name: "mytemplate", args: {}}) %>
-     */
-    var TemplateView = View.extend({
-        template: function() {
-            return this.options.template;
-        },
-
-        templateContext: function() {
-            return this.options.args;
-        },
-    });
-
-    /* Register template component */
-    View.Template.registerComponent("template", TemplateView);
-
-    return TemplateView;
-});
 define('yapp/vendors/underscore-more',[
     "Underscore"
 ], function(_) {
@@ -11749,14 +11859,14 @@ define('yapp/yapp',[
     "yapp/utils/urls",
     "yapp/utils/storage",
     "yapp/utils/cache",
-
-    "yapp/templates/base",
-    "yapp/templates/view",
+    "yapp/utils/template",
+    "yapp/utils/ressources",
+    "yapp/utils/deferred",
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
 Class, View, Application, Head, Router,
-Logger, Requests, Urls, Storage, Cache, Template) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
     return {
         configs: configs,
         Class: Class,
@@ -11770,10 +11880,13 @@ Logger, Requests, Urls, Storage, Cache, Template) {
         Cache: Cache,
         Requests: Requests,
         Urls: Urls,
-
         Template: Template,
+        Ressources: Ressources,
+        Deferred: Deferred,
 
         configure: function(args, options) {
+            options = options || {};
+            args = args || {};
             if (args.revision == null) {
                 Logger.logging.error("Error invalid configuration for yapp");
                 return;
@@ -11781,9 +11894,9 @@ Logger, Requests, Urls, Storage, Cache, Template) {
 
             configs.extend(options, {
                 revision: args.revision,
-                args: args
+                args: args,
+                baseUrl: args.baseUrl || ""
             });
-            console.log(configs);
         }
     }
 });

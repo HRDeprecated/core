@@ -55,8 +55,11 @@ define([
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });
-            if (configs.router.mode == "hashs") url = "#/"+url;
-            return Urls.base(url);
+            if (configs.router.mode == "hashs") {
+                return Urls.base("") + "#/"+url;
+            } else {
+                return Urls.base(url);
+            }
         }
     };
 
