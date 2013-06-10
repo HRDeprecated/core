@@ -1,9 +1,8 @@
 define([
-    "jQuery",
     "Underscore",
     "yapp/core/class",
     "yapp/utils/logger"
-], function($, _, Class, Logger) {
+], function(_, Class, Logger) {
     var logging = Logger.addNamespace("models");
 
     var Joint = Class.extend({
@@ -20,13 +19,6 @@ define([
             this.value = attrvalue;
             return this;
         },
-
-        /*
-         *  Get Model for this joint
-         */
-        getModel: function() {
-
-        }
     });
 
     var Model = Class.extend({
@@ -44,6 +36,7 @@ define([
             attributes = attributes || {};
             attributes = _.deepExtend({}, _.result(this, "defaults"), attributes);
 
+            this.collection = options.collection;
             this.joints_values = {};
             this.attributes = {};
             this.set(attributes, {silent: true})

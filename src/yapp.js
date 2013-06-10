@@ -6,6 +6,7 @@ define([
     "yapp/core/head",
     "yapp/core/router",
     "yapp/core/model",
+    "yapp/core/collection",
 
     "yapp/utils/logger",
     "yapp/utils/requests",
@@ -18,7 +19,7 @@ define([
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
-Class, View, Application, Head, Router, Model,
+Class, View, Application, Head, Router, Model, Collection,
 Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
     return {
         configs: configs,
@@ -28,6 +29,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
         Head: Head,
         Router: Router,
         Model: Model,
+        Collection: Collection,
 
         Logger: Logger,
         Storage: Storage,

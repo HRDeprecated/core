@@ -73,6 +73,9 @@ module.exports = {
                 "html": "index.html"
             },
 
+            // bower dependencies
+            "dependencies": {},
+
             // Static files
             // Map of {"directory": "absolute/path"}
             "static": {},
