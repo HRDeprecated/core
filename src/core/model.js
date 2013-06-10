@@ -32,6 +32,7 @@ define([
          *  Initialize the model
          */
         initialize: function(attributes, options) {
+            options = options || {};
             Model.__super__.initialize.call(this, options);
             attributes = attributes || {};
             attributes = _.deepExtend({}, _.result(this, "defaults"), attributes);
