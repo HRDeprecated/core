@@ -23955,6 +23955,7 @@ define('yapp/core/model',[
          *  Initialize the model
          */
         initialize: function(attributes, options) {
+            options = options || {};
             Model.__super__.initialize.call(this, options);
             attributes = attributes || {};
             attributes = _.deepExtend({}, _.result(this, "defaults"), attributes);
@@ -24563,7 +24564,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1370898285561,"baseUrl":"/yapp.js/"}; });
+define('yapp/args',[],function() { return {"revision":1370898692811,"baseUrl":"/yapp.js/"}; });
 require([
     "yapp/yapp"
 ], function(yapp) {
