@@ -15,6 +15,7 @@ define([
          *  Initialize a view
          */
         initialize: function() {
+            View.__super__.initialize.apply(this, arguments);
             this._ensureElement();
             this.delegateEvents();
 

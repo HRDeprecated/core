@@ -32,11 +32,17 @@
                 <p>Here is a list of all the differents options for build process :</p>
                 <%= view.component("code", {code: "build/options.js"}) %>
             </article>
+            <article id="build/run">
+                <h3>Build &amp; Run your application</h3>
+                <p>For building, simply run in a command line tool : <code>node build.js all</code>.</p>
+                <p>You can also <b>only build</b> with : <code>node build.js build</code>.</p>
+                <p>Or <b>only run</b> the simple server with : <code>node build.js run</code>.</p>
+            </article>
             <article id="build/module">
                 <h3>Modularity</h3>
                 <p>Yapp.js uses <a href="http://requirejs.org/">require.js</a> as module loader.</p>
                 <%= view.component("code", {code: "build/module.js"}) %>
-            </article>
+            </article>   
         </section>
 
         <section id="application">
@@ -140,6 +146,39 @@
             <article id="class/once">
                 <h3>once <code>object.once(event, callback, [context])</code></h3>
                 <p>Just like <a href="<%- yapp.urls.route("class/on") %>">on</a>, but causes the bound callback to only fire once before being removed. Handy for saying "the next time that X happens, do this".</p>
+            </article>
+        </section>
+
+        <section id="model">
+            <h2><a href="<%- yapp.urls.route("model") %>">Model</a></h2>
+            <p>The class <b>Model</b> let you define complex model in your applciation.</p>
+
+            <article id="model/extend">
+                <h3><a href="<%- yapp.urls.route("model/extend") %>">extend</a> <code>yapp.Model.extend(properties, [classProperties])</code></h3>
+                <p>To create a <b>Model</b> class of your own, you extend <code>yapp.Model</code> and provide instance <b>properties</b>, as well as optional <b>classProperties</b> to be attached directly to the constructor function.</p>
+                <%= view.component("code", {code: "model/extend.js", run: true}) %>
+            </article>
+
+            <article id="model/get">
+                <h3><a href="<%- yapp.urls.route("model/get") %>">get</a> <code>model.get(attribute, [default])</code></h3>
+                <p>Get the current value of an attribute from the model. For example: <code>note.get("author.name")</code></p>
+            </article>
+
+            <article id="model/set">
+                <h3><a href="<%- yapp.urls.route("model/set") %>">set</a> <code>model.set(attributes, [options])</code></h3>
+                <p>Set a hash of attributes (one or many) on the model. If any of the attributes change the model's state, a <code>"change"</code> event will be triggered on the model. Change events for specific attributes are also triggered, and you can bind to those as well, for example: <code>change:title</code>, and <code>change:content</code>. You may also pass individual keys and values.</p>
+                <%= view.component("code", {code: "model/set.js", run: true}) %>
+            </article>
+
+            <article id="model/has">
+                <h3><a href="<%- yapp.urls.route("model/has") %>">has</a> <code>model.has(attribute)</code></h3>
+                <p>Returns <code>true</code> if the attribute is set to a non-null or non-undefined value.</p>
+            </article>
+
+            <article id="model/tojson">
+                <h3><a href="<%- yapp.urls.route("model/tojson") %>">toJSON</a> <code>model.toJSON()</code></h3>
+                <p>Return a copy of the model's <a href="<%- yapp.urls.route("model/attributes") %>">attributes</a> for JSON stringification. This can be used for persistence, serialization, or for augmentation before being sent to the server. The name of this method is a bit confusing, as it doesn't actually return a JSON string — but I'm afraid that it's the way that <a href="https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method">the JavaScript API for JSON.stringify works</a>.</p>
+                <%= view.component("code", {code: "model/tojson.js", run: true}) %>
             </article>
         </section>
 
