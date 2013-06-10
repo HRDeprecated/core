@@ -73,6 +73,18 @@
             </ul>
         </div>
         <div class="menu">
+            <a href="<%- yapp.urls.route("collection") %>"><h3>Collection</h3></a>
+            <ul>
+                <li><a href="<%- yapp.urls.route("collection/extend") %>">extend</a></li>
+                <li><a href="<%- yapp.urls.route("collection/model") %>">model</a></li>
+                <li><a href="<%- yapp.urls.route("collection/initialize") %>">initialize</a></li>
+                <li><a href="<%- yapp.urls.route("collection/add") %>">add</a></li>
+                <li><a href="<%- yapp.urls.route("collection/remove") %>">remove</a></li>
+                <li><a href="<%- yapp.urls.route("collection/reset") %>">reset</a></li>
+                <li><a href="<%- yapp.urls.route("collection/tojson") %>">toJSON</a></li>
+            </ul>
+        </div>
+        <div class="menu">
             <a href="<%- yapp.urls.route("requests") %>"><h3>Requests</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("requests/class") %>">class</a></li>

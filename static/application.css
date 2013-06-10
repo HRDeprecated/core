@@ -89,6 +89,7 @@ pre .chunk{color:#aaaaaa;}
 .component-codeviewer{padding:0.5em;border:1px solid #ddd;background-color:#f8f5ec;position:relative;min-height:26px;}.component-codeviewer .run{padding:5px;cursor:pointer;position:absolute;top:5px;right:5px;color:#f8f5ec;background:#444;}
 .page{margin-right:auto;margin-left:auto;width:100%;max-width:1200px;}.page .content{width:70%;-moz-box-sizing:border-box;box-sizing:border-box;-o-box-sizing:border-box;-webkit-box-sizing:border-box;float:right;padding:25px;}.page .content section{margin-bottom:2em;}.page .content section h2{border-bottom:2px solid #E74C3C;margin:0;color:#E74C3C;font-weight:normal;text-transform:uppercase;}.page .content section h2 a{color:inherit;text-decoration:none;}.page .content section h2 a:hover{text-decoration:none;}
 .page .content section article{margin-bottom:3em;}.page .content section article h3{font-weight:normal;font-size:1.3em;}.page .content section article h3 code{color:#bbb;margin-left:1em;font-size:0.7em;float:right;margin-top:0.3em;}
+.page .content section article p code{padding:0px 3px;background:#fff;border:1px solid #ddd;zoom:1;}
 .page .content section.intro .title{font-size:3em;margin:0;margin-bottom:0.5em;}
 header{-moz-box-sizing:border-box;box-sizing:border-box;-o-box-sizing:border-box;-webkit-box-sizing:border-box;width:30%;float:left;padding:15px;}header.close{position:fixed;top:0px;bottom:0px;max-width:360px;}header.close .search-result{display:block !important;}
 header.close .no-search-result{display:none !important;}

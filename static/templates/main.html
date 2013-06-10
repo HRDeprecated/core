@@ -159,6 +159,11 @@
                 <%= view.component("code", {code: "model/extend.js", run: true}) %>
             </article>
 
+            <article id="model/initialize">
+                <h3><a href="<%- yapp.urls.route("model/initialize") %>">constructor / initialize</a> <code>new yapp.Model([attributes], [options]) </code></h3>
+                <p>When creating an instance of a model, you can pass in the initial values of the <b>attributes</b>, which will be <a href="<%- yapp.urls.route("model/set") %>">set</a> on the model. If you define an initialize function, it will be invoked when the model is created.</p>
+            </article>
+
             <article id="model/get">
                 <h3><a href="<%- yapp.urls.route("model/get") %>">get</a> <code>model.get(attribute, [default])</code></h3>
                 <p>Get the current value of an attribute from the model. For example: <code>note.get("author.name")</code></p>
@@ -179,6 +184,39 @@
                 <h3><a href="<%- yapp.urls.route("model/tojson") %>">toJSON</a> <code>model.toJSON()</code></h3>
                 <p>Return a copy of the model's <a href="<%- yapp.urls.route("model/attributes") %>">attributes</a> for JSON stringification. This can be used for persistence, serialization, or for augmentation before being sent to the server. The name of this method is a bit confusing, as it doesn't actually return a JSON string — but I'm afraid that it's the way that <a href="https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method">the JavaScript API for JSON.stringify works</a>.</p>
                 <%= view.component("code", {code: "model/tojson.js", run: true}) %>
+            </article>
+
+            <article id="model/joints">
+                <h3><a href="<%- yapp.urls.route("model/joints") %>">joints</a> <code>model.joints</code></h3>
+                <p>Joints between models let you define complex models and relationship between models.</p>
+                <p>Property <code>joints</code> is a map of global key and model constructor function.</p>
+                <%= view.component("code", {code: "model/extend.js", run: true}) %>
+            </article>
+        </section>
+
+        <section id="collection">
+            <h2><a href="<%- yapp.urls.route("collection") %>">Collection</a></h2>
+            <p>Collections are ordered sets of <a href="<%- yapp.urls.route("model") %>">models</a>. You can bind <code>"change"</code> events to be notified when any model in the collection has been modified, listen for <code>"add"</code> and <code>"remove"</code> events, and use a full suite of <a href="http://underscorejs.org/">Underscore.js</a> methods.</p>
+
+            <p>Any event that is triggered on a model in a collection will also be triggered on the collection directly, for convenience. This allows you to listen for changes to specific attributes in any model in a collection, for example: <code>documents.on("change:selected", ...)</code></p>
+
+            <article id="collection/extend">
+                <h3><a href="<%- yapp.urls.route("collection/extend") %>">extend</a> <code>yapp.Collection.extend(properties, [classProperties])</code></h3>
+                <p>To create a <b>Collection</b> class of your own, extend <b>yapp.Collection</b>, providing instance <code>properties</code>, as well as optional <code>classProperties</code> to be attached directly to the collection's constructor function.</p>
+            </article>
+
+            <article id="collection/model">
+                <h3><a href="<%- yapp.urls.route("collection/model") %>">model</a> <code>collection.model</code></h3>
+                <p>Override this property to specify the model class that the collection contains. If defined, you can pass raw attributes objects (and arrays) to <a href="<%- yapp.urls.route("collection/add") %>">add</a> and <a href="<%- yapp.urls.route("collection/reset") %>">reset</a>, and the attributes will be converted into a model of the proper type.</p>
+                <%= view.component("code", {code: "collection/model.js"}) %>
+                <p>A collection can also contain polymorphic models by overriding this property with a function that returns a model.</p>
+                <%= view.component("code", {code: "collection/model_polymorphic.js"}) %>
+            </article>
+
+            <article id="collection/tojson">
+                <h3><a href="<%- yapp.urls.route("collection/tojson") %>">toJSON</a> <code>collection.toJSON()</code></h3>
+                <p>Return an array containing the attributes hash of each model in the collection. This can be used to serialize and persist the collection as a whole. The name of this method is a bit confusing, because it conforms to <a href="https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method">the JavaScript API for JSON.stringify works</a>.</p>
+                <%= view.component("code", {code: "collection/tojson.js", run: true}) %>
             </article>
         </section>
 
