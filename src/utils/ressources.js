@@ -62,9 +62,10 @@ define([
     Ressources.addLoader("require", function(ressourcename, callback, config) {  
         _.defaults(config, {
             mode: "text",
-            base: ""
+            base: "",
+            extension: ""
         });
-        ressourcename = config.mode+"!"+Urls.join(config.base, ressourcename);
+        ressourcename = config.mode + "!" + Urls.join(config.base, ressourcename) + config.extension;
         
         logging.debug("Load using require ", ressourcename);
         try {
