@@ -80,8 +80,6 @@ define([
             , messages = translations[locale] || {}
             , currentScope
         ;
-
-        console.log(translations, locale);
         
         if (typeof(scope) == "object") {
             scope = scope.join(this.defaultSeparator);
