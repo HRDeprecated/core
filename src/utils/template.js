@@ -35,7 +35,7 @@ define([
                 "yapp": {
                     "configs": configs,
                     "urls": Urls,
-                    "I18n": I18n
+                    "i18n": I18n
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
@@ -62,7 +62,7 @@ define([
                         return component[0].outerHTML;
                     }
                 }
-            });
+            }, Templates.options);
 
             return this;
         },
@@ -106,6 +106,9 @@ define([
             return this.load();
         },
     }, {
+        /* Defaults options for template */.
+        options: {},
+
         /* Map of components constructor */
         components: {},
 
@@ -118,6 +121,14 @@ define([
                 "id": cid,
                 "Class": ViewClass
             };
+        },
+
+        /*
+         *  Add contexts to all templates
+         *  @options : options for templates to add
+         */
+        extendContext: function(options) {
+            Templates.options = _.extend(Templates.options || {}, options);
         }
     });
 

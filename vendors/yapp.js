@@ -11166,7 +11166,7 @@ define('yapp/utils/template',[
                 "yapp": {
                     "configs": configs,
                     "urls": Urls,
-                    "I18n": I18n
+                    "i18n": I18n
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
