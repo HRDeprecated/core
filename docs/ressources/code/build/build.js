@@ -1,7 +1,7 @@
 var yapp = require("yapp");
 var path = require("path");
 
-yapp.Application(
+exports.config = {
     // Base directory for the application
     "base": __dirname,
 
@@ -25,4 +25,4 @@ yapp.Application(
 
     // Stylesheet entry point
     "style": path.resolve(__dirname, "stylesheets/imports.less"),
-});
+};

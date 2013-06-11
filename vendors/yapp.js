@@ -10966,9 +10966,10 @@ define('yapp/utils/ressources',[
     Ressources.addLoader("require", function(ressourcename, callback, config) {  
         _.defaults(config, {
             mode: "text",
-            base: ""
+            base: "",
+            extension: ""
         });
-        ressourcename = config.mode+"!"+Urls.join(config.base, ressourcename);
+        ressourcename = config.mode + "!" + Urls.join(config.base, ressourcename) + config.extension;
         
         logging.debug("Load using require ", ressourcename);
         try {
@@ -11011,8 +11012,9 @@ define('yapp/utils/i18n',[
     "yapp/configs",
     "yapp/utils/urls",
     "yapp/utils/logger",
-    "yapp/utils/ressources"
-], function($, _, configs, Urls, Logger, Ressources) {
+    "yapp/utils/ressources",
+    "yapp/utils/deferred"
+], function($, _, configs, Urls, Logger, Ressources, Deferred) {
     var logging = Logger.addNamespace("i18n");
     var I18n = {};
 
@@ -11049,6 +11051,13 @@ define('yapp/utils/i18n',[
     };
 
     I18n.loadLocale = function(lng) {
+        if (_.isArray(lng)) {
+            var d = [];
+            _.each(lng, function(lang) {
+                d.push(I18n.loadLocale(lang));
+            });
+            return Deferred.when.apply(Deffered, d);
+        }
         return Ressources.load("i18n", lng).then(function(content) {
             if (_.isString(content)) content = JSON.parse(content);
             I18n.translations[lng] = content;
