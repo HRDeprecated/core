@@ -11056,7 +11056,7 @@ define('yapp/utils/i18n',[
             _.each(lng, function(lang) {
                 d.push(I18n.loadLocale(lang));
             });
-            return Deferred.when.apply(Deffered, d);
+            return Deferred.when.apply(Deferred, d);
         }
         return Ressources.load("i18n", lng).then(function(content) {
             if (_.isString(content)) content = JSON.parse(content);
