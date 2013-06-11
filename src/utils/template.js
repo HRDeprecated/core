@@ -62,7 +62,7 @@ define([
                         return component[0].outerHTML;
                     }
                 }
-            }, Templates.options);
+            }, Template.options);
 
             return this;
         },
@@ -128,7 +128,7 @@ define([
          *  @options : options for templates to add
          */
         extendContext: function(options) {
-            Templates.options = _.extend(Templates.options || {}, options);
+            Template.options = _.extend(Template.options || {}, options);
         }
     });
 
