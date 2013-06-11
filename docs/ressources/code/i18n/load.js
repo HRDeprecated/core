@@ -1,4 +1,4 @@
-// Configure loading of i18n translation
+// Configure loading of i18n translations
 yapp.Ressources.addNamespace("i18n", {
     loader: "http",
     base: "i18n",
@@ -14,7 +14,9 @@ yapp.Deferred.when(dEn, dFr).then(function() {
     yapp.I18n.setCurrentLocale("en");
     alert("In english : "+yapp.I18n.t("message.hello", {name: "Samy"}));
 
-    // Set locale to french
-    yapp.I18n.setCurrentLocale("fr");
-    alert("In french : "+yapp.I18n.t("message.hello", {name: "Samy"}));  
+    // Define locale during the translation
+    alert("In french : "+yapp.I18n.t("message.hello", {
+        name: "Samy",
+        locale: "fr"
+    }));  
 });

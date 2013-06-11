@@ -35,7 +35,7 @@ define([
          *  @callback : callback when routing
          */
         route: function(route, name, callback) {
-            if (_.isObject(route)) {
+            if (_.isObject(route) && _.isRegExp(route) == false) {
                 _.each(route, function(callback, route) {
                     this.route(route, callback, callback);
                 }, this);

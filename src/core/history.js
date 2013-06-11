@@ -38,7 +38,7 @@ define([
          */
         start: function() {
             if (this.started) {
-                logging.warning("routing history already started");
+                logging.warn("routing history already started");
                 return false;
             }
 
@@ -51,9 +51,6 @@ define([
             if (configs.router.mode == "html5") {
                 // Bind history changement
                 $window.bind('popstate', _.bind(this._handleCurrentState, this));
-
-                // Bind hash changement
-                //$window.bind('hashchange', _.bind(this._handleCurrentState, this));
 
                 // Bind links click
                 $('body').on('click.link.history', 'a[href^="/"],a[href^="'+rootUrl+'"]', function (e) {
@@ -87,8 +84,14 @@ define([
             };
 
             logging.log("navigate to ", url, state);
-            window.history.pushState(state, url, url);
-            this._handleState(url, state);
+
+            if (configs.router.mode == "html5") {
+                window.history.pushState(state, url, url);
+                this._handleState(url, state);
+            } else {
+                window.location.hash = url;
+            } 
+            
             return this;
         },
 

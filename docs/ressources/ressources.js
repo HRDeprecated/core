@@ -33,6 +33,8 @@ define([
     "text!ressources/code/requests/post.js",
     "text!ressources/code/logger/namespace.js",
     "text!ressources/code/logger/logging.js",
+    "text!ressources/code/router/extend.js",
+    "text!ressources/code/router/route.js",
     "text!ressources/code/urls/base.js",
     "text!ressources/code/urls/static.js",
     "text!ressources/code/urls/route.js",
