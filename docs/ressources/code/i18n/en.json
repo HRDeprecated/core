@@ -1,0 +1,10 @@
+{
+    "lang": "English",
+    "homepage": {
+        "title": "Dashboard of <%- name %>"
+    },
+    "messages": {
+        "admin": "<%- name %>, you can administrate your profile below :",
+        "user": "<%- name %>, you should be admin to access this page"
+    }
+}

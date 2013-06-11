@@ -23,6 +23,7 @@ yapp.Application({
     // Static files
     "static": {
         "templates": path.resolve(__dirname, "ressources", "templates"),
+        "i18n": path.resolve(__dirname, "ressources", "i18n"),
         "images": path.resolve(__dirname, "ressources", "images"),
     },
 

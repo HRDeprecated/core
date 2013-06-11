@@ -4,8 +4,9 @@ define([
     "yapp/core/class",
     "yapp/utils/logger",
     "yapp/utils/urls",
-    "yapp/utils/ressources"
-], function(_, configs, Class, Logger, Urls, Ressources) {
+    "yapp/utils/ressources",
+    "yapp/utils/i18n"
+], function(_, configs, Class, Logger, Urls, Ressources, I18n) {
     var Template = Class.extend({
         defaults: {
             /* Template id */
@@ -33,7 +34,8 @@ define([
                 "_": _,
                 "yapp": {
                     "configs": configs,
-                    "urls": Urls
+                    "urls": Urls,
+                    "I18n": I18n
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {

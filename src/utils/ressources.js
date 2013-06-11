@@ -79,9 +79,10 @@ define([
     // HTTP loader
     Ressources.addLoader("http", function(ressourcename, callback, config) {
         _.defaults(config, {
-            base: "./"
+            base: "./",
+            extension: ""
         });
-        ressourceurl = Urls.static(config.base, ressourcename);
+        ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
         
         // Check application cache
         var content = cache.get(ressourcename);

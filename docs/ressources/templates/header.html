@@ -118,6 +118,14 @@
             </ul>
         </div>
         <div class="menu">
+            <a href="<%- yapp.urls.route("i18n") %>"><h3>i18n</h3></a>
+            <ul>
+                <li><a href="<%- yapp.urls.route("i18n/loadLocale") %>">loadLocale</a></li>
+                <li><a href="<%- yapp.urls.route("i18n/translate") %>">translate</a></li>
+                <li><a href="<%- yapp.urls.route("i18n/template") %>">template</a></li>
+            </ul>
+        </div>
+        <div class="menu">
             <a href="<%- yapp.urls.route("storage") %>"><h3>Storage</h3></a>
             <ul>
                 <li><a href="<%- yapp.urls.route("storage/get") %>">get</a></li>

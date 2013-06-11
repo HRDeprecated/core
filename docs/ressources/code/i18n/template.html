@@ -1,0 +1,8 @@
+<h1><%- yapp.I18n.t("homepage.title", {name: user.name}) %></h1>
+
+<% if (user.admin) { %>
+    <p><%= yapp.I18n.t("homepage.messages.admin", {name: user.name}) %></p>
+    <%- view.component("admin") %>
+<% } else { %>
+    <p><%= yapp.I18n.t("homepage.messages.user", {name: user.name}) %></p>
+<% } %>

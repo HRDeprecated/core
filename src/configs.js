@@ -30,6 +30,9 @@ define(function(args) {
             "loader": "http"
         },
 
+        // i18n
+        "defaultLocale": "en",
+
         extend: function() {
             var args = Array.prototype.slice.call(arguments, 0);
             args.splice(0,0, Config);

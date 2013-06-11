@@ -16,11 +16,12 @@ define([
     "yapp/utils/template",
     "yapp/utils/ressources",
     "yapp/utils/deferred",
+    "yapp/utils/i18n",
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
 Class, View, Application, Head, Router, Model, Collection,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, I18n) {
     return {
         configs: configs,
         Class: Class,
@@ -39,6 +40,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
         Template: Template,
         Ressources: Ressources,
         Deferred: Deferred,
+        I18n: I18n,
 
         configure: function(args, options) {
             options = options || {};
