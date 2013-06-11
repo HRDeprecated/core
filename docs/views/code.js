@@ -1,4 +1,4 @@
-require([
+define([
     "yapp/yapp",
     "highlight"
 ], function(yapp, hljs) {

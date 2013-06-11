@@ -1,4 +1,4 @@
-require([
+define([
     "yapp/yapp"
 ], function(yapp) {
     /*
