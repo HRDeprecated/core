@@ -28,5 +28,13 @@
         "type": "git",
         "url": "https://github.com/SamyPesse/yapp.js"
     },
-    "bin": "bin/yapp.js"
+    "bin": "bin/yapp.js",
+
+    "contributors": [
+        {
+            "name": "Aaron O'Mullan",
+            "email": "aaron.omullan@friendco.de",
+            "url": "https://friendco.de"
+        }
+    ]
 }
