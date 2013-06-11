@@ -6,12 +6,12 @@ end
 
 desc "build the documentation in docs/build"
 task :doc do
-  system 'node docs/build.js'
+  system './bin/yapp.js -d docs build'
 end
 
 desc "run the documentation website"
 task :run do
-  system 'node docs/build.js all'
+  system './bin/yapp.js -d docs all'
 end
 
 desc "install dependencies using npm"
