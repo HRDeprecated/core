@@ -1,7 +1,6 @@
-var yapp = require("../yapp");
 var path = require("path");
 
-yapp.Application({
+exports.config = {
     // Base directory
     "base": __dirname,
 
@@ -39,4 +38,4 @@ yapp.Application({
             exports: "hljs"
         }
     }
-});
+};

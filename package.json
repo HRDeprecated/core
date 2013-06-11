@@ -26,9 +26,5 @@
         "type": "git",
         "url": "https://github.com/SamyPesse/yapp.js"
     },
-    "files": [
-        "README.md",
-        "yapp.js"
-    ],
-    "main": "yapp.js"
+    "bin": "bin/yapp.js"
 }
