@@ -23763,7 +23763,7 @@ define('yapp/core/history',[
          */
         start: function() {
             if (this.started) {
-                logging.warning("routing history already started");
+                logging.warn("routing history already started");
                 return false;
             }
 
@@ -23776,9 +23776,6 @@ define('yapp/core/history',[
             if (configs.router.mode == "html5") {
                 // Bind history changement
                 $window.bind('popstate', _.bind(this._handleCurrentState, this));
-
-                // Bind hash changement
-                //$window.bind('hashchange', _.bind(this._handleCurrentState, this));
 
                 // Bind links click
                 $('body').on('click.link.history', 'a[href^="/"],a[href^="'+rootUrl+'"]', function (e) {
@@ -23812,8 +23809,14 @@ define('yapp/core/history',[
             };
 
             logging.log("navigate to ", url, state);
-            window.history.pushState(state, url, url);
-            this._handleState(url, state);
+
+            if (configs.router.mode == "html5") {
+                window.history.pushState(state, url, url);
+                this._handleState(url, state);
+            } else {
+                window.location.hash = url;
+            } 
+            
             return this;
         },
 
@@ -23891,7 +23894,7 @@ define('yapp/core/router',[
          *  @callback : callback when routing
          */
         route: function(route, name, callback) {
-            if (_.isObject(route)) {
+            if (_.isObject(route) && _.isRegExp(route) == false) {
                 _.each(route, function(callback, route) {
                     this.route(route, callback, callback);
                 }, this);
@@ -24687,7 +24690,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, I18n) {
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1370959467949,"baseUrl":"/yapp.js/"}; });
+define('yapp/args',[],function() { return {"revision":1370966528917,"baseUrl":"/yapp.js/"}; });
 require([
     "yapp/yapp"
 ], function(yapp) {
@@ -25147,7 +25150,11 @@ define('text!ressources/code/requests/post.js',[],function () { return 'yapp.Req
 
 define('text!ressources/code/logger/namespace.js',[],function () { return '// Namespace for a model : into navigator console\nvar log_user = yapp.Logger.addNamespace("users");\n\nlog_user.error("Invalid user (don\'t have \'name\') :", {\n    username: "Samy" \n});\n\n// Namespace for urgent logs\nvar log_urgent = yapp.Logger.addNamespace("urgent", function() {\n    var args = Array.prototype.slice.call(arguments);\n    alert(args.join(" "));\n});\n\nlog_urgent.warn("Error in rendering view \'user\'");\n\n';});
 
-define('text!ressources/code/logger/logging.js',[],function () { return '// log message visible only when configuration "logLevel": "log"\nyapp.Logger.logging.log("a log message");\n\n// log message visible only when configuration "logLevel": "log" or "debug"\nyapp.Logger.logging.debug("a debug message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warning"\nyapp.Logger.logging.warning("a warning message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warning" or "error"\nyapp.Logger.logging.error("an error message");\n\n// if "logLevel": "none" => no log message are outputed';});
+define('text!ressources/code/logger/logging.js',[],function () { return '// log message visible only when configuration "logLevel": "log"\nyapp.Logger.logging.log("a log message");\n\n// log message visible only when configuration "logLevel": "log" or "debug"\nyapp.Logger.logging.debug("a debug message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warn"\nyapp.Logger.logging.warn("a warning message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warn" or "error"\nyapp.Logger.logging.error("an error message");\n\n// if "logLevel": "none" => no log message are outputed';});
+
+define('text!ressources/code/router/extend.js',[],function () { return 'var Router = yapp.Router.extend({\n    routes: {\n        "home": "home",                    // #/home\n        "user/:id": "user",                // #/user/samy\n        "search/:query":        "search",  // #/search/kiwis\n        "search/:query/p:page": "search"   // #/search/kiwis/p7\n    }\n});\n\n\nvar router = new Router();\nrouter.on("route:home", function() {\n    ...\n});\nrouter.on("route:user", function() {\n    ...\n});\nrouter.on("route:search", function() {\n    ...\n});';});
+
+define('text!ressources/code/router/route.js',[],function () { return 'var router = new yapp.Router();\nrouter.route("test/home", "home", function() {\n    alert("home !");\n});\nrouter.route(/^test\\/(.*?)\\/edit$/, "edit", function(file) {\n    alert("Edit file "+file);\n});\nrouter.start();\n\nrouter.navigate("test/directory/test.txt/edit");';});
 
 define('text!ressources/code/urls/base.js',[],function () { return 'alert(yapp.Urls.base("index.html"));';});
 
@@ -25157,7 +25164,7 @@ define('text!ressources/code/urls/route.js',[],function () { return 'alert(yapp.
 
 define('text!ressources/code/urls/template.html',[],function () { return '<% _.each(photos, function(photo) { %>\n    <a href="<%- yapp.urls.static("images", photo.Id, "1024.jpg") %>">\n        <img src="<%- yapp.urls.static("images", photo.Id, "128.jpg") %>" />\n    </a>\n    <a href="<%- yapp.urls.route("photos/comments/:Id", photo) %>">\n        <%- photo.comments %> Comments\n    </a>\n<% }); %>';});
 
-define('text!ressources/code/i18n/load.js',[],function () { return '// Configure loading of i18n translation\nyapp.Ressources.addNamespace("i18n", {\n    loader: "http",\n    base: "i18n",\n    extension: ".json"\n});\n\n// Load translations\nvar dEn = yapp.I18n.loadLocale("en");\nvar dFr = yapp.I18n.loadLocale("fr");\n\nyapp.Deferred.when(dEn, dFr).then(function() {\n    // Set locale to english\n    yapp.I18n.setCurrentLocale("en");\n    alert("In english : "+yapp.I18n.t("message.hello", {name: "Samy"}));\n\n    // Set locale to french\n    yapp.I18n.setCurrentLocale("fr");\n    alert("In french : "+yapp.I18n.t("message.hello", {name: "Samy"}));  \n});';});
+define('text!ressources/code/i18n/load.js',[],function () { return '// Configure loading of i18n translations\nyapp.Ressources.addNamespace("i18n", {\n    loader: "http",\n    base: "i18n",\n    extension: ".json"\n});\n\n// Load translations\nvar dEn = yapp.I18n.loadLocale("en");\nvar dFr = yapp.I18n.loadLocale("fr");\n\nyapp.Deferred.when(dEn, dFr).then(function() {\n    // Set locale to english\n    yapp.I18n.setCurrentLocale("en");\n    alert("In english : "+yapp.I18n.t("message.hello", {name: "Samy"}));\n\n    // Define locale during the translation\n    alert("In french : "+yapp.I18n.t("message.hello", {\n        name: "Samy",\n        locale: "fr"\n    }));  \n});';});
 
 define('text!ressources/code/i18n/template.html',[],function () { return '<h1><%- yapp.I18n.t("homepage.title", {name: user.name}) %></h1>\n\n<% if (user.admin) { %>\n    <p><%= yapp.I18n.t("homepage.messages.admin", {name: user.name}) %></p>\n    <%- view.component("admin") %>\n<% } else { %>\n    <p><%= yapp.I18n.t("homepage.messages.user", {name: user.name}) %></p>\n<% } %>';});
 
@@ -25208,6 +25215,8 @@ define('ressources/ressources',[
     "text!ressources/code/requests/post.js",
     "text!ressources/code/logger/namespace.js",
     "text!ressources/code/logger/logging.js",
+    "text!ressources/code/router/extend.js",
+    "text!ressources/code/router/route.js",
     "text!ressources/code/urls/base.js",
     "text!ressources/code/urls/static.js",
     "text!ressources/code/urls/route.js",

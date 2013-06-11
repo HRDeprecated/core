@@ -7,7 +7,7 @@
                 <p>Yapp.js gives structure to client-side web application by bringing a complete build system
                     with a a rich API similar in the base similar to Backbone.js.</p>
                 <p>yapp.js is an open-source component of <a href="https://friendco.de">FriendCode</a>.</p>
-                <p>Current version is <b><%- yapp.configs.version %></b></p>
+                <p>Current version is <b><%- yapp.configs.version %></b>, code is disponible on GitHub : <a href="https://github.com/FriendCode/yapp.js">FriendCode/yapp.js</a>.</p>
                 <p>
                     <%= view.component("counter", {
                         prefix: "This project started ",
@@ -15,31 +15,32 @@
                         from: new Date(2013, 4, 30 , 10, 0, 0, 0)
                     }) %>
                 </p>
+                <iframe src="https://friendco.de/widgets/button/codenow?style=horizontal&url=https%3A%2F%2Fgithub.com%2FFriendCode%2Fyapp.js.git&file=" frameborder="0" scrolling="no" frameborder="0" style="border:none; overflow:hidden;width: 160px;height: 30px;" allowTransparency="true"></iframe>
             </article>
         </section>
 
         <section id="build">
             <h2><a href="<%- yapp.urls.route("build") %>">Build system</a></h2>
             <article id="build/structure">
-                <h3>Real structure for client-side application</h3>
+                <h3><a href="<%- yapp.urls.route("build/structure") %>">Real structure for client-side application</a></h3>
                 <p>yapp.js as been build to bring a real structure to client-side application code.</p>
                 <%= view.component("code", {code: "build/structure.txt"}) %>
             </article>
             <article id="build/application">
-                <h3>Defining an application</h3>
+                <h3><a href="<%- yapp.urls.route("build/application") %>">Defining an application</a></h3>
                 <p>An application in yapp.js need a real base structure</p>
                 <%= view.component("code", {code: "build/build.js"}) %>
                 <p>Here is a list of all the differents options for build process :</p>
                 <%= view.component("code", {code: "build/options.js"}) %>
             </article>
             <article id="build/run">
-                <h3>Build &amp; Run your application</h3>
+                <h3><a href="<%- yapp.urls.route("build/run") %>">Build &amp; Run your application</a></h3>
                 <p>For building, simply run in a command line tool : <code>node build.js all</code>.</p>
                 <p>You can also <b>only build</b> with : <code>node build.js build</code>.</p>
                 <p>Or <b>only run</b> the simple server with : <code>node build.js run</code>.</p>
             </article>
             <article id="build/module">
-                <h3>Modularity</h3>
+                <h3><a href="<%- yapp.urls.route("build/module") %>">Modularity</a></h3>
                 <p>Yapp.js uses <a href="http://requirejs.org/">require.js</a> as module loader.</p>
                 <%= view.component("code", {code: "build/module.js"}) %>
             </article>   
@@ -51,13 +52,13 @@
             <p>The class <b>Application</b> inherit from <a href="<%- yapp.urls.route("views") %>"><code>yapp.View</code></a>.</p>
 
             <article id="application/extend">
-                <h3>extend <code>yapp.Application.extend(properties, [classProperties])</code></h3>
+                <h3><a href="<%- yapp.urls.route("application/extend") %>">extend</a> <code>yapp.Application.extend(properties, [classProperties])</code></h3>
                 <p>To create an <b>Application</b> class of your own, <a href="<%- yapp.urls.route("class/extend") %>">extend</a> <code>yapp.Application</code>, providing instance properties, as well as optional <b>classProperties</b> to be attached directly to the application's constructor function.</p>
                 <%= view.component("code", {code: "application/extend.js"}) %>
             </article>
 
             <article id="application/run">
-                <h3>run <code>application.run()</code></h3>
+                <h3><a href="<%- yapp.urls.route("application/run") %>">run</a> <code>application.run()</code></h3>
                 <p>After extending the <code>yapp.Application</code> class, you need to start your new application.</p>
                 <%= view.component("code", {code: "application/run.js"}) %>
             </article>
@@ -66,12 +67,12 @@
         <section id="view">
             <h2><a href="<%- yapp.urls.route("view") %>">View</a></h2>
             <article id="view/extend">
-                <h3>extend <code>yapp.View.extend(properties, [classProperties])</code></h3>
+                <h3><a href="<%- yapp.urls.route("view/extend") %>">extend</a> <code>yapp.View.extend(properties, [classProperties])</code></h3>
                 <p>The first thing who have to do for creating a new view is extending the basic view class.</p>
                 <%= view.component("code", {code: "view/extend.js"}) %>
             </article>
             <article id="view/template">
-                <h3>template</h3>
+                <h3><a href="<%- yapp.urls.route("view/template") %>">template</a></h3>
                 <p>Views in yapp.js can easily uses templates by defining property <code>template</code> with the template name and uses <code>templateContext</code> to return the variables for the template.</p>
                 <%= view.component("code", {code: "view/template.js"}) %>
                 <p><code>template</code> name could alse be given by a function, for example :</p>
@@ -82,13 +83,13 @@
         <section id="template">
             <h2><a href="<%- yapp.urls.route("template") %>">Templating</a></h2>
             <article id="template/syntax">
-                <h3>Syntax</h3>
+                <h3><a href="<%- yapp.urls.route("template/syntax") %>">Syntax</a></h3>
                 <p>yapp.js allow view to manage in a simple way templates.</p>
                 <p>Template can interpolate variables, using <code>&lt;%= … %&gt;</code>, as well as execute arbitrary JavaScript code, with <code>&lt;% … %&gt;</code>. If you wish to interpolate a value, and have it be HTML-escaped, use <code>&lt;%- … %&gt;</code>.</p>
                 <%= view.component("code", {code: "template/syntax.html"}) %>
             </article>
             <article id="template/components">
-                <h3>Components</h3>
+                <h3><a href="<%- yapp.urls.route("template/components") %>">Components</a></h3>
                 <p>Components in <b>template</b> is a great way to manage child views.</p>
                 <p>Template components have to been registrated using <a href="<%- yapp.urls.route("view/registerComponent") %>"><code>yapp.View.Template.registerComponent</code></a></p>
                 <%= view.component("code", {code: "template/components.html"}) %>
@@ -102,24 +103,24 @@
             <p>The module <b>class</b> is the base for all the modules in yapp.js, giving the object the ability to bind and trigger custom named events. 
             Events do not have to be declared before they are bound, and may take passed arguments.</p>
             <article id="class/extend">
-                <h3>extend <code>yapp.Class.extend(properties, [classProperties])</code></h3>
+                <h3><a href="<%- yapp.urls.route("class/extend") %>">extend</a> <code>yapp.Class.extend(properties, [classProperties])</code></h3>
                 <p>To create a <b>class</b> of your own, you extend <code>yapp.Class</code> and provide instance <b>properties</b>, as well as optional <b>classProperties</b> to be attached directly to the constructor function.</^>
 
                 <p><b>extend</b> correctly sets up the prototype chain, so subclasses created with <b>extend</b> can be further extended and subclassed as far as you like.</p>
                 <%= view.component("code", {code: "class/extend.js"}) %>
             </article>
             <article id="class/initialize">
-                <h3>initialize <code>new yapp.Class([options])</code></h3>
+                <h3><a href="<%- yapp.urls.route("class/initialize") %>">initialize</a> <code>new yapp.Class([options])</code></h3>
                 <p><b>initialize</b> represents the constructor of the class, object passed to <b>initialize</b> is merged with <a href="<%- yapp.urls.route("class/defaults") %>"><code>defaults</code></a> into <code>options</code>.</p>
                 <%= view.component("code", {code: "class/initialize.js", run: true}) %>
             </article>
             <article id="class/defaults">
-                <h3>defaults <code>yapp.Class.defaults</code></h3>
+                <h3><a href="<%- yapp.urls.route("class/defaults") %>">defaults</a> <code>yapp.Class.defaults</code></h3>
                 <p><b>defaults</b> let you define the defaults properties of the objects. Properties of the objects are stored into <code>options</code>.</p>
                 <%= view.component("code", {code: "class/defaults.js", run: true}) %>
             </article>
             <article id="class/on">
-                <h3>on <code>object.on(event, callback, [context])</code></h3>
+                <h3><a href="<%- yapp.urls.route("class/on") %>">on</a> <code>object.on(event, callback, [context])</code></h3>
                 <p>Bind a callback function to an object. The callback will be invoked whenever the <b>event</b> is fired. If you have a large number of different events on a page, the convention is to use colons to namespace them: <code>"poll:start"</code>, or <code>"change:selection"</code>. The event string may also be a space-delimited list of several events...</p>
                 <%= view.component("code", {code: "class/on.js"}) %>
                 <p>To supply a context value for this when the callback is invoked, pass the optional third argument: <code>object.on('change', this.render, this)</code></p>
@@ -131,20 +132,20 @@
                 <%= view.component("code", {code: "class/on_sub.js", run: true}) %>
             </article>
             <article id="class/off">
-                <h3>off <code>object.off([event], [callback], [context])</code></h3>
+                <h3><a href="<%- yapp.urls.route("class/off") %>">off</a> <code>object.off([event], [callback], [context])</code></h3>
                 <p>Remove a previously-bound <b>callback</b> function from an object. If no <b>context</b> is specified, all of the versions of the callback with different contexts will be removed. If no callback is specified, all callbacks for the <b>event</b> will be removed. If no event is specified, callbacks for all events will be removed.</p>
                 <%= view.component("code", {code: "class/off.js"}) %>
             </article>
             <article id="class/trigger">
-                <h3>trigger <code>object.trigger(event, [*args])</code></h3>
+                <h3><a href="<%- yapp.urls.route("class/trigger") %>">trigger</a> <code>object.trigger(event, [*args])</code></h3>
                 <p>Trigger callbacks for the given <b>event</b>, or space-delimited list of events. Subsequent arguments to <b>trigger</b> will be passed along to the event callbacks.</p>
             </article>
             <article id="class/triggerOnly">
-                <h3>triggerOnly <code>object.triggerOnly(event, [*args])</code></h3>
+                <h3><a href="<%- yapp.urls.route("class/triggerOnly") %>">triggerOnly</a> <code>object.triggerOnly(event, [*args])</code></h3>
                 <p>Trigger callbacks for the given <b>event</b>, or space-delimited list of events. Subsequent arguments to <b>trigger</b> will be passed along to the event callbacks. But don't trigger parents events.</p>
             </article>
             <article id="class/once">
-                <h3>once <code>object.once(event, callback, [context])</code></h3>
+                <h3><a href="<%- yapp.urls.route("class/once") %>">once</a> <code>object.once(event, callback, [context])</code></h3>
                 <p>Just like <a href="<%- yapp.urls.route("class/on") %>">on</a>, but causes the bound callback to only fire once before being removed. Handy for saying "the next time that X happens, do this".</p>
             </article>
         </section>
@@ -225,7 +226,7 @@
             <p>The class <b>Requests</b> let you create simple or complex http requests in a easy way.</p>
 
             <article id="requests/class">
-                <h3>Requests <code>new yapp.Requests(options)</code></h3>
+                <h3><a href="<%- yapp.urls.route("requests/class") %>">Requests</a> <code>new yapp.Requests(options)</code></h3>
                 <p>The class <b>Requests</b> is very simple to use.</p>
                 <%= view.component("code", {code: "requests/class.js", run: true}) %>
             </article>
@@ -233,19 +234,19 @@
             <p>The <b>Requests</b> class get some usefull shortcuts class methods such as <a href="<%- yapp.urls.route("requests/get") %>">get</a> or <a href="<%- yapp.urls.route("requests/post") %>">post</a></p>
 
             <article id="requests/get">
-                <h3>get <code>yapp.Requests.get(url, arguments, options)</code></h3>
+                <h3><a href="<%- yapp.urls.route("requests/get") %>">get</a> <code>yapp.Requests.get(url, arguments, options)</code></h3>
                 <p>Easy way to do a <b>get</b> requests with some query arguments, it returns a <a href="<%- yapp.urls.route("deferrer") %>"><code>Deferrer</code></a> object.</p>
                 <%= view.component("code", {code: "requests/get.js", run: true}) %>
             </article>
 
             <article id="requests/post">
-                <h3>post <code>yapp.Requests.post(url, arguments, options)</code></h3>
+                <h3><a href="<%- yapp.urls.route("requests/post") %>">post</a> <code>yapp.Requests.post(url, arguments, options)</code></h3>
                 <p>Easy way to do a <b>post</b> requests with some body arguments, it returns a <a href="<%- yapp.urls.route("deferrer") %>"><code>Deferrer</code></a> object.</p>
                 <%= view.component("code", {code: "requests/post.js", run: true}) %>
             </article>
 
             <article id="requests/getJSON">
-                <h3>getJSON <code>yapp.Requests.getJSON(url, arguments, options)</code></h3>
+                <h3><a href="<%- yapp.urls.route("requests/getJSON") %>">getJSON</a> <code>yapp.Requests.getJSON(url, arguments, options)</code></h3>
                 <p>Like <b>get</b> but use JSONP callback to do cross-domain requests.</p>
                 <%= view.component("code", {code: "requests/getjson.js", run: true}) %>
             </article>
@@ -256,7 +257,7 @@
             <p>The class <b>Logger</b> let you manage different log in a standart way with a global configuration.</p>
 
             <article id="logger/addNamespace">
-                <h3>Logger.addNamespace <code>yapp.Logger.addNamespace(namespace, [handler])</code></h3>
+                <h3><a href="<%- yapp.urls.route("logger/addNamespace") %>">Logger.addNamespace</a> <code>yapp.Logger.addNamespace(namespace, [handler])</code></h3>
                 <p><b>Logger</b> let you create logging object linked to a namespace and a handler.</p>
                 <p>The <b>namespace</b> is a <em>string</em> defining the context of messages to this logger.</p>
                 <p>The <b>handler</b> is an object with the following method : <code>"log", "debug", "warn", "error"</code></p>
@@ -264,10 +265,37 @@
             </article>
 
             <article id="logger/logging">
-                <h3>Logger.logging <code>yapp.Logger.logging</code></h3>
+                <h3><a href="<%- yapp.urls.route("logger/logging") %>">Logger.logging</a> <code>yapp.Logger.logging</code></h3>
                 <p><b>logging</b> is a logger instance linked to the namespace <code>"base"</code>.</p>
                 <p>Log messages are visible in the <b>console</b> of your navigator</p>
                 <%= view.component("code", {code: "logger/logging.js", run: true}) %>
+            </article>
+        </section>
+
+        <section id="router">
+            <h2><a href="<%- yapp.urls.route("router") %>">Router</a></h2>
+            <p>Web applications often provide linkable, bookmarkable, shareable URLs for important locations in the app. Until recently, hash fragments (#page) were used to provide these permalinks, but with the arrival of the History API, it's now possible to use standard URLs (/page). yapp.Router provides methods for routing client-side pages, and connecting them to actions and events.</p>
+
+            <article id="router/extend">
+                <h3><a href="<%- yapp.urls.route("router/extend") %>">extend</a> <code>yapp.Router.extend(properties, [classProperties])</code></h3>
+                <p>Get started by creating a custom <b>router</b> class. Define actions that are triggered when certain URL fragments are matched, and provide a routes hash that pairs routes to actions.</p>
+                <%= view.component("code", {code: "router/extend.js"}) %>
+            </article>
+
+            <article id="router/route">
+                <h3><a href="<%- yapp.urls.route("router/route") %>">route</a> <code>router.route(route, name, [callback])</code></h3>
+                <p>Manually create a route for the router, The <code>route</code> argument may be a routing string or regular expression. Each matching capture from the route or regular expression will be passed as an argument to the callback. The <code>name</code> argument will be triggered as a <code>"route:name"</code> event whenever the route is matched.</p>
+            </article>
+
+            <article id="router/navigate">
+                <h3><a href="<%- yapp.urls.route("router/navigate") %>">navigate</a> <code>router.navigate(url, [mode, data, options])</code></h3>
+                <p>Whenever you reach a point in your application that you'd like to save as a URL, call <b>navigate</b> in order to update the URL. If you wish to not call the route function, set the <b>trigger</b> option to <code>false</code>.</p>
+            </article>
+
+            <article id="router/start">
+                <h3><a href="<%- yapp.urls.route("router/start") %>">start</a> <code>router.start()</code></h3>
+                <p>Start the router to listen to url changeemnt.</p>
+                <%= view.component("code", {code: "router/route.js", run:true}) %>
             </article>
         </section>
 
@@ -276,25 +304,25 @@
             <p>The module <b>Urls</b> gives access to methods to simply calculate application urls.</p>
 
             <article id="urls/base">
-                <h3>base <code>yapp.urls.route(*args)</code></h3>
+                <h3><a href="<%- yapp.urls.route("urls/base") %>">base</a> <code>yapp.urls.route(*args)</code></h3>
                 <p>Return complete url in the application using the configuration variable <code>baseUrl</code>.</p>
                 <%= view.component("code", {code: "urls/base.js", run: true}) %>
             </article>
 
             <article id="urls/static">
-                <h3>static <code>yapp.Urls.static(*args)</code></h3>
+                <h3><a href="<%- yapp.urls.route("urls/static") %>">static</a> <code>yapp.Urls.static(*args)</code></h3>
                 <p>Return complete url in the application for a content in the static directory using the configuration variable <code>staticDirectory</code>.</p>
                 <%= view.component("code", {code: "urls/static.js", run: true}) %>
             </article>
 
             <article id="urls/route">
-                <h3>route <code>yapp.Urls.route(route, args)</code></h3>
+                <h3><a href="<%- yapp.urls.route("urls/route") %>">route</a> <code>yapp.Urls.route(route, args)</code></h3>
                 <p>Return complete url in the application for a route and the route arguments using the configuration variable <code>router.mode</code>.</p>
                 <%= view.component("code", {code: "urls/route.js", run: true}) %>
             </article>
 
             <article id="urls/template">
-                <h3>In templates</h3>
+                <h3><a href="<%- yapp.urls.route("urls/template") %>">In templates</a></h3>
                 <p>Module <b>Urls</b> is accessible in templates using <code>yapp.urls</code>.</p>
                 <%= view.component("code", {code: "urls/template.html"}) %>
             </article>
@@ -305,20 +333,20 @@
             <p>The module <b>I18n</b> gives an easy way to manage different languages for your application.</p>
 
             <article id="i18n/loadLocale">
-                <h3>loadLocale <code>yapp.I18n.loadLocale(lang)</code></h3>
+                <h3><a href="<%- yapp.urls.route("i18n/loadLocale") %>">loadLocale</a> <code>yapp.I18n.loadLocale(lang)</code></h3>
                 <p>Load <b>translation</b> corresponding for the language <b>lang</b>.</p>
                 <%= view.component("code", {code: "i18n/load.js", run: true}) %>
             </article>
 
             <article id="i18n/translate">
-                <h3>translate <code>yapp.I18n.translate(scope, [options])</code></h3>
+                <h3><a href="<%- yapp.urls.route("i18n/translate") %>">translate</a> <code>yapp.I18n.t(scope, [options])</code></h3>
                 <p>Return the translation for <b>scope</b>. The translation string is parsed like a template using <b>options</b>.</p>
                 <p>The translations tables is something like that :</p>
                 <%= view.component("code", {code: "i18n/en.json"}) %>
             </article>
 
             <article id="i18n/template">
-                <h3>In templates</h3>
+                <h3><a href="<%- yapp.urls.route("i18n/template") %>">In templates</a></h3>
                 <p>Module <b>i18n</b> is accessible directly in the template using <code>yapp.I18n</code>.</p>
                 <%= view.component("code", {code: "i18n/template.html"}) %>
             </article>
@@ -331,27 +359,27 @@
             <p>For gestion of cached values or ressources, use instead module <a href="<%- yapp.urls.route("cache") %>"><b>Cache</b></a>.</p>
 
             <article id="storage/get">
-                <h3>get <code>yapp.Storage.get(key)</code></h3>
+                <h3><a href="<%- yapp.urls.route("storage/get") %>">get</a> <code>yapp.Storage.get(key)</code></h3>
                 <p>Return a value stored in the <code>localStorage</code>.</p>
             </article>
 
             <article id="storage/set">
-                <h3>set <code>yapp.Storage.set(key, value)</code></h3>
+                <h3><a href="<%- yapp.urls.route("storage/set") %>">set</a> <code>yapp.Storage.set(key, value)</code></h3>
                 <p>Define a value to store in the <code>localStorage</code>.</p>
             </article>
 
             <article id="storage/remove">
-                <h3>remove <code>yapp.Storage.remove(key)</code></h3>
+                <h3><a href="<%- yapp.urls.route("storage/remove") %>">remove</a> <code>yapp.Storage.remove(key)</code></h3>
                 <p>Remove a value from <code>localStorage</code>.</p>
             </article>
 
             <article id="storage/clear">
-                <h3>clear <code>yapp.Storage.clear()</code></h3>
+                <h3><a href="<%- yapp.urls.route("storage/clear") %>">clear</a> <code>yapp.Storage.clear()</code></h3>
                 <p>Clear all the values stored in the <code>localStorage</code>.</p>
             </article>
 
             <article id="storage/usedSpace">
-                <h3>usedSpace <code>yapp.Storage.usedSpace()</code></h3>
+                <h3><a href="<%- yapp.urls.route("storage/usedSpace") %>">usedSpace</a> <code>yapp.Storage.usedSpace()</code></h3>
                 <p>Return the number of value stored in <code>localStorage</code>.</p>
             </article>
         </section>
@@ -366,28 +394,28 @@
             <%= view.component("code", {code: "cache/key.js"}) %>
 
             <article id="cache/get">
-                <h3>get <code>yapp.Cache.get(namespace, key)</code></h3>
+                <h3><a href="<%- yapp.urls.route("cache/get") %>">get</a> <code>yapp.Cache.get(namespace, key)</code></h3>
                 <p>Return a value stored in the <code>Storage</code>.</p>
             </article>
 
             <article id="cache/set">
-                <h3>set <code>yapp.Cache.set(namespace, key, value, expiration)</code></h3>
+                <h3><a href="<%- yapp.urls.route("cache/set") %>">set</a> <code>yapp.Cache.set(namespace, key, value, expiration)</code></h3>
                 <p>Define a value to store in the <code>Storage</code> for a timelapse.</p>
                 <p><b>expiration</b> define the timelapse in seconds, if <b>expiration</b> <&lsaquo; 0 then value don't have a timelife.</p>
             </article>
 
             <article id="cache/remove">
-                <h3>remove <code>yapp.Cache.remove(namespace, key)</code></h3>
+                <h3><a href="<%- yapp.urls.route("cache/remove") %>">remove</a> <code>yapp.Cache.remove(namespace, key)</code></h3>
                 <p>Remove a value from <code>Storage</code>.</p>
             </article>
 
             <article id="cache/clear">
-                <h3>clear <code>yapp.Cache.clear()</code></h3>
+                <h3><a href="<%- yapp.urls.route("cache/clear") %>">clear</a> <code>yapp.Cache.clear()</code></h3>
                 <p>Clear the all cache without clearing the all <code>Storage</code>.</p>
             </article>
 
             <article id="cache/namespace">
-                <h3>namespace <code>yapp.Cache.namespace(namespace)</code></h3>
+                <h3><a href="<%- yapp.urls.route("cache/namespace") %>">namespace</a> <code>yapp.Cache.namespace(namespace)</code></h3>
                 <p>Return a cache interface centered arround a namespace.</p>
                 <%= view.component("code", {code: "cache/namespace.js", run: true}) %>
             </article>
@@ -398,19 +426,19 @@
             <p>The module <b>Ressources</b> let you load ressources (such as templates, ...) in a standart way.</p>
 
             <article id="ressources/load">
-                <h3>load <code>yapp.Ressources.load(namespace, ressource)</code></h3>
+                <h3><a href="<%- yapp.urls.route("ressources/load") %>">load</a> <code>yapp.Ressources.load(namespace, ressource)</code></h3>
                 <p>Load a ressource in a namespace and return a <a href="<%- yapp.urls.route("deferred") %>"><code>Deferred</code></a>.</p>
                 <%= view.component("code", {code: "ressources/load.js", run: true}) %>
             </article>
 
             <article id="ressources/addNamespace">
-                <h3>addNamespace <code>yapp.Ressources.addNamespace(namespace, options)</code></h3>
+                <h3><a href="<%- yapp.urls.route("ressources/addNamespace") %>">addNamespace</a> <code>yapp.Ressources.addNamespace(namespace, options)</code></h3>
                 <p>Add a namespaces for ressources with options for loading.</p>
                 <%= view.component("code", {code: "ressources/namespace.js", run: true}) %>
             </article>
 
             <article id="ressources/addLoader">
-                <h3>addLoader <code>yapp.Ressources.addLoader(name, handler)</code></h3>
+                <h3><a href="<%- yapp.urls.route("ressources/addLoader") %>">addLoader</a> <code>yapp.Ressources.addLoader(name, handler)</code></h3>
                 <p>Add a new loader for loading ressources.</p>
                 <p>Base loader are :
                     <ul>
