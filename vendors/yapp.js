@@ -11193,7 +11193,7 @@ define('yapp/utils/template',[
                         return component[0].outerHTML;
                     }
                 }
-            });
+            }, Templates.options);
 
             return this;
         },
@@ -11237,6 +11237,9 @@ define('yapp/utils/template',[
             return this.load();
         },
     }, {
+        /* Defaults options for template */
+        options: {},
+
         /* Map of components constructor */
         components: {},
 
@@ -11249,6 +11252,14 @@ define('yapp/utils/template',[
                 "id": cid,
                 "Class": ViewClass
             };
+        },
+
+        /*
+         *  Add contexts to all templates
+         *  @options : options for templates to add
+         */
+        extendContext: function(options) {
+            Templates.options = _.extend(Templates.options || {}, options);
         }
     });
 

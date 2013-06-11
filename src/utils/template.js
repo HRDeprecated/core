@@ -106,7 +106,7 @@ define([
             return this.load();
         },
     }, {
-        /* Defaults options for template */.
+        /* Defaults options for template */
         options: {},
 
         /* Map of components constructor */
