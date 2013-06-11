@@ -10,8 +10,8 @@ var pkg = require('../package.json');
 // Create a function
 // That creates the app then calls the given method
 function appCall(methodName) {
-    return function(cli, options) {
-        var app = createApp();
+    return function() {
+        var app = createApp(this.dir);
         app[methodName]();
     };
 }
