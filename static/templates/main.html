@@ -300,6 +300,30 @@
             </article>
         </section>
 
+        <section id="i18n">
+            <h2><a href="<%- yapp.urls.route("i18n") %>">Internationalization (i18n)</a></h2>
+            <p>The module <b>I18n</b> gives an easy way to manage different languages for your application.</p>
+
+            <article id="i18n/loadLocale">
+                <h3>loadLocale <code>yapp.I18n.loadLocale(lang)</code></h3>
+                <p>Load <b>translation</b> corresponding for the language <b>lang</b>.</p>
+                <%= view.component("code", {code: "i18n/load.js", run: true}) %>
+            </article>
+
+            <article id="i18n/translate">
+                <h3>translate <code>yapp.I18n.translate(scope, [options])</code></h3>
+                <p>Return the translation for <b>scope</b>. The translation string is parsed like a template using <b>options</b>.</p>
+                <p>The translations tables is something like that :</p>
+                <%= view.component("code", {code: "i18n/en.json"}) %>
+            </article>
+
+            <article id="i18n/template">
+                <h3>In templates</h3>
+                <p>Module <b>i18n</b> is accessible directly in the template using <code>yapp.I18n</code>.</p>
+                <%= view.component("code", {code: "i18n/template.html"}) %>
+            </article>
+        </section>
+
         <section id="storage">
             <h2><a href="<%- yapp.urls.route("storage") %>">Storage</a></h2>
             <p>The module <b>Storage</b> is a simple interface to the navigator <code>localStorage</code>.</p>

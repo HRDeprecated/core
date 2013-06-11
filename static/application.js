@@ -12159,6 +12159,9 @@ define('yapp/configs',['require'],function(args) {
             "loader": "http"
         },
 
+        // i18n
+        "defaultLocale": "en",
+
         extend: function() {
             var args = Array.prototype.slice.call(arguments, 0);
             args.splice(0,0, Config);
@@ -23108,9 +23111,10 @@ define('yapp/utils/ressources',[
     // HTTP loader
     Ressources.addLoader("http", function(ressourcename, callback, config) {
         _.defaults(config, {
-            base: "./"
+            base: "./",
+            extension: ""
         });
-        ressourceurl = Urls.static(config.base, ressourcename);
+        ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
         
         // Check application cache
         var content = cache.get(ressourcename);
@@ -23129,14 +23133,130 @@ define('yapp/utils/ressources',[
 
     return Ressources;
 });
+define('yapp/utils/i18n',[
+    "jQuery",
+    "Underscore",
+    "yapp/configs",
+    "yapp/utils/urls",
+    "yapp/utils/logger",
+    "yapp/utils/ressources"
+], function($, _, configs, Urls, Logger, Ressources) {
+    var logging = Logger.addNamespace("i18n");
+    var I18n = {};
+
+    // Set default locale to english
+    I18n.defaultLocale = "en";
+
+    // Set default separator
+    I18n.defaultSeparator = ".";
+
+    // Set current locale to null
+    I18n.locale = null;
+
+    I18n.interpolate = function(message, options) {
+        options = options || {};
+        
+        var compiled = _.template(message);
+
+        _.extend(options, {
+            "_": _,
+            "yapp": {
+                "configs": configs,
+                "urls": Urls
+            }
+        });
+        return compiled(options);
+    };
+
+    I18n.currentLocale = function() {
+        return (I18n.locale || I18n.defaultLocale);
+    };
+
+    I18n.setCurrentLocale = function(lang) {
+        I18n.locale = lang;
+    };
+
+    I18n.loadLocale = function(lng) {
+        return Ressources.load("i18n", lng).then(function(content) {
+            if (_.isString(content)) content = JSON.parse(content);
+            I18n.translations[lng] = content;
+        }, function() {
+            logging.error("Error loading locale "+lng);
+        });
+    };
+
+    I18n.missingTranslation = function() {
+        var message = '[missing "' + this.currentLocale()
+            , count = arguments.length
+        ;
+
+        for (var i = 0; i < count; i++) {
+            message += "." + arguments[i];
+        }
+
+        message += '" translation]';
+
+        return message;
+    };
+
+    I18n.lookup = function(scope, options) {
+        var options = options || {}
+            , lookupInitialScope = scope
+            , translations = I18n.translations
+            , locale = options.locale || I18n.currentLocale()
+            , messages = translations[locale] || {}
+            , currentScope
+        ;
+
+        console.log(translations, locale);
+        
+        if (typeof(scope) == "object") {
+            scope = scope.join(this.defaultSeparator);
+        }
+
+        if (options.scope) {
+            scope = options.scope.toString() + this.defaultSeparator + scope;
+        }
+
+        scope = scope.split(this.defaultSeparator);
+
+        while (messages && scope.length > 0) {
+            currentScope = scope.shift();
+            messages = messages[currentScope];
+        }
+
+        return messages;
+    };
+
+    I18n.translate = function(scope, options) {
+        var translation = this.lookup(scope, options);
+
+        try {
+            return this.interpolate(translation, options);
+        } catch(err) {
+            logging.error(err);
+            return this.missingTranslation(scope);
+        }
+    };
+
+    I18n.translations = {};
+    I18n.t = I18n.translate;
+
+    I18n.defaultLocale = configs.defaultLocale;
+    I18n.locale = configs.defaultLocale;
+
+
+    return I18n;
+});
 define('yapp/utils/template',[
     "Underscore",
     "yapp/configs",
     "yapp/core/class",
     "yapp/utils/logger",
     "yapp/utils/urls",
-    "yapp/utils/ressources"
-], function(_, configs, Class, Logger, Urls, Ressources) {
+    "yapp/utils/ressources",
+    "yapp/utils/i18n"
+], function(_, configs, Class, Logger, Urls, Ressources, I18n) {
     var Template = Class.extend({
         defaults: {
             /* Template id */
@@ -23164,7 +23284,8 @@ define('yapp/utils/template',[
                 "_": _,
                 "yapp": {
                     "configs": configs,
-                    "urls": Urls
+                    "urls": Urls,
+                    "I18n": I18n
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
@@ -24524,11 +24645,12 @@ define('yapp/yapp',[
     "yapp/utils/template",
     "yapp/utils/ressources",
     "yapp/utils/deferred",
+    "yapp/utils/i18n",
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
 Class, View, Application, Head, Router, Model, Collection,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, I18n) {
     return {
         configs: configs,
         Class: Class,
@@ -24547,6 +24669,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
         Template: Template,
         Ressources: Ressources,
         Deferred: Deferred,
+        I18n: I18n,
 
         configure: function(args, options) {
             options = options || {};
@@ -24564,7 +24687,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred) {
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1370898692811,"baseUrl":"/yapp.js/"}; });
+define('yapp/args',[],function() { return {"revision":1370959467949,"baseUrl":"/yapp.js/"}; });
 require([
     "yapp/yapp"
 ], function(yapp) {
@@ -25016,7 +25139,7 @@ define('text!ressources/code/collection/tojson.js',[],function () { return 'var 
 
 define('text!ressources/code/requests/class.js',[],function () { return 'var r = new yapp.Requests({\n    url: yapp.Urls.static("templates/header.html"),\n\n    /*\n    Some others options with defaults values :\n        method: "GET",\n        params: {},\n        dataType: "text"\n    */\n});\nr.on("done", function(content) {\n    alert("content size is " + content.length);\n});\nr.on("error", function() {\n    alert("Error in the request!");\n})\nr.execute();';});
 
-define('text!ressources/code/requests/get.js',[],function () { return 'yapp.Requests.get(Urls.static("templates/header.html")).then(function() {\n    alert("Nice requests !");\n}, function() {\n    alert("Error !");\n})';});
+define('text!ressources/code/requests/get.js',[],function () { return 'yapp.Requests.get(yapp.Urls.static("templates/header.html")).then(function() {\n    alert("Nice requests !");\n}, function() {\n    alert("Error !");\n})';});
 
 define('text!ressources/code/requests/getjson.js',[],function () { return 'yapp.Requests.getJSON("https://api.github.com/repos/FriendCode/yapp.js").then(function(data) {\n    alert("Yapp.js github repo has "+data.watchers_count+" watchers");\n}, function() {\n    alert("Error !");\n})';});
 
@@ -25033,6 +25156,12 @@ define('text!ressources/code/urls/static.js',[],function () { return 'alert(yapp
 define('text!ressources/code/urls/route.js',[],function () { return 'alert(yapp.Urls.route("article/:id", {id: 1234}));';});
 
 define('text!ressources/code/urls/template.html',[],function () { return '<% _.each(photos, function(photo) { %>\n    <a href="<%- yapp.urls.static("images", photo.Id, "1024.jpg") %>">\n        <img src="<%- yapp.urls.static("images", photo.Id, "128.jpg") %>" />\n    </a>\n    <a href="<%- yapp.urls.route("photos/comments/:Id", photo) %>">\n        <%- photo.comments %> Comments\n    </a>\n<% }); %>';});
+
+define('text!ressources/code/i18n/load.js',[],function () { return '// Configure loading of i18n translation\nyapp.Ressources.addNamespace("i18n", {\n    loader: "http",\n    base: "i18n",\n    extension: ".json"\n});\n\n// Load translations\nvar dEn = yapp.I18n.loadLocale("en");\nvar dFr = yapp.I18n.loadLocale("fr");\n\nyapp.Deferred.when(dEn, dFr).then(function() {\n    // Set locale to english\n    yapp.I18n.setCurrentLocale("en");\n    alert("In english : "+yapp.I18n.t("message.hello", {name: "Samy"}));\n\n    // Set locale to french\n    yapp.I18n.setCurrentLocale("fr");\n    alert("In french : "+yapp.I18n.t("message.hello", {name: "Samy"}));  \n});';});
+
+define('text!ressources/code/i18n/template.html',[],function () { return '<h1><%- yapp.I18n.t("homepage.title", {name: user.name}) %></h1>\n\n<% if (user.admin) { %>\n    <p><%= yapp.I18n.t("homepage.messages.admin", {name: user.name}) %></p>\n    <%- view.component("admin") %>\n<% } else { %>\n    <p><%= yapp.I18n.t("homepage.messages.user", {name: user.name}) %></p>\n<% } %>';});
+
+define('text!ressources/code/i18n/en.json',[],function () { return '{\n    "lang": "English",\n    "homepage": {\n        "title": "Dashboard of <%- name %>"\n    },\n    "messages": {\n        "admin": "<%- name %>, you can administrate your profile below :",\n        "user": "<%- name %>, you should be admin to access this page"\n    }\n}';});
 
 define('text!ressources/code/cache/key.js',[],function () { return '// Key and Value are strings\nyapp.Cache.set("test", "mykey", "myvalue");\n\n// Key is a number\nyapp.Cache.set("test", 4, "myvalue");\n\n// Value is a number\nyapp.Cache.set("test", "mykey2", 55);\n\n// Value is an object\nyapp.Cache.set("test", "me", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n});\n\n// Key is an object, Value is a Date\nyapp.Cache.set("lastconnexion", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n}, new Date(), 3600);';});
 
@@ -25083,6 +25212,9 @@ define('ressources/ressources',[
     "text!ressources/code/urls/static.js",
     "text!ressources/code/urls/route.js",
     "text!ressources/code/urls/template.html",
+    "text!ressources/code/i18n/load.js",
+    "text!ressources/code/i18n/template.html",
+    "text!ressources/code/i18n/en.json",
     "text!ressources/code/cache/key.js",
     "text!ressources/code/cache/namespace.js",
     "text!ressources/code/ressources/load.js",
