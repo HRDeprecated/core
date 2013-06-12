@@ -329,6 +329,12 @@
                 <%= view.component("code", {code: "urls/route.js", run: true}) %>
             </article>
 
+            <article id="urls/rules">
+                <h3><a href="<%- yapp.urls.route("urls/rules") %>">extendRules</a> <code>yapp.Urls.extendRules(rules)</code></h3>
+                <p>Extend urls rules of module <b>Urls</b>.</p>
+                <%= view.component("code", {code: "urls/rules.js", run:true}) %>
+            </article>
+
             <article id="urls/template">
                 <h3><a href="<%- yapp.urls.route("urls/template") %>">In templates</a></h3>
                 <p>Module <b>Urls</b> is accessible in templates using <code>yapp.urls</code>.</p>
