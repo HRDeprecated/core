@@ -60,6 +60,14 @@ define([
             } else {
                 return Urls.base(url);
             }
+        },
+
+        /*
+         *  Extend rules
+         *  @rules : map of rules
+         */
+        extendRules: function(rules) {
+            _.extend(Urls, rules);
         }
     };
 

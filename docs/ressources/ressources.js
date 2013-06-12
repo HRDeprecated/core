@@ -38,6 +38,7 @@ define([
     "text!ressources/code/urls/base.js",
     "text!ressources/code/urls/static.js",
     "text!ressources/code/urls/route.js",
+    "text!ressources/code/urls/rules.js",
     "text!ressources/code/urls/template.html",
     "text!ressources/code/i18n/load.js",
     "text!ressources/code/i18n/template.html",
