@@ -18,9 +18,9 @@ define([
         /*
          *  Load a ressource
          */
-        load: function(namespace, ressource) {
+        load: function(namespace, ressource, options) {
             var d = new Deferred();
-            var namespace_configs = Ressources.namespaces[namespace] || {};
+            var namespace_configs = _.extend({}, Ressources.namespaces[namespace] || {}, options || {});
             var loader = namespace_configs.loader || configs.ressources.loader;
             
             if (Ressources.loaders[loader] == null) {
