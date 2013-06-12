@@ -1,7 +1,7 @@
 <div class="page">
     <%= view.component("template", {template: "header.html"}, "header") %>
     <div class="content">
-        <section class="intro">
+        <section id="intro" class="intro">
             <article>
                 <p class="title">Build large client-side application in a structured way.</p>
                 <p>Yapp.js gives structure to client-side web application by bringing a complete build system
@@ -17,6 +17,14 @@
                 </p>
                 <iframe src="https://friendco.de/widgets/button/codenow?style=horizontal&url=https%3A%2F%2Fgithub.com%2FFriendCode%2Fyapp.js.git&file=" frameborder="0" scrolling="no" frameborder="0" style="border:none; overflow:hidden;width: 160px;height: 30px;" allowTransparency="true"></iframe>
             </article>
+        </section>
+
+        <section id="install">
+            <h2><a href="<%- yapp.urls.route("install") %>">Installation</a></h2>
+            <article>
+                <p>Simply install yapp.js using <b>NPM</b> :</p>
+                <p><code>npm install -g git+ssh://git@github.com:FriendCode/yapp.js.git#master</code>.</p>
+            </article>   
         </section>
 
         <section id="build">
@@ -35,9 +43,9 @@
             </article>
             <article id="build/run">
                 <h3><a href="<%- yapp.urls.route("build/run") %>">Build &amp; Run your application</a></h3>
-                <p>For building, simply run in a command line tool : <code>node build.js all</code>.</p>
-                <p>You can also <b>only build</b> with : <code>node build.js build</code>.</p>
-                <p>Or <b>only run</b> the simple server with : <code>node build.js run</code>.</p>
+                <p>For building, simply run in a command line tool : <code>yapp.js all</code>.</p>
+                <p>You can also <b>only build</b> with : <code>yapp.js build</code>.</p>
+                <p>Or <b>only run</b> the simple server with : <code>yapp.js run</code>.</p>
             </article>
             <article id="build/module">
                 <h3><a href="<%- yapp.urls.route("build/module") %>">Modularity</a></h3>
