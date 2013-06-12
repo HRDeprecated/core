@@ -11199,6 +11199,13 @@ define('yapp/utils/template',[
 
                         return component[0].outerHTML;
                     }
+                },
+                "template": {
+                    "args": this.args,
+                    "name": this.template,
+                    "import": function(name, args) {
+                        return this.args.view.component("template", {template: name, args: args}, name);
+                    }
                 }
             }, Template.options);
 
