@@ -1,7 +1,7 @@
 {
     "author": "Samy Pesse",
     "name": "yapp",
-    "description": "Client-side framework for structured appliactions.",
+    "description": "Client-side framework for structured applications.",
     "version": "0.0.1",
     "keywords": [
         "clientside"
