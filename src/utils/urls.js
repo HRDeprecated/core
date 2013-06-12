@@ -49,16 +49,17 @@ define([
          *  @route : route to transform
          *  @args : args for the route
          */
-        route: function(route, args) {
+        route: function(route, args, base) {
+            base = base || "";
             args = args || {};
             var url = route;
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });
             if (configs.router.mode == "hashs") {
-                return Urls.base("") + "#/"+url;
+                return Urls.base(base) + "#/"+url;
             } else {
-                return Urls.base(url);
+                return Urls.base(base, url);
             }
         },
 

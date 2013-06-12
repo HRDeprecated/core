@@ -324,7 +324,7 @@
             </article>
 
             <article id="urls/route">
-                <h3><a href="<%- yapp.urls.route("urls/route") %>">route</a> <code>yapp.Urls.route(route, args)</code></h3>
+                <h3><a href="<%- yapp.urls.route("urls/route") %>">route</a> <code>yapp.Urls.route(route, args, [base])</code></h3>
                 <p>Return complete url in the application for a route and the route arguments using the configuration variable <code>router.mode</code>.</p>
                 <%= view.component("code", {code: "urls/route.js", run: true}) %>
             </article>
