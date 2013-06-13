@@ -17,8 +17,7 @@
         "cli-color": "0.2.2",
         "underscore": "1.4.4",
         "less": "1.3.3",
-
-        "requirejs": "2.1.6"
+        "watchr": "2.4.3"
     },
     "engines": {
         "node": "0.8.x",

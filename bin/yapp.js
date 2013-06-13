@@ -33,6 +33,11 @@ function main() {
     .action(appCall('run'));
 
     _cli
+    .command('dev')
+    .description('Watches your sources and rebuilds on changes. Useful for interactive development.')
+    .action(appCall('dev'));
+
+    _cli
     .option('-d, --dir <path>', 'App directory if different from current working directory.');
 
 
