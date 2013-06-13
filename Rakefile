@@ -14,6 +14,11 @@ task :run do
   system './bin/yapp.js -d docs all'
 end
 
+desc "run the sample"
+task :sample do
+  system './bin/yapp.js -d skeleton all'
+end
+
 desc "install dependencies using npm"
 task :dependencies do
   check 'npm', 'NPM', 'https://npmjs.org/'

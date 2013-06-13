@@ -1,0 +1,9 @@
+<div class="sample">
+    <h1><%- yapp.i18n.t("hello") %></h1>
+    <h2><a href="http://friendcode.github.io/yapp.js/"><%- yapp.i18n.t("doc") %></a></h2>
+    <p>
+        <% _.each(yapp.i18n.locales, function(lang) { %>
+        <a href="<%- yapp.urls.route("lang/:lang", {lang: lang}) %>"><%- yapp.i18n.t("lang", {locale: lang}) %></a>
+        <% }); %>
+    </p>
+</div>

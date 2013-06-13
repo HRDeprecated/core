@@ -19,6 +19,9 @@ define([
     // Set current locale to null
     I18n.locale = null;
 
+    // Languages loaded
+    I18n.locales = [];
+
     I18n.interpolate = function(message, options) {
         options = options || {};
         
@@ -46,7 +49,12 @@ define([
         if (_.isArray(lng)) {
             var d = [];
             _.each(lng, function(lang) {
-                d.push(I18n.loadLocale(lang));
+                var nd = I18n.loadLocale(lang);
+                nd.done(function() {
+                    I18n.locales.push(lang);
+                    I18n.locales = _.uniq(I18n.locales);
+                });
+                d.push(nd);
             });
             return Deferred.when.apply(Deferred, d);
         }

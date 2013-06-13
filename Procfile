@@ -1,1 +1,1 @@
-web: rake
+web: npm install . ; ./bin/yapp.js -d skeleton all
