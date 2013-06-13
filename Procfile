@@ -1,1 +1,1 @@
-web: npm install . ; ./bin/yapp.js -d skeleton all
+web: ./bin/yapp.js -d skeleton all
