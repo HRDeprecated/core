@@ -38,7 +38,7 @@ define([
             this.head = new this.Head({
                 app: this
             });
-            this.head.meta(this.meta);
+            this.head.meta(this.metas);
             this.head.link(this.links);
 
             this.title("");
