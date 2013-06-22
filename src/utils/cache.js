@@ -10,6 +10,22 @@ define([
 
     var Cache = {
         /*
+         *  Initialize the cache : delete all the "old-version" values
+         */
+        init: function() {
+            var s = Storage.storage();
+            if (s == null) {
+                return false;
+            }
+            var r = new RegExp("/^(cache_"+configs.revision+")/");
+            Object.keys(s).forEach(function(key){
+                   if (/^(cache_)/.test(key) && r.test(key) == false) {
+                       s.removeItem(key);
+                   }
+            });
+        },
+
+        /*
          *  Transform a key in cache key
          *  @namespace : cat of the key
          *  @key : key of the data to cache
@@ -103,6 +119,8 @@ define([
             return ncache;
         }
     };
+
+    Cache.init();
 
     return Cache;
 });

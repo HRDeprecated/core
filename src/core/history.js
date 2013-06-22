@@ -4,7 +4,8 @@ define([
     "yapp/configs",
     "yapp/core/class",
     "yapp/utils/logger",
-], function($, _, configs, Class, Logger) {
+    "yapp/utils/urls",
+], function($, _, configs, Class, Logger, Urls) {
 
     var logging = Logger.addNamespace("history");
 
@@ -46,24 +47,8 @@ define([
             var $window = $(window);
             var rootUrl = document.location.protocol+'//'+(document.location.hostname||document.location.host);
 
-            logging.log("start routing history mode=", configs.router.mode);
-
-            if (configs.router.mode == "html5") {
-                // Bind history changement
-                $window.bind('popstate', _.bind(this._handleCurrentState, this));
-
-                // Bind links click
-                $('body').on('click.link.history', 'a[href^="/"],a[href^="'+rootUrl+'"]', function (e) {
-                    e.preventDefault();
-                    var $a = $(e.currentTarget);
-                    self.navigate($a.attr("href"), "get");
-                });
-
-                // Bind form submit
-            }  else if (configs.router.mode == "hashs") {
-                $window.bind('hashchange', _.bind(this._handleCurrentState, this));
-            }
-            
+            logging.log("start routing history");
+            $window.bind('hashchange', _.bind(this._handleCurrentState, this));
 
             this._handleCurrentState();
             this.started = true;
@@ -74,25 +59,10 @@ define([
         /*
          *  Navigate
          */
-        navigate: function(url, mode, data, options) {
-            mode = mode || "get";
-            data = data || {};
-
-            var state = {
-                mode: mode,
-                data: data 
-            };
-
-            logging.log("navigate to ", url, state);
-
-            if (configs.router.mode == "html5") {
-                window.history.pushState(state, url, url);
-                this._handleState(url, state);
-            } else {
-                window.location.hash = url;
-            } 
-            
-            return this;
+        navigate: function(route, args) {
+            url = Urls.route(route, args);
+            logging.log("navigate to ", url);
+            window.location.hash = url;
         },
 
         /*
@@ -100,7 +70,7 @@ define([
          *  @url : url of the state
          *  @state : state object
          */
-        _handleState: function(url, state) {
+        _handleState: function(url) {
             if (url == null) return this;
             if (url.length > 0 && url[0] == "/") {
                 url = url.replace("/", "");
@@ -111,7 +81,7 @@ define([
                     return true;
                 }
             });
-            logging.log("handle state ", url, state, matched);
+            logging.log("handle state ", url, matched != null);
             return this;
         },
 
@@ -119,14 +89,8 @@ define([
          *  Handle current page state
          */
         _handleCurrentState: function() {
-            var url = window.location.pathname;
-            if (configs.router.mode == "hashs") url = window.location.hash.replace("#", "");
-
-            var state = window.history.state || {
-                mode: "get",
-                data: {}
-            };
-            return this._handleState(url, state);
+            var url = window.location.hash.replace("#", "");
+            return this._handleState(url);
         },
     }));
 

@@ -8,7 +8,7 @@ define([
      *  yapp.Class is the base for objects in yapp
      */
     var Class = function(options) {
-        this.options = options || {};
+        this.options = _.extend({}, options || {});
         _.defaults(this.options, this.defaults);
         this.cid = _.uniqueId('class');
         this.initialize.apply(this, arguments);
@@ -71,7 +71,7 @@ define([
          *  the callback to all events fired.
          */
         on: function(name, callback, context) {
-            if (!this.multipleEvents(this, 'on', name, [callback, context]) || !callback) return this;
+            if (!this.multipleEvents('on', name, [callback, context]) || !callback) return this;
             this._events || (this._events = {});
             var events = this._events[name] || (this._events[name] = []);
             events.push({
@@ -87,7 +87,7 @@ define([
          *  the callback is invoked, it will be removed.
          */
         once: function(name, callback, context) {
-            if (!this.multipleEvents(this, 'once', name, [callback, context]) || !callback) return this;
+            if (!this.multipleEvents('once', name, [callback, context]) || !callback) return this;
             var self = this;
             var once = _.once(function() {
                 self.off(name, once);
@@ -149,7 +149,7 @@ define([
         },
         trigger: function(name) {
             var args = Array.prototype.slice.call(arguments, 0);
-            if (!this.multipleEvents(this, 'trigger', name, args)) return this;
+            if (!this.multipleEvents('trigger', name, args)) return this;
             _.each(name.split(":"), function(part, n, parts) {
                 var newname = parts.slice(0, n+1).join(":");
                 args[0] = newname;

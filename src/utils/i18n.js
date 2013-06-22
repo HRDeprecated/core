@@ -59,7 +59,8 @@ define([
             return Deferred.when.apply(Deferred, d);
         }
         return Ressources.load("i18n", lng).then(function(content) {
-            if (_.isString(content)) content = JSON.parse(content);
+            // use "eval" here because content is from a trusted source
+            if (_.isString(content)) content = eval('(' + content + ')');//JSON.parse(content);
             I18n.translations[lng] = content;
         }, function() {
             logging.error("Error loading locale "+lng);

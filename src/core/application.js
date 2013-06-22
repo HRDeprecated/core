@@ -74,6 +74,7 @@ define([
          *  @name : name of the method for the route callback
          */
         route: function(route, name) {
+            var handler;
             if (_.isObject(route)) {
                 _.each(route, function(callback, route) {
                     this.route(route, callback);
@@ -81,8 +82,17 @@ define([
                 return this;
             }
 
+            handler = this[name];
+            if (handler == null) {
+                handler = function() {
+                    var args = _.values(arguments);
+                    args.unshift('route:'+name);
+                    this.trigger.apply(this, args);
+                };
+            }
+
             if (!this.router) this.router = new this.Router();
-            this.router.route(route, name, _.bind(this[name], this));
+            this.router.route(route, name, _.bind(handler, this));
             return this;
         }
     });

@@ -12,17 +12,13 @@ define(function(args) {
         // Log level
         // "log", "debug", "warn", "error", "none"
         "logLevel": "log",
+        "logLevels": {},
 
         // Base url
         "baseUrl": "/",
 
         // Static files directory (relative to baseUrl)
         "staticDirectory": "static",
-
-        // Configuration for routing
-        "router": {
-            "mode": "hashs" //"html5" or "hashs"
-        },
 
         // Configurations for ressources loading
         "ressources": {

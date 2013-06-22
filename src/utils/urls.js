@@ -53,14 +53,11 @@ define([
             base = base || "";
             args = args || {};
             var url = route;
+            url = url.replace("#!", "#").replace("#", "");
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });
-            if (configs.router.mode == "hashs") {
-                return Urls.base(base) + "#/"+url;
-            } else {
-                return Urls.base(base, url);
-            }
+            return "#/"+url;
         },
 
         /*
@@ -69,6 +66,16 @@ define([
          */
         extendRules: function(rules) {
             _.extend(Urls, rules);
+        },
+
+        /*
+         *  Redirect the user
+         */ 
+        redirect: function(route, rule) {
+            if (rule == null) rule = "base";
+            if (_.isString(rule)) rule = Urls[rule];
+            route = rule(route);
+            window.location.href = route;
         }
     };
 

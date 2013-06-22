@@ -42,11 +42,11 @@ define([
                 return this;
             }
 
-            if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+            if (!_.isRegExp(route)) route = Router.routeToRegExp(route);
             logging.log("add route ", name, route);
 
             History.route(route, _.bind(function(url) {
-                var args = this._extractParameters(route, url);
+                var args = Router.extractParameters(route, url);
                 logging.log("route callback ", url, name, args);
                 callback && callback.apply(this, args);
                 this.trigger.apply(this, ['route:' + name].concat(args));
@@ -71,13 +71,12 @@ define([
             History.navigate.apply(History, arguments);
             return this;
         },
-
-        
+    }, {
         /*
          *  Convert a route string into a regular expression, suitable for matching
          *  against the current location hash.
          */
-        _routeToRegExp: function(route) {
+        routeToRegExp: function(route) {
             route = route.replace(escapeRegExp, '\\$&')
                             .replace(namedParam, '([^\/]+)')
                             .replace(splatParam, '(.*?)');
@@ -88,7 +87,7 @@ define([
          *  Given a route, and a URL fragment that it matches, return the array of
          *  extracted parameters.
          */
-        _extractParameters: function(route, fragment) {
+        extractParameters: function(route, fragment) {
             return route.exec(fragment).slice(1);
         }
     });

@@ -133,6 +133,7 @@ define([
                 _.each(diffs, function(diff, tag) {
                     this.trigger("change:"+tag, diff);
                 }, this);
+                this.trigger("set", diffs);
             }
 
             return this;

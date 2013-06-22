@@ -10,13 +10,23 @@ define([
         // Model for this colleciton
         model: Model,
 
+        // Defaults settings
+        defaults: {
+            loader: null,   // Load for infinite collections
+            loaderArgs: [], // Arguments for the loader
+            startIndex: 0,  // Start index for infinite laoding
+            limit: 10,      // Limit for infinite loading
+            models: []
+        },
+
         /*
          *  Initialize the colleciton
          */
-        initialize: function(models, options) {
+        initialize: function(options) {
             Collection.__super__.initialize.call(this, options);
             this.models = [];
-            this.reset(models || [], {silent: true});
+            this._totalCount = null;
+            this.reset(this.options.models || [], {silent: true});
             return this;
         },
 
@@ -77,6 +87,13 @@ define([
          *  Reset the collection
          */
         reset: function(models, options) {
+            // Manage {list:[], n:0} for infinite list
+            if (_.size(models) == 2
+            && models.list != null && models.n != null) {
+                this._totalCount = models.n;
+                return this.reset(models.list, options);
+            }
+            this.startIndex = 0;
             this.models = [];
             this.add(models, _.extend({silent: true}, options || {}));
             options = _.defaults(options || {}, {
@@ -98,6 +115,13 @@ define([
                     this.add(m, options);
                 }, this);
                 return this;
+            }
+
+            // Manage {list:[], n:0} for infinite list
+            if (_.size(model) == 2
+            && model.list != null && model.n != null) {
+                this._totalCount = model.n;
+                return this.add(model.list, options);
             }
 
             options = _.defaults(options || {}, {
@@ -216,6 +240,44 @@ define([
                 this.remove(model, options);
             }
             this.trigger.apply(this, arguments);
+        },
+
+        /*
+         *  Return number of elements in collections
+         */
+        count: function() {
+            return _.size(this.models);
+        },
+
+        /*
+         *  Return the total number of elements in the source (for exemple in the database)
+         */
+        totalCount: function() {
+            return this._totalCount || this.count();
+        },
+
+        /*
+         *  Get more elements from an infinite collection
+         */
+        hasMore: function() {
+            return this.totalCount() - this.count();
+        },
+
+        /*
+         *  Get more elements from an infinite collection
+         */
+        getMore: function() {
+            var d, self = this;
+
+            if (this.options.loader == null) return this;
+
+            if (this._totalCount == null || this.hasMore() > 0) {
+                this.options.startIndex = this.options.startIndex || 0;
+                d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
+                d.done(function() {
+                    self.options.startIndex = self.options.startIndex + self.options.limit
+                });
+            }
         }
     });
 

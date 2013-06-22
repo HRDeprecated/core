@@ -13,17 +13,13 @@ define('yapp/configs',['require'],function(args) {
         // Log level
         // "log", "debug", "warn", "error", "none"
         "logLevel": "log",
+        "logLevels": {},
 
         // Base url
         "baseUrl": "/",
 
         // Static files directory (relative to baseUrl)
         "staticDirectory": "static",
-
-        // Configuration for routing
-        "router": {
-            "mode": "hashs" //"html5" or "hashs"
-        },
 
         // Configurations for ressources loading
         "ressources": {
@@ -1287,7 +1283,7 @@ define('yapp/core/class',[
      *  yapp.Class is the base for objects in yapp
      */
     var Class = function(options) {
-        this.options = options || {};
+        this.options = _.extend({}, options || {});
         _.defaults(this.options, this.defaults);
         this.cid = _.uniqueId('class');
         this.initialize.apply(this, arguments);
@@ -1350,7 +1346,7 @@ define('yapp/core/class',[
          *  the callback to all events fired.
          */
         on: function(name, callback, context) {
-            if (!this.multipleEvents(this, 'on', name, [callback, context]) || !callback) return this;
+            if (!this.multipleEvents('on', name, [callback, context]) || !callback) return this;
             this._events || (this._events = {});
             var events = this._events[name] || (this._events[name] = []);
             events.push({
@@ -1366,7 +1362,7 @@ define('yapp/core/class',[
          *  the callback is invoked, it will be removed.
          */
         once: function(name, callback, context) {
-            if (!this.multipleEvents(this, 'once', name, [callback, context]) || !callback) return this;
+            if (!this.multipleEvents('once', name, [callback, context]) || !callback) return this;
             var self = this;
             var once = _.once(function() {
                 self.off(name, once);
@@ -1428,7 +1424,7 @@ define('yapp/core/class',[
         },
         trigger: function(name) {
             var args = Array.prototype.slice.call(arguments, 0);
-            if (!this.multipleEvents(this, 'trigger', name, args)) return this;
+            if (!this.multipleEvents('trigger', name, args)) return this;
             _.each(name.split(":"), function(part, n, parts) {
                 var newname = parts.slice(0, n+1).join(":");
                 args[0] = newname;
@@ -10354,7 +10350,9 @@ define('yapp/utils/logger',[
          */
         printLog: function(type) {
             var args = Array.prototype.slice.call(arguments, 1);
-            if (this.logLevel(type) < this.logLevel(configs.logLevel)) {
+            var level = configs.logLevels[this.namespace] || configs.logLevel;
+
+            if (this.logLevel(type) < this.logLevel(level)) {
                 return this;
             }
             args.splice(0, 0, "[" + this.namespace + "] [" + type + "]");
@@ -10470,14 +10468,11 @@ define('yapp/utils/urls',[
             base = base || "";
             args = args || {};
             var url = route;
+            url = url.replace("#!", "#").replace("#", "");
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });
-            if (configs.router.mode == "hashs") {
-                return Urls.base(base) + "#/"+url;
-            } else {
-                return Urls.base(base, url);
-            }
+            return "#/"+url;
         },
 
         /*
@@ -10486,6 +10481,16 @@ define('yapp/utils/urls',[
          */
         extendRules: function(rules) {
             _.extend(Urls, rules);
+        },
+
+        /*
+         *  Redirect the user
+         */ 
+        redirect: function(route, rule) {
+            if (rule == null) rule = "base";
+            if (_.isString(rule)) rule = Urls[rule];
+            route = rule(route);
+            window.location.href = route;
         }
     };
 
@@ -10596,6 +10601,22 @@ define('yapp/utils/cache',[
 
     var Cache = {
         /*
+         *  Initialize the cache : delete all the "old-version" values
+         */
+        init: function() {
+            var s = Storage.storage();
+            if (s == null) {
+                return false;
+            }
+            var r = new RegExp("/^(cache_"+configs.revision+")/");
+            Object.keys(s).forEach(function(key){
+                   if (/^(cache_)/.test(key) && r.test(key) == false) {
+                       s.removeItem(key);
+                   }
+            });
+        },
+
+        /*
          *  Transform a key in cache key
          *  @namespace : cat of the key
          *  @key : key of the data to cache
@@ -10690,12 +10711,14 @@ define('yapp/utils/cache',[
         }
     };
 
+    Cache.init();
+
     return Cache;
 });
 define('yapp/utils/deferred',[
     "Underscore",
     "yapp/core/class",
-], function(_, Class) {
+], function(_, Class) {    
     /* 
     * Deferred is an implementation of the Promise pattern, which allows
     * for asynchronous events to be handled in a unified way across an
@@ -10783,6 +10806,8 @@ define('yapp/utils/deferred',[
                         method = cb.shift()
                     }
                 } catch(e) {
+                    console.trace();
+                    console.error("Error in Deferred callbacks (file: "+e.fileName+" line: "+e.lineNumber+") : " + e.name + " : ", e.message, e.stack, e);
                     state && (method = cb.shift()), this.err = state = 1
                 }
             }
@@ -11076,7 +11101,8 @@ define('yapp/utils/i18n',[
             return Deferred.when.apply(Deferred, d);
         }
         return Ressources.load("i18n", lng).then(function(content) {
-            if (_.isString(content)) content = JSON.parse(content);
+            // use "eval" here because content is from a trusted source
+            if (_.isString(content)) content = eval('(' + content + ')');//JSON.parse(content);
             I18n.translations[lng] = content;
         }, function() {
             logging.error("Error loading locale "+lng);
@@ -11181,7 +11207,37 @@ define('yapp/utils/template',[
                 "yapp": {
                     "configs": configs,
                     "urls": Urls,
-                    "i18n": I18n
+                    "i18n": I18n,
+                    "utils": {
+                        "timeago": function(timestamp) {
+                            var current_timestamp = (new Date()).getTime() / 1000;
+                            var distance_in_minutes = Math.round((current_timestamp - timestamp)/60);
+
+                            var msgid = "error";
+                            
+                            if (distance_in_minutes < 0) {
+                                distance_in_minutes = 0;
+                            }
+                            
+                            if (distance_in_minutes < 1051199) { msgid = 'yearago'; }
+                            if (distance_in_minutes < 525960) { msgid =  'months'; }
+                            if (distance_in_minutes < 86400) { msgid = 'month'; }
+                            if (distance_in_minutes < 43200) { msgid =  'days'; }
+                            if (distance_in_minutes < 2880) { msgid = 'day'; }
+                            if (distance_in_minutes < 1440) { msgid = 'hours'; }
+                            if (distance_in_minutes < 90) { msgid = 'hour'; }
+                            if (distance_in_minutes < 45) { msgid =  'minutes'; }
+                            if (distance_in_minutes == 1) { msgid = 'minute'; }
+                            if (distance_in_minutes == 0) { msgid = 'seconds'; }
+
+                            return I18n.t("yapp.utils.timeago."+msgid, {
+                                "months": Math.floor(distance_in_minutes / 43200),
+                                "days": Math.floor(distance_in_minutes / 1440),
+                                "hours": Math.round(distance_in_minutes / 60),
+                                "minutes": distance_in_minutes
+                            });
+                        }
+                    }
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
@@ -11197,7 +11253,7 @@ define('yapp/utils/template',[
                             return "";
                         }
 
-                        var view = new Template.components[cid].Class(args || {});
+                        var view = new Template.components[cid].Class(args || {}, self.view);
                         
                         self.view.addComponent(name, view);
 
@@ -11252,6 +11308,7 @@ define('yapp/utils/template',[
             if (this.view != null) el = el || this.view.$el;
             this.on("loaded", function() {
                 if (this.content == null) return;
+                if (this.view != null) this.view.clearComponents();
                 el.html(this.generate(this.args));
                 if (this.view != null) this.view.renderComponents();
                 this.trigger("updated");
@@ -11303,8 +11360,8 @@ define('yapp/core/view',[
         /*
          *  Initialize a view
          */
-        initialize: function() {
-            View.__super__.initialize.apply(this, arguments);
+        initialize: function(options, parent) {
+            View.__super__.initialize.call(this, options);
             this._ensureElement();
             this.delegateEvents();
 
@@ -11312,7 +11369,10 @@ define('yapp/core/view',[
             this.components = {};
 
             // parent view
-            this.parent = null;
+            this.parent = parent || this;
+
+            // Model
+            this.model = this.options.model || null;
 
             // View state
             this.is_ready = false;
@@ -11326,8 +11386,8 @@ define('yapp/core/view',[
          *  Remove the view from the DOM
          */
         remove: function() {
+            this.undelegateEvents();
             this.$el.remove();
-            this.stopListening();
             return this;
         },
 
@@ -11474,15 +11534,19 @@ define('yapp/core/view',[
 
             if (_.size(this.components) == 0) { this.ready(); return this; }
 
-            var addComponent = function(component) {
-                this.$("component[data-component='"+component.cid+"']").first().empty().append(component.$el);
-                component.on("ready", _.once(componentRendered));
+            var addComponent = _.bind(function(component) {
+                this.$("component[data-component='"+component.cid+"']").empty().append(component.$el);
+                var readyCallback = _.once(componentRendered);
+                component.on("ready", readyCallback);
+                if (component.is_ready) {
+                    readyCallback();
+                }
                 component.render();
-            };
+            }, this);
             
             _.each(this.components, function(value, cid) {
                 if (_.isArray(value)) {
-                    _.each(value, _.bind(addComponent, this))
+                    _.each(value, addComponent);
                 } else {
                     addComponent(value);
                 }
@@ -11499,7 +11563,7 @@ define('yapp/core/view',[
          */
         renderTemplate: function(tplname, tplargs) {
             tplname = tplname || this.template;
-            tplargs = tplargs || this.templateContext();
+            tplargs = tplargs || _.result(this, "templateContext");
 
             var tpl = new Template({
                 template: tplname,
@@ -11580,6 +11644,7 @@ define('yapp/core/head',[
             }
             if (value != null) {
                 mt.attr('content', value);
+                return this;
             } else {
                 return mt.attr('content');
             }
@@ -11630,6 +11695,28 @@ define('yapp/core/head',[
             }
         },
 
+        /*
+         *  Set or get description
+         *  @value : new value for description
+         */
+        description: function(value) {
+            return this.meta("description", value);
+        },     
+
+        /*
+         *  Active or desactive crawling
+         *  @index : indexation state (true or false)
+         *  @follow : follow state (true or false) (default as index)
+         */
+        setCrawling: function(index, follow) {
+            if (_.isNull(follow)) follow = index;
+            var value = "";
+            value = index ? "index" : "noindex";
+            value =  value + "," + (follow ? "follow" : "nofollow");
+            this.meta("robots", value);
+            return this;
+        },
+
         render: function() {
             return this;
         }
@@ -11643,7 +11730,8 @@ define('yapp/core/history',[
     "yapp/configs",
     "yapp/core/class",
     "yapp/utils/logger",
-], function($, _, configs, Class, Logger) {
+    "yapp/utils/urls",
+], function($, _, configs, Class, Logger, Urls) {
 
     var logging = Logger.addNamespace("history");
 
@@ -11685,24 +11773,8 @@ define('yapp/core/history',[
             var $window = $(window);
             var rootUrl = document.location.protocol+'//'+(document.location.hostname||document.location.host);
 
-            logging.log("start routing history mode=", configs.router.mode);
-
-            if (configs.router.mode == "html5") {
-                // Bind history changement
-                $window.bind('popstate', _.bind(this._handleCurrentState, this));
-
-                // Bind links click
-                $('body').on('click.link.history', 'a[href^="/"],a[href^="'+rootUrl+'"]', function (e) {
-                    e.preventDefault();
-                    var $a = $(e.currentTarget);
-                    self.navigate($a.attr("href"), "get");
-                });
-
-                // Bind form submit
-            }  else if (configs.router.mode == "hashs") {
-                $window.bind('hashchange', _.bind(this._handleCurrentState, this));
-            }
-            
+            logging.log("start routing history");
+            $window.bind('hashchange', _.bind(this._handleCurrentState, this));
 
             this._handleCurrentState();
             this.started = true;
@@ -11713,25 +11785,10 @@ define('yapp/core/history',[
         /*
          *  Navigate
          */
-        navigate: function(url, mode, data, options) {
-            mode = mode || "get";
-            data = data || {};
-
-            var state = {
-                mode: mode,
-                data: data 
-            };
-
-            logging.log("navigate to ", url, state);
-
-            if (configs.router.mode == "html5") {
-                window.history.pushState(state, url, url);
-                this._handleState(url, state);
-            } else {
-                window.location.hash = url;
-            } 
-            
-            return this;
+        navigate: function(route, args) {
+            url = Urls.route(route, args);
+            logging.log("navigate to ", url);
+            window.location.hash = url;
         },
 
         /*
@@ -11739,7 +11796,7 @@ define('yapp/core/history',[
          *  @url : url of the state
          *  @state : state object
          */
-        _handleState: function(url, state) {
+        _handleState: function(url) {
             if (url == null) return this;
             if (url.length > 0 && url[0] == "/") {
                 url = url.replace("/", "");
@@ -11750,7 +11807,7 @@ define('yapp/core/history',[
                     return true;
                 }
             });
-            logging.log("handle state ", url, state, matched);
+            logging.log("handle state ", url, matched != null);
             return this;
         },
 
@@ -11758,14 +11815,8 @@ define('yapp/core/history',[
          *  Handle current page state
          */
         _handleCurrentState: function() {
-            var url = window.location.pathname;
-            if (configs.router.mode == "hashs") url = window.location.hash.replace("#", "");
-
-            var state = window.history.state || {
-                mode: "get",
-                data: {}
-            };
-            return this._handleState(url, state);
+            var url = window.location.hash.replace("#", "");
+            return this._handleState(url);
         },
     }));
 
@@ -11815,11 +11866,11 @@ define('yapp/core/router',[
                 return this;
             }
 
-            if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+            if (!_.isRegExp(route)) route = Router.routeToRegExp(route);
             logging.log("add route ", name, route);
 
             History.route(route, _.bind(function(url) {
-                var args = this._extractParameters(route, url);
+                var args = Router.extractParameters(route, url);
                 logging.log("route callback ", url, name, args);
                 callback && callback.apply(this, args);
                 this.trigger.apply(this, ['route:' + name].concat(args));
@@ -11844,13 +11895,12 @@ define('yapp/core/router',[
             History.navigate.apply(History, arguments);
             return this;
         },
-
-        
+    }, {
         /*
          *  Convert a route string into a regular expression, suitable for matching
          *  against the current location hash.
          */
-        _routeToRegExp: function(route) {
+        routeToRegExp: function(route) {
             route = route.replace(escapeRegExp, '\\$&')
                             .replace(namedParam, '([^\/]+)')
                             .replace(splatParam, '(.*?)');
@@ -11861,7 +11911,7 @@ define('yapp/core/router',[
          *  Given a route, and a URL fragment that it matches, return the array of
          *  extracted parameters.
          */
-        _extractParameters: function(route, fragment) {
+        extractParameters: function(route, fragment) {
             return route.exec(fragment).slice(1);
         }
     });
@@ -11944,6 +11994,7 @@ define('yapp/core/application',[
          *  @name : name of the method for the route callback
          */
         route: function(route, name) {
+            var handler;
             if (_.isObject(route)) {
                 _.each(route, function(callback, route) {
                     this.route(route, callback);
@@ -11951,8 +12002,17 @@ define('yapp/core/application',[
                 return this;
             }
 
+            handler = this[name];
+            if (handler == null) {
+                handler = function() {
+                    var args = _.values(arguments);
+                    args.unshift('route:'+name);
+                    this.trigger.apply(this, args);
+                };
+            }
+
             if (!this.router) this.router = new this.Router();
-            this.router.route(route, name, _.bind(this[name], this));
+            this.router.route(route, name, _.bind(handler, this));
             return this;
         }
     });
@@ -12094,6 +12154,7 @@ define('yapp/core/model',[
                 _.each(diffs, function(diff, tag) {
                     this.trigger("change:"+tag, diff);
                 }, this);
+                this.trigger("set", diffs);
             }
 
             return this;
@@ -12216,13 +12277,23 @@ define('yapp/core/collection',[
         // Model for this colleciton
         model: Model,
 
+        // Defaults settings
+        defaults: {
+            loader: null,   // Load for infinite collections
+            loaderArgs: [], // Arguments for the loader
+            startIndex: 0,  // Start index for infinite laoding
+            limit: 10,      // Limit for infinite loading
+            models: []
+        },
+
         /*
          *  Initialize the colleciton
          */
-        initialize: function(models, options) {
+        initialize: function(options) {
             Collection.__super__.initialize.call(this, options);
             this.models = [];
-            this.reset(models || [], {silent: true});
+            this._totalCount = null;
+            this.reset(this.options.models || [], {silent: true});
             return this;
         },
 
@@ -12283,6 +12354,13 @@ define('yapp/core/collection',[
          *  Reset the collection
          */
         reset: function(models, options) {
+            // Manage {list:[], n:0} for infinite list
+            if (_.size(models) == 2
+            && models.list != null && models.n != null) {
+                this._totalCount = models.n;
+                return this.reset(models.list, options);
+            }
+            this.startIndex = 0;
             this.models = [];
             this.add(models, _.extend({silent: true}, options || {}));
             options = _.defaults(options || {}, {
@@ -12304,6 +12382,13 @@ define('yapp/core/collection',[
                     this.add(m, options);
                 }, this);
                 return this;
+            }
+
+            // Manage {list:[], n:0} for infinite list
+            if (_.size(model) == 2
+            && model.list != null && model.n != null) {
+                this._totalCount = model.n;
+                return this.add(model.list, options);
             }
 
             options = _.defaults(options || {}, {
@@ -12422,6 +12507,44 @@ define('yapp/core/collection',[
                 this.remove(model, options);
             }
             this.trigger.apply(this, arguments);
+        },
+
+        /*
+         *  Return number of elements in collections
+         */
+        count: function() {
+            return _.size(this.models);
+        },
+
+        /*
+         *  Return the total number of elements in the source (for exemple in the database)
+         */
+        totalCount: function() {
+            return this._totalCount || this.count();
+        },
+
+        /*
+         *  Get more elements from an infinite collection
+         */
+        hasMore: function() {
+            return this.totalCount() - this.count();
+        },
+
+        /*
+         *  Get more elements from an infinite collection
+         */
+        getMore: function() {
+            var d, self = this;
+
+            if (this.options.loader == null) return this;
+
+            if (this._totalCount == null || this.hasMore() > 0) {
+                this.options.startIndex = this.options.startIndex || 0;
+                d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
+                d.done(function() {
+                    self.options.startIndex = self.options.startIndex + self.options.limit
+                });
+            }
         }
     });
 
@@ -12440,6 +12563,300 @@ define('yapp/core/collection',[
     });
 
     return Collection;
+});
+define('yapp/core/list',[
+    "Underscore",
+    "yapp/core/view",
+    "yapp/utils/logger",
+    "yapp/core/collection"
+], function(_, View, Logger, Collection) {
+
+    var logging = Logger.addNamespace("lists");
+
+    var ItemView = View.extend({
+        tagName: "li",
+        
+        initialize: function() {
+            ItemView.__super__.initialize.apply(this, arguments);
+            this.collection = this.options.collection;
+            this.list = this.options.list;
+            return this;
+        }
+    });
+
+
+    var ListView = View.extend({
+        tagName: "ul",
+        className: "",
+        Item: ItemView,
+        Collection: Collection,
+        defaults: {
+            collection: {},
+            searchAttribute: null,
+            displayEmptyList: true,
+            displayHasMore: true,
+            loadAtInit: true
+        },
+        styles: {
+            "default": ""
+        },
+        events: {
+            "click *[data-list-action='showmore']": "getItems"
+        },
+        
+        /*
+         *  Initialize the list view
+         */
+        initialize: function() {
+            ListView.__super__.initialize.apply(this, arguments);
+            this.setRenderStyle("default");
+            this.items = {};
+            if (this.options.collections instanceof Collection) {
+                this.collection = this.options.collection;
+            } else {
+                this.collection = new this.Collection(this.options.collection);
+            }
+            this.collection.on("reset", function() {
+                this.resetModels();
+            }, this);
+            this.collection.on("add", function(elementmodel) {
+                this.addModel(elementmodel);
+            }, this);
+            this.collection.on("remove", function(elementmodel) {
+                this.removeModel(elementmodel)
+            }, this);
+
+            this.resetModels({
+                silent: true
+            });
+
+            if (this.options.loadAtInit) this.getItems();
+
+            return this.render();
+        },
+
+        /*
+         *  Add a model to the list
+         *  @model : model to add
+         *  @options
+         */
+        addModel: function(model, options) {
+            var item, tag;
+
+            // Define options
+            options = _.defaults(options || {}, {
+                silent: false,
+                render: true,
+                at: _.size(this.items),
+            });
+            item = new this.Item({
+                "model": model,
+                "list": this,
+                "collection": this.collection
+            });
+            model.on("change", function() {
+                item.render();
+            });
+            item.render();
+            tag = this.Item.prototype.tagName;
+
+            if (options.at > 0) {
+                this.$(tag).eq(options.at-1).after(item.$el);
+            } else {
+                this.$el.prepend(item.$el);
+            }
+            
+            this.items[model.cid] = item;
+
+            if (!options.silent) this.trigger("change:add", model);
+            if (options.render) this.render();
+
+            return this;
+        },
+
+        /*
+         *  Remove a model from the list
+         *  @model : model to remove
+         *  @options
+         */
+        removeModel: function(model, options) {
+            // Define options
+            options = _.defaults(options || {}, {
+                silent: false,
+                render: true
+            });
+            if (this.items[model.cid] == null) return this;
+
+            this.items[model.cid].$el.remove();
+            this.items[model.cid] = null;
+            delete this.items[model.cid];
+
+            if (!options.silent) this.trigger("change:remove", model);
+            if (options.render) this.render();
+
+            return this;
+        },
+
+        /*
+         *  Reset models from the collection
+         */
+        resetModels: function(options) {
+            // Define options
+            options = _.defaults(options || {}, {
+                silent: false,
+                render: true
+            });
+
+            _.each(this.items, function(item) {
+                this.removeModel(item.model, {
+                    silent: true,
+                    render: false
+                });
+            }, this);
+            this.items = {};
+
+            // add new models
+            this.collection.forEach(function(model) {
+                this.addModel(model, {
+                    silent: true,
+                    render: false
+                });
+            }, this);
+
+            if (!options.silent) this.trigger("change:reset");
+            if (options.render) this.render();
+            return this;
+        },
+
+        /*
+         * Change render style
+         * @style style to apply
+         */
+        setRenderStyle: function(style) {
+            var c = this.styles[style];
+            if (c != null) {
+                this.$el.attr("class", this.className);
+                this.$el.addClass(c);
+                this.currentStyle = style;
+            }
+            return this;
+        },
+
+        /*
+         *  Return number of elements in collections
+         */
+        count: function() {
+            return this.collection.count();
+        },
+
+        /*
+         *  Return the total number of elements in the source (for exemple in the database)
+         */
+        totalCount: function() {
+            return this.collection.totalCount();
+        },
+
+        /*
+         *  Return > 0 if has more elements in the source
+         */
+        hasMore: function() {
+            return this.collection.hasMore();
+        },
+
+        /*
+         *  Load more elements from the source
+         */
+        getItems: function() {
+            this.collection.getMore();
+            return this;
+        },
+
+        /*
+         *  Filter the items list
+         *  @filt : function to apply to each model
+         *  @context
+         */
+        filter: function(filt, context) {
+            var n = 0;
+            if (_.isFunction(filt) == false) {
+                return n;
+            }
+            filt = _.bind(filt, context);
+            _.each(this.items, function(item) {
+                if (!filt(item.model, item)) {
+                    item.$el.hide();
+                } else {
+                    item.$el.show();
+                    n = n + 1;
+                }
+            });
+            return n;
+        },
+
+        /*
+         * Search in the items
+         * @query search terms
+         * @options
+         */
+        search: function(query, options) {
+            var nresults = 0, content;
+
+            // Define options
+            options = _.defaults(options || {}, {
+                silent: false,
+                caseSensitive: false
+            });
+
+            query = options.caseSensitive ? query : query.toLowerCase();
+
+            nresults = this.filter(function(model, item) {
+                content = this.options.searchAttribute != null ? model.get(this.searchAttribute, "") : item.$el.text();
+                content = options.caseSensitive ? content : content.toLowerCase();
+                return content.search(query) >= 0;
+            }, this);
+
+            if (!options.silent) this.trigger("search", {
+                query: query,
+                n: nresults
+            });
+
+            return this;
+        },
+
+        /*
+         *  Display empty list message
+         */
+        displayEmptyList: function() {
+            return this;
+        },
+
+        /*
+         *  Display has more button message
+         */
+        displayHasMore: function() {
+            var btn = $("<div>", {
+                "class": "alert yapp-list-message yapp-list-message-more",
+                "data-list-action": "showmore",
+                "text": this.hasMore(),
+            });
+            this.$el.append(btn);
+            return this;
+        },
+
+        /*
+         *  Render the list
+         */
+        render: function() {
+            this.$(".yapp-list-message").remove();
+            if (this.count() == 0 && this.options.displayEmptyList) this.displayEmptyList();
+            if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
+            return this.ready();
+        }
+    }, {
+        Item: ItemView
+    });
+
+    return ListView;
 });
 define('yapp/vendors/underscore-more',[
     "Underscore"
@@ -12550,9 +12967,11 @@ define('yapp/yapp',[
     "yapp/core/view",
     "yapp/core/application",
     "yapp/core/head",
+    "yapp/core/history",
     "yapp/core/router",
     "yapp/core/model",
     "yapp/core/collection",
+    "yapp/core/list",
 
     "yapp/utils/logger",
     "yapp/utils/requests",
@@ -12566,7 +12985,7 @@ define('yapp/yapp',[
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
-Class, View, Application, Head, Router, Model, Collection,
+Class, View, Application, Head, History, Router, Model, Collection, ListView,
 Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, I18n) {
     return {
         configs: configs,
@@ -12577,6 +12996,8 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, I18n) {
         Router: Router,
         Model: Model,
         Collection: Collection,
+        List: ListView,
+        History: History,
 
         Logger: Logger,
         Storage: Storage,

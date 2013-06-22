@@ -14,8 +14,8 @@ define([
         /*
          *  Initialize a view
          */
-        initialize: function() {
-            View.__super__.initialize.apply(this, arguments);
+        initialize: function(options, parent) {
+            View.__super__.initialize.call(this, options);
             this._ensureElement();
             this.delegateEvents();
 
@@ -23,7 +23,10 @@ define([
             this.components = {};
 
             // parent view
-            this.parent = null;
+            this.parent = parent || this;
+
+            // Model
+            this.model = this.options.model || null;
 
             // View state
             this.is_ready = false;
@@ -37,8 +40,8 @@ define([
          *  Remove the view from the DOM
          */
         remove: function() {
+            this.undelegateEvents();
             this.$el.remove();
-            this.stopListening();
             return this;
         },
 
@@ -185,15 +188,19 @@ define([
 
             if (_.size(this.components) == 0) { this.ready(); return this; }
 
-            var addComponent = function(component) {
-                this.$("component[data-component='"+component.cid+"']").first().empty().append(component.$el);
-                component.on("ready", _.once(componentRendered));
+            var addComponent = _.bind(function(component) {
+                this.$("component[data-component='"+component.cid+"']").empty().append(component.$el);
+                var readyCallback = _.once(componentRendered);
+                component.on("ready", readyCallback);
+                if (component.is_ready) {
+                    readyCallback();
+                }
                 component.render();
-            };
+            }, this);
             
             _.each(this.components, function(value, cid) {
                 if (_.isArray(value)) {
-                    _.each(value, _.bind(addComponent, this))
+                    _.each(value, addComponent);
                 } else {
                     addComponent(value);
                 }
@@ -210,7 +217,7 @@ define([
          */
         renderTemplate: function(tplname, tplargs) {
             tplname = tplname || this.template;
-            tplargs = tplargs || this.templateContext();
+            tplargs = tplargs || _.result(this, "templateContext");
 
             var tpl = new Template({
                 template: tplname,

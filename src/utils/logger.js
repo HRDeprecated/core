@@ -30,7 +30,9 @@ define([
          */
         printLog: function(type) {
             var args = Array.prototype.slice.call(arguments, 1);
-            if (this.logLevel(type) < this.logLevel(configs.logLevel)) {
+            var level = configs.logLevels[this.namespace] || configs.logLevel;
+
+            if (this.logLevel(type) < this.logLevel(level)) {
                 return this;
             }
             args.splice(0, 0, "[" + this.namespace + "] [" + type + "]");

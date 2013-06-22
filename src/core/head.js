@@ -47,6 +47,7 @@ define([
             }
             if (value != null) {
                 mt.attr('content', value);
+                return this;
             } else {
                 return mt.attr('content');
             }
@@ -95,6 +96,28 @@ define([
             } else {
                 return mt.attr('content');
             }
+        },
+
+        /*
+         *  Set or get description
+         *  @value : new value for description
+         */
+        description: function(value) {
+            return this.meta("description", value);
+        },     
+
+        /*
+         *  Active or desactive crawling
+         *  @index : indexation state (true or false)
+         *  @follow : follow state (true or false) (default as index)
+         */
+        setCrawling: function(index, follow) {
+            if (_.isNull(follow)) follow = index;
+            var value = "";
+            value = index ? "index" : "noindex";
+            value =  value + "," + (follow ? "follow" : "nofollow");
+            this.meta("robots", value);
+            return this;
         },
 
         render: function() {

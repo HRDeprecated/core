@@ -1,7 +1,7 @@
 define([
     "Underscore",
     "yapp/core/class",
-], function(_, Class) {
+], function(_, Class) {    
     /* 
     * Deferred is an implementation of the Promise pattern, which allows
     * for asynchronous events to be handled in a unified way across an
@@ -89,6 +89,8 @@ define([
                         method = cb.shift()
                     }
                 } catch(e) {
+                    console.trace();
+                    console.error("Error in Deferred callbacks (file: "+e.fileName+" line: "+e.lineNumber+") : " + e.name + " : ", e.message, e.stack, e);
                     state && (method = cb.shift()), this.err = state = 1
                 }
             }
