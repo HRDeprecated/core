@@ -140,6 +140,14 @@ define([
         },
 
         /*
+         *  Destroy the model
+         */
+        destroy: function(options) {
+            this.trigger("destroy", this, this.collection, options);
+            return this;
+        },
+
+        /*
          *  Clear attributes
          */
         clear: function(options) {

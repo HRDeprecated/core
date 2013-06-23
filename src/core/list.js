@@ -99,7 +99,6 @@ define([
             } else {
                 this.$el.prepend(item.$el);
             }
-            
             this.items[model.cid] = item;
 
             if (!options.silent) this.trigger("change:add", model);
@@ -121,7 +120,7 @@ define([
             });
             if (this.items[model.cid] == null) return this;
 
-            this.items[model.cid].$el.remove();
+            this.items[model.cid].remove();
             this.items[model.cid] = null;
             delete this.items[model.cid];
 
@@ -173,6 +172,14 @@ define([
                 this.$el.addClass(c);
                 this.currentStyle = style;
             }
+            return this;
+        },
+
+        /*
+         *  Refresh the list
+         */
+        refresh: function() {
+            this.collection.refresh();
             return this;
         },
 

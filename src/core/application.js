@@ -75,7 +75,7 @@ define([
          */
         route: function(route, name) {
             var handler;
-            if (_.isObject(route)) {
+            if (_.isObject(route) && !_.isRegExp(route)) {
                 _.each(route, function(callback, route) {
                     this.route(route, callback);
                 }, this);

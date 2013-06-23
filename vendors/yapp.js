@@ -11995,7 +11995,7 @@ define('yapp/core/application',[
          */
         route: function(route, name) {
             var handler;
-            if (_.isObject(route)) {
+            if (_.isObject(route) && !_.isRegExp(route)) {
                 _.each(route, function(callback, route) {
                     this.route(route, callback);
                 }, this);
@@ -12157,6 +12157,14 @@ define('yapp/core/model',[
                 this.trigger("set", diffs);
             }
 
+            return this;
+        },
+
+        /*
+         *  Destroy the model
+         */
+        destroy: function(options) {
+            this.trigger("destroy", this, this.collection, options);
             return this;
         },
 
@@ -12440,6 +12448,7 @@ define('yapp/core/collection',[
 
             if (options.silent) return this;
             options.index = index;
+            if (this._totalCount != null) this._totalCount = _.max([0, this._totalCount - 1]);
             this.trigger('remove', model, this, options);
             return this;
         },
@@ -12545,7 +12554,17 @@ define('yapp/core/collection',[
                     self.options.startIndex = self.options.startIndex + self.options.limit
                 });
             }
-        }
+        },
+
+        /*
+         *  Refresh the list
+         */
+        refresh: function() {
+            this.options.startIndex = 0;
+            this.reset([]);
+            this.getMore();
+            return this;
+        },
     });
 
     // Underscore methods that we want to implement on the Collection.
@@ -12665,7 +12684,6 @@ define('yapp/core/list',[
             } else {
                 this.$el.prepend(item.$el);
             }
-            
             this.items[model.cid] = item;
 
             if (!options.silent) this.trigger("change:add", model);
@@ -12687,7 +12705,7 @@ define('yapp/core/list',[
             });
             if (this.items[model.cid] == null) return this;
 
-            this.items[model.cid].$el.remove();
+            this.items[model.cid].remove();
             this.items[model.cid] = null;
             delete this.items[model.cid];
 
@@ -12739,6 +12757,14 @@ define('yapp/core/list',[
                 this.$el.addClass(c);
                 this.currentStyle = style;
             }
+            return this;
+        },
+
+        /*
+         *  Refresh the list
+         */
+        refresh: function() {
+            this.collection.refresh();
             return this;
         },
 

@@ -173,6 +173,7 @@ define([
 
             if (options.silent) return this;
             options.index = index;
+            if (this._totalCount != null) this._totalCount = _.max([0, this._totalCount - 1]);
             this.trigger('remove', model, this, options);
             return this;
         },
@@ -278,7 +279,17 @@ define([
                     self.options.startIndex = self.options.startIndex + self.options.limit
                 });
             }
-        }
+        },
+
+        /*
+         *  Refresh the list
+         */
+        refresh: function() {
+            this.options.startIndex = 0;
+            this.reset([]);
+            this.getMore();
+            return this;
+        },
     });
 
     // Underscore methods that we want to implement on the Collection.
