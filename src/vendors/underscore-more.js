@@ -91,12 +91,20 @@ define([
         return finalObj;
     };
 
+    sum = function(obj) {
+      if (!$.isArray(obj) || obj.length == 0) return 0;
+      return _.reduce(obj, function(sum, n) {
+        return sum += n;
+      });
+    };
+
     _.mixin({
         deepClone: deepClone,
         isBasicObject: isBasicObject,
         basicObjects: basicObjects,
         arrays: arrays,
-        deepExtend: deepExtend
+        deepExtend: deepExtend,
+        sum: sum
     });
 
     return _;

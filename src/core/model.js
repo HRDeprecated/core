@@ -11,8 +11,7 @@ define([
          *  @constructor : constructor for the Model to join
          *  @attrvalue : base value of the attribute replaced by the joint
          */
-        initialize: function(parent, constructor, attrvalue, options) {
-            Joint.__super__.initialize.call(this, options);
+        initialize: function(options, parent, constructor, attrvalue) {
             this.parent = parent;
             this.constructor = constructor;
             this.model = this.constructor(this.parent);
@@ -31,13 +30,11 @@ define([
         /*
          *  Initialize the model
          */
-        initialize: function(attributes, options) {
-            options = options || {};
-            Model.__super__.initialize.call(this, options);
+        initialize: function(options, attributes) {
             attributes = attributes || {};
             attributes = _.deepExtend({}, _.result(this, "defaults"), attributes);
 
-            this.collection = options.collection;
+            this.collection = this.options.collection;
             this.joints_values = {};
             this.attributes = {};
             this.set(attributes, {silent: true})
@@ -184,7 +181,7 @@ define([
 
                 if (this.joints_values[tag] == null
                 || this.joints_values[tag].value != currentvalue) {
-                    this.joints_values[tag] = new Joint(this, constructor, currentvalue);
+                    this.joints_values[tag] = new Joint({}, this, constructor, currentvalue);
                 }
             }, this);
         },

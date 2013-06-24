@@ -53,8 +53,8 @@ define([
             this.collection.on("reset", function() {
                 this.resetModels();
             }, this);
-            this.collection.on("add", function(elementmodel) {
-                this.addModel(elementmodel);
+            this.collection.on("add", function(elementmodel, collection, options) {
+                this.addModel(elementmodel, options);
             }, this);
             this.collection.on("remove", function(elementmodel) {
                 this.removeModel(elementmodel)

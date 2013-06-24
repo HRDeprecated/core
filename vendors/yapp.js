@@ -12032,8 +12032,7 @@ define('yapp/core/model',[
          *  @constructor : constructor for the Model to join
          *  @attrvalue : base value of the attribute replaced by the joint
          */
-        initialize: function(parent, constructor, attrvalue, options) {
-            Joint.__super__.initialize.call(this, options);
+        initialize: function(options, parent, constructor, attrvalue) {
             this.parent = parent;
             this.constructor = constructor;
             this.model = this.constructor(this.parent);
@@ -12052,13 +12051,11 @@ define('yapp/core/model',[
         /*
          *  Initialize the model
          */
-        initialize: function(attributes, options) {
-            options = options || {};
-            Model.__super__.initialize.call(this, options);
+        initialize: function(options, attributes) {
             attributes = attributes || {};
             attributes = _.deepExtend({}, _.result(this, "defaults"), attributes);
 
-            this.collection = options.collection;
+            this.collection = this.options.collection;
             this.joints_values = {};
             this.attributes = {};
             this.set(attributes, {silent: true})
@@ -12205,7 +12202,7 @@ define('yapp/core/model',[
 
                 if (this.joints_values[tag] == null
                 || this.joints_values[tag].value != currentvalue) {
-                    this.joints_values[tag] = new Joint(this, constructor, currentvalue);
+                    this.joints_values[tag] = new Joint({}, this, constructor, currentvalue);
                 }
             }, this);
         },
@@ -12497,7 +12494,7 @@ define('yapp/core/collection',[
             if (!(model instanceof Model)) {
                 var attrs = model;
                 options.collection = this;
-                model = new this.model(attrs, options);
+                model = new this.model(options, attrs);
             } else if (!model.collection) {
                 model.collection = this;
             }
@@ -12638,8 +12635,8 @@ define('yapp/core/list',[
             this.collection.on("reset", function() {
                 this.resetModels();
             }, this);
-            this.collection.on("add", function(elementmodel) {
-                this.addModel(elementmodel);
+            this.collection.on("add", function(elementmodel, collection, options) {
+                this.addModel(elementmodel, options);
             }, this);
             this.collection.on("remove", function(elementmodel) {
                 this.removeModel(elementmodel)
@@ -12977,12 +12974,20 @@ define('yapp/vendors/underscore-more',[
         return finalObj;
     };
 
+    sum = function(obj) {
+      if (!$.isArray(obj) || obj.length == 0) return 0;
+      return _.reduce(obj, function(sum, n) {
+        return sum += n;
+      });
+    };
+
     _.mixin({
         deepClone: deepClone,
         isBasicObject: isBasicObject,
         basicObjects: basicObjects,
         arrays: arrays,
-        deepExtend: deepExtend
+        deepExtend: deepExtend,
+        sum: sum
     });
 
     return _;

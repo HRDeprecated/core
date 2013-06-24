@@ -222,7 +222,7 @@ define([
             if (!(model instanceof Model)) {
                 var attrs = model;
                 options.collection = this;
-                model = new this.model(attrs, options);
+                model = new this.model(options, attrs);
             } else if (!model.collection) {
                 model.collection = this;
             }
