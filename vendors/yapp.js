@@ -12539,12 +12539,15 @@ define('yapp/core/collection',[
         /*
          *  Get more elements from an infinite collection
          */
-        getMore: function() {
+        getMore: function(options) {
+            options = _.defaults(options || {}, {
+                refresh: false
+            });
             var d, self = this;
 
             if (this.options.loader == null) return this;
 
-            if (this._totalCount == null || this.hasMore() > 0) {
+            if (this._totalCount == null || this.hasMore() > 0 || options.refresh) {
                 this.options.startIndex = this.options.startIndex || 0;
                 d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
                 d.done(function() {
@@ -12559,7 +12562,9 @@ define('yapp/core/collection',[
         refresh: function() {
             this.options.startIndex = 0;
             this.reset([]);
-            this.getMore();
+            this.getMore({
+                refresh: true
+            });
             return this;
         },
     });
