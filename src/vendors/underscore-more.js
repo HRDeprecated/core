@@ -1,7 +1,8 @@
 define([
-    "Underscore"
-], function(_) {
-    var arrays, basicObjects, deepClone, deepExtend, deepExtendCouple, isBasicObject,
+    "Underscore",
+    "jQuery",
+], function(_, $) {
+    var arrays, basicObjects, deepClone, deepExtend, deepExtendCouple, isBasicObject, sum, removeHtml,
     __slice = [].slice;
 
     deepClone = function(obj) {
@@ -98,13 +99,18 @@ define([
       });
     };
 
+    removeHtml = function(t) {
+        return $("<div>").html(t).text();
+    },
+
     _.mixin({
         deepClone: deepClone,
         isBasicObject: isBasicObject,
         basicObjects: basicObjects,
         arrays: arrays,
         deepExtend: deepExtend,
-        sum: sum
+        sum: sum,
+        removeHtml: removeHtml
     });
 
     return _;

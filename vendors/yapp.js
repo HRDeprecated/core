@@ -12964,7 +12964,6 @@ define('yapp/core/list',[
         render: function() {
             this.$(".yapp-list-message").remove();
             if (this.count() == 0 && this.options.displayEmptyList) {
-                console.log("display empty list on ", this)
                 var el = this.displayEmptyList();
                 $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
             }
@@ -12978,9 +12977,10 @@ define('yapp/core/list',[
     return ListView;
 });
 define('yapp/vendors/underscore-more',[
-    "Underscore"
-], function(_) {
-    var arrays, basicObjects, deepClone, deepExtend, deepExtendCouple, isBasicObject,
+    "Underscore",
+    "jQuery",
+], function(_, $) {
+    var arrays, basicObjects, deepClone, deepExtend, deepExtendCouple, isBasicObject, sum, removeHtml,
     __slice = [].slice;
 
     deepClone = function(obj) {
@@ -13077,13 +13077,18 @@ define('yapp/vendors/underscore-more',[
       });
     };
 
+    removeHtml = function(t) {
+        return $("<div>").html(t).text();
+    },
+
     _.mixin({
         deepClone: deepClone,
         isBasicObject: isBasicObject,
         basicObjects: basicObjects,
         arrays: arrays,
         deepExtend: deepExtend,
-        sum: sum
+        sum: sum,
+        removeHtml: removeHtml
     });
 
     return _;
