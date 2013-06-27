@@ -12940,7 +12940,9 @@ define('yapp/core/list',[
          *  Display empty list message
          */
         displayEmptyList: function() {
-            return this;
+            return $("<div>", {
+                html: ""
+            });
         },
 
         /*
@@ -12961,7 +12963,11 @@ define('yapp/core/list',[
          */
         render: function() {
             this.$(".yapp-list-message").remove();
-            if (this.count() == 0 && this.options.displayEmptyList) this.displayEmptyList();
+            if (this.count() == 0 && this.options.displayEmptyList) {
+                console.log("display empty list on ", this)
+                var el = this.displayEmptyList();
+                $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+            }
             if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             return this.ready();
         }
