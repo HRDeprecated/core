@@ -57,7 +57,7 @@ define([
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });
-            return "#/"+url;
+            return base+"#/"+url;
         },
 
         /*

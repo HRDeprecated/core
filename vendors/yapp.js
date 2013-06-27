@@ -10472,7 +10472,7 @@ define('yapp/utils/urls',[
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });
-            return "#/"+url;
+            return base+"#/"+url;
         },
 
         /*
@@ -11269,6 +11269,9 @@ define('yapp/utils/template',[
                     "name": this.template,
                     "import": function(name, args) {
                         return this.args.view.component("template", {template: name, args: args}, name);
+                    },
+                    "htmlid": function(h) {
+                        return _.escape(h);
                     }
                 }
             }, Template.options);
@@ -12270,12 +12273,84 @@ define('yapp/core/model',[
 
     return Model;
 });
+define('yapp/utils/queue',[
+    "Underscore",
+    "yapp/core/class",
+    "yapp/utils/deferred"
+], function(_, Class, Deferred) {
+    var Queue = Class.extend({
+        /*
+         *  Initialize
+         */
+        initialize: function() {
+            this.tasks = [];
+            this.empty = true;
+            return this;
+        },
+
+        /*
+         *  Add tasks
+         *  @task : function task
+         *  @args : args to the task
+         *  @context : context to the task
+         */
+        defer: function(task, context, args) {
+            var d = new Deferred();
+            this.tasks.push({
+                "task": task,
+                "args": args || [],
+                "context": context,
+                "result": d
+            });
+            if (this.empty == true) {
+                this.startNext();
+            }
+            return d;
+        },
+
+        /*
+         *  Start a task
+         *  @task task object to start
+         */
+        startTask: function(task) {
+            var d = task.task.apply(task.context, task.args);
+            if (!(d instanceof Deferred)) {
+                task.result.resolve(d)
+                this.startNext();
+            } else {
+                d.then(function() {
+                    task.result.resolve.apply(task.result, arguments);
+                }, function() {
+                    task.result.reject.apply(task.result, arguments);
+                });
+                d.always(_.bind(this.startNext, this));
+            }
+        },
+
+        /*
+         *  Start next task
+         */
+        startNext: function() {
+            if (_.size(this.tasks) > 0) {
+                this.empty = false;
+                var task = this.tasks.shift();
+                this.startTask(task);
+            } else {
+                this.empty = true;
+            } 
+        }
+    });
+
+    return Queue;
+});
 define('yapp/core/collection',[
     "Underscore",
     "yapp/core/class",
     "yapp/core/model",
-    "yapp/utils/logger"
-], function(_, Class, Model, Logger) {
+    "yapp/utils/logger",
+    "yapp/utils/deferred",
+    "yapp/utils/queue"
+], function(_, Class, Model, Logger, Deferred, Queue) {
     var logging = Logger.addNamespace("collections");
 
     var Collection = Class.extend({
@@ -12296,6 +12371,7 @@ define('yapp/core/collection',[
          */
         initialize: function(options) {
             Collection.__super__.initialize.call(this, options);
+            this.queue = new Queue();
             this.models = [];
             this._totalCount = null;
             this.reset(this.options.models || [], {silent: true});
@@ -12540,28 +12616,37 @@ define('yapp/core/collection',[
          *  Get more elements from an infinite collection
          */
         getMore: function(options) {
-            options = _.defaults(options || {}, {
-                refresh: false
-            });
-            var d, self = this;
-
-            if (this.options.loader == null) return this;
-
-            if (this._totalCount == null || this.hasMore() > 0 || options.refresh) {
-                this.options.startIndex = this.options.startIndex || 0;
-                d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
-                d.done(function() {
-                    self.options.startIndex = self.options.startIndex + self.options.limit
+            this.queue.defer(function() {
+                options = _.defaults(options || {}, {
+                    refresh: false
                 });
-            }
+                var d, self = this;
+
+                if (this.options.loader == null) return this;
+                if (options.refresh) {
+                    this.options.startIndex = 0;
+                    this.reset([]);
+                }
+
+                if (this._totalCount == null || this.hasMore() > 0 || options.refresh) {
+                    this.options.startIndex = this.options.startIndex || 0;
+                    d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
+                    d.done(function() {
+                        self.options.startIndex = self.options.startIndex + self.options.limit
+                    });
+                } else {
+                    d = new Deferred();
+                    d.reject();
+                }
+
+                return d;
+            }, this);
         },
 
         /*
          *  Refresh the list
          */
         refresh: function() {
-            this.options.startIndex = 0;
-            this.reset([]);
             this.getMore({
                 refresh: true
             });
@@ -13017,12 +13102,13 @@ define('yapp/yapp',[
     "yapp/utils/template",
     "yapp/utils/ressources",
     "yapp/utils/deferred",
+    "yapp/utils/queue",
     "yapp/utils/i18n",
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, I18n) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n) {
     return {
         configs: configs,
         Class: Class,
@@ -13043,6 +13129,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, I18n) {
         Template: Template,
         Ressources: Ressources,
         Deferred: Deferred,
+        Queue: Queue,
         I18n: I18n,
 
         configure: function(args, options) {

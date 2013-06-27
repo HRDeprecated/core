@@ -97,6 +97,9 @@ define([
                     "name": this.template,
                     "import": function(name, args) {
                         return this.args.view.component("template", {template: name, args: args}, name);
+                    },
+                    "htmlid": function(h) {
+                        return _.escape(h);
                     }
                 }
             }, Template.options);
