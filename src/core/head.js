@@ -13,6 +13,7 @@ define([
             Head.__super__.initialize.apply(this, arguments);
 
             this._title = "";
+            this._preTitle = "";
             this.app = this.options.app;
 
             return this;
@@ -22,6 +23,7 @@ define([
          *  Transform a page name in complete title
          */
         completeTitle: function(title) {
+            if (this._preTitle.length > 0) title = this._preTitle + " " + title;
             if (_.size(title) == 0) return this.app.name;
             return title + " - " + this.app.name;
         },
@@ -96,6 +98,15 @@ define([
             } else {
                 return mt.attr('content');
             }
+        },
+
+        /*
+         *  Set or get the pre-title
+         */
+        preTitle: function(v) {
+            if (v == null) return this._preTitle;
+            this._preTitle = v;
+            this.title(this._title);
         },
 
         /*
