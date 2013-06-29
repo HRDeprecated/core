@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 // Requries
+var _ = require('underscore');
+
 var _cli = require('commander');
 
 var createApp = require('../').app.createApp;
@@ -40,6 +42,15 @@ function main() {
     _cli
     .option('-d, --dir <path>', 'App directory if different from current working directory.');
 
+    var noCommands = _.isEmpty(
+        _.values(
+            _.pick(_cli, ['all', 'build', 'run', 'dev'])
+        )
+    );
+
+    if(noCommands) {
+        return _cli.help();
+    }
 
     _cli
     .version(pkg.version)
