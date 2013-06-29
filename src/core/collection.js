@@ -280,6 +280,7 @@ define([
                 if (this.options.loader == null) return this;
                 if (options.refresh) {
                     this.options.startIndex = 0;
+                    this._totalCount = null;
                     this.reset([]);
                 }
 

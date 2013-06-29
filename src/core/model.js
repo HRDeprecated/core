@@ -160,6 +160,21 @@ define([
         },
 
         /*
+         *  Reset
+         */
+        reset: function(attributes, options) {
+            options = _.defaults(options || {}, {
+                silent: false
+            });
+            this.clear({silent: true});
+            this.set(attributes, options);
+            if (!options.silent) {
+                this.trigger("reset");
+            }
+            return this;
+        },
+
+        /*
          *  Returns `true` if the attribute contains a value that is not null
          *  or undefined.
          */
