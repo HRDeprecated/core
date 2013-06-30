@@ -53,7 +53,7 @@ define([
             base = base || "";
             args = args || {};
             var url = route;
-            url = url.replace("#!", "#").replace("#", "");
+            url = url.replace("#!/","#").replace("#!", "#").replace("#", "");
             _.map(args, function(value, attr) {
                 url = url.replace("\:"+attr, value);
             });

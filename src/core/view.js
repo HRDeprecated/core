@@ -122,6 +122,7 @@ define([
          *  Signal the view is ready
          */
         ready: function() {
+            this.delegateEvents();
             this.finish();
             if (!this.is_ready) {
                 this.trigger("ready");
