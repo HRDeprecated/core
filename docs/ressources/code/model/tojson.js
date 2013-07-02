@@ -1,4 +1,4 @@
-var artist = new yapp.Model({
+var artist = new yapp.Model({}, {
     firstName: "Wassily",
     lastName: "Kandinsky"
 });

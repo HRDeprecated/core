@@ -5,7 +5,7 @@ var Author = yapp.Model.extend({
     },
 }, {
     getByArticle: function(article) {
-        return new Author({
+        return new Author({}, {
             "name": article.get("author"),
             "fullname": "Mr. "+article.get("author").toUpperCase()
         })
@@ -29,7 +29,7 @@ var Article = yapp.Model.extend({
     }
 });
 
-var article = new Article({
+var article = new Article({}, {
     "title": "My first article",
     "description": "It's my first article on this website",
     "author": "samy"
