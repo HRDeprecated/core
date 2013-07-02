@@ -12050,8 +12050,8 @@ define('yapp/core/model',[
         initialize: function(options, parent, constructor, attrvalue) {
             this.parent = parent;
             this.constructor = constructor;
-            this.model = this.constructor(this.parent);
             this.value = attrvalue;
+            this.model = this.constructor(this.parent, this.value);
             return this;
         },
     });
@@ -12093,16 +12093,23 @@ define('yapp/core/model',[
             var scope, attributes, subjoint, value;
 
             // Define options
-            options = _.defaults(options || {}, {});
+            options = _.defaults(options || {}, {
+                ignoreJoints: false
+            });
 
             // Check if in joint
             value = null;
-            _.each(this.joints_values, function(joint, tag) {
-                subjoint = tag+".";
-                if (basescope.indexOf(subjoint) == 0) {
-                    value = joint.model.get(basescope.replace(subjoint, ""), null);
-                }
-            });
+            if (!options.ignoreJoints) {
+                _.each(this.joints_values, function(joint, tag) {
+                    subjoint = tag+".";
+                    if (basescope.indexOf(subjoint) == 0) {
+                        value = joint.model.get(basescope.replace(subjoint, ""), null);
+                    }
+                    if (basescope == tag) {
+                        value = joint.model;
+                    }
+                });
+            }
 
             if (value != null) return value;
 
@@ -12223,10 +12230,10 @@ define('yapp/core/model',[
          */
         updateJoints: function() {
             _.each(this.joints, function(constructor, tag) {
-                var currentvalue = this.get(tag);
-
+                var currentvalue = this.get(tag, null, {
+                    ignoreJoints: true
+                });
                 if (currentvalue == null) {
-                    logging.error("Error join on a non-existant attribute '"+tag+"'");
                     return;
                 }
 
