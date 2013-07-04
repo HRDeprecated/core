@@ -1,10 +1,11 @@
 require([
+    "Underscore",
     "yapp/yapp",
     "yapp/args",
 
     "views/views",
     "ressources/ressources"
-], function(yapp, args) {
+], function(_, yapp, args) {
     // Configure yapp
     yapp.configure(args);
 
@@ -31,13 +32,13 @@ require([
 
         initialize: function() {
             Application.__super__.initialize.apply(this, arguments);
-            var throttled = _.throttle(_.bind(function() {
+            var throttled = _.bind(_.throttle(function() {
                 if ($(window).scrollTop() > this.components.header.$("header").height()) {
                     this.components.header.$("header").addClass("close");
                 } else {
                     this.components.header.$("header").removeClass("close");
                 }
-            }, this), 250);
+            }, 250), this);
             $(window).scroll(throttled);
             return this;
         },

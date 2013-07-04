@@ -14,7 +14,7 @@ yapp.Ressources.addNamespace("i18n", {
 // Add a other namespace for your application
 yapp.Ressources.addNamespace("codes", {
     loader: "require",
-    base: "ressources/codes",
+    base: "ressources/code",
     mode: "text"
 });
 

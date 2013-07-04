@@ -1,6 +1,6 @@
 // Simple http loader using yahoo queries
 // for getting page content
-yapp.Ressources.addLoader("yql", function(query, callback, config) {
+yapp.Ressources.addLoader("yql", function(query, callback, args, config) {
     _.defaults(config, {
         version: "v1",
         server: "https://query.yahooapis.com"

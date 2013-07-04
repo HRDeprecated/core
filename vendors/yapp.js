@@ -10956,7 +10956,7 @@ define('yapp/utils/ressources',[
         /*
          *  Load a ressource
          */
-        load: function(namespace, ressource, options) {
+        load: function(namespace, ressource, args, options) {
             var d = new Deferred();
             var namespace_configs = _.extend({}, Ressources.namespaces[namespace] || {}, options || {});
             var loader = namespace_configs.loader || configs.ressources.loader;
@@ -10966,7 +10966,7 @@ define('yapp/utils/ressources',[
                 d.reject();
                 return d;
             }
-            Ressources.loaders[loader](ressource, d, namespace_configs);
+            Ressources.loaders[loader](ressource, d, args, namespace_configs);
             return d;
         },
 
@@ -10997,7 +10997,7 @@ define('yapp/utils/ressources',[
     };
 
     // Require loader
-    Ressources.addLoader("require", function(ressourcename, callback, config) {  
+    Ressources.addLoader("require", function(ressourcename, callback, args, config) {  
         _.defaults(config, {
             mode: "text",
             base: "",
@@ -11016,7 +11016,7 @@ define('yapp/utils/ressources',[
     });
 
     // HTTP loader
-    Ressources.addLoader("http", function(ressourcename, callback, config) {
+    Ressources.addLoader("http", function(ressourcename, callback, args, config) {
         _.defaults(config, {
             base: "./",
             extension: ""
@@ -11267,8 +11267,9 @@ define('yapp/utils/template',[
                 "template": {
                     "args": this.args,
                     "name": this.template,
-                    "import": function(name, args) {
-                        return this.args.view.component("template", {template: name, args: args}, name);
+                    "import": function(name, args, cname) {
+                        cname = cname || name;
+                        return this.args.view.component("template", {template: name, args: args}, cname);
                     },
                     "htmlid": function(h) {
                         return _.escape(h);
