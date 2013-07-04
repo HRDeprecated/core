@@ -60,9 +60,25 @@ define([
                 this.empty = false;
                 var task = this.tasks.shift();
                 this.startTask(task);
+                this.trigger("tasks:next");
             } else {
                 this.empty = true;
-            } 
+                this.trigger("tasks:finish");
+            }      
+        },
+
+        /*
+         *  Return queue size
+         */
+        size: function() {
+            return _.size(this.tasks);
+        },
+
+        /*
+         *  Return true if tasks queue is finish
+         */
+        isComplete: function() {
+            return this.empty == true;
         }
     });
 

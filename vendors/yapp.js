@@ -12369,9 +12369,25 @@ define('yapp/utils/queue',[
                 this.empty = false;
                 var task = this.tasks.shift();
                 this.startTask(task);
+                this.trigger("tasks:next");
             } else {
                 this.empty = true;
-            } 
+                this.trigger("tasks:finish");
+            }      
+        },
+
+        /*
+         *  Return queue size
+         */
+        size: function() {
+            return _.size(this.tasks);
+        },
+
+        /*
+         *  Return true if tasks queue is finish
+         */
+        isComplete: function() {
+            return this.empty == true;
         }
     });
 
@@ -12766,6 +12782,9 @@ define('yapp/core/list',[
             this.collection.on("remove", function(elementmodel) {
                 this.removeModel(elementmodel)
             }, this);
+            this.collection.queue.on("tasks", function() {
+                this.render();
+            }, this);
 
             this.resetModels({
                 silent: true
@@ -12998,11 +13017,17 @@ define('yapp/core/list',[
          */
         render: function() {
             this.$(".yapp-list-message").remove();
-            if (this.count() == 0 && this.options.displayEmptyList) {
-                var el = this.displayEmptyList();
-                $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+            if (this.collection.queue.isComplete() == false) {
+                $("<div>", {
+                    "class": "yapp-list-message yapp-list-message-loading"
+                }).appendTo(this.$el);
+            } else {
+                if (this.count() == 0 && this.options.displayEmptyList) {
+                    var el = this.displayEmptyList();
+                    $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+                }
+                if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             }
-            if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             return this.ready();
         }
     }, {

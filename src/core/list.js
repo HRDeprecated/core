@@ -59,6 +59,9 @@ define([
             this.collection.on("remove", function(elementmodel) {
                 this.removeModel(elementmodel)
             }, this);
+            this.collection.queue.on("tasks", function() {
+                this.render();
+            }, this);
 
             this.resetModels({
                 silent: true
@@ -291,11 +294,17 @@ define([
          */
         render: function() {
             this.$(".yapp-list-message").remove();
-            if (this.count() == 0 && this.options.displayEmptyList) {
-                var el = this.displayEmptyList();
-                $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+            if (this.collection.queue.isComplete() == false) {
+                $("<div>", {
+                    "class": "yapp-list-message yapp-list-message-loading"
+                }).appendTo(this.$el);
+            } else {
+                if (this.count() == 0 && this.options.displayEmptyList) {
+                    var el = this.displayEmptyList();
+                    $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+                }
+                if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             }
-            if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             return this.ready();
         }
     }, {
