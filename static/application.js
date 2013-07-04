@@ -23084,7 +23084,7 @@ define('yapp/utils/ressources',[
         /*
          *  Load a ressource
          */
-        load: function(namespace, ressource, options) {
+        load: function(namespace, ressource, args, options) {
             var d = new Deferred();
             var namespace_configs = _.extend({}, Ressources.namespaces[namespace] || {}, options || {});
             var loader = namespace_configs.loader || configs.ressources.loader;
@@ -23094,7 +23094,7 @@ define('yapp/utils/ressources',[
                 d.reject();
                 return d;
             }
-            Ressources.loaders[loader](ressource, d, namespace_configs);
+            Ressources.loaders[loader](ressource, d, args, namespace_configs);
             return d;
         },
 
@@ -23125,7 +23125,7 @@ define('yapp/utils/ressources',[
     };
 
     // Require loader
-    Ressources.addLoader("require", function(ressourcename, callback, config) {  
+    Ressources.addLoader("require", function(ressourcename, callback, args, config) {  
         _.defaults(config, {
             mode: "text",
             base: "",
@@ -23144,7 +23144,7 @@ define('yapp/utils/ressources',[
     });
 
     // HTTP loader
-    Ressources.addLoader("http", function(ressourcename, callback, config) {
+    Ressources.addLoader("http", function(ressourcename, callback, args, config) {
         _.defaults(config, {
             base: "./",
             extension: ""
@@ -23395,8 +23395,9 @@ define('yapp/utils/template',[
                 "template": {
                     "args": this.args,
                     "name": this.template,
-                    "import": function(name, args) {
-                        return this.args.view.component("template", {template: name, args: args}, name);
+                    "import": function(name, args, cname) {
+                        cname = cname || name;
+                        return this.args.view.component("template", {template: name, args: args}, cname);
                     },
                     "htmlid": function(h) {
                         return _.escape(h);
@@ -24178,8 +24179,8 @@ define('yapp/core/model',[
         initialize: function(options, parent, constructor, attrvalue) {
             this.parent = parent;
             this.constructor = constructor;
-            this.model = this.constructor(this.parent);
             this.value = attrvalue;
+            this.model = this.constructor(this.parent, this.value);
             return this;
         },
     });
@@ -24221,16 +24222,23 @@ define('yapp/core/model',[
             var scope, attributes, subjoint, value;
 
             // Define options
-            options = _.defaults(options || {}, {});
+            options = _.defaults(options || {}, {
+                ignoreJoints: false
+            });
 
             // Check if in joint
             value = null;
-            _.each(this.joints_values, function(joint, tag) {
-                subjoint = tag+".";
-                if (basescope.indexOf(subjoint) == 0) {
-                    value = joint.model.get(basescope.replace(subjoint, ""), null);
-                }
-            });
+            if (!options.ignoreJoints) {
+                _.each(this.joints_values, function(joint, tag) {
+                    subjoint = tag+".";
+                    if (basescope.indexOf(subjoint) == 0) {
+                        value = joint.model.get(basescope.replace(subjoint, ""), null);
+                    }
+                    if (basescope == tag) {
+                        value = joint.model;
+                    }
+                });
+            }
 
             if (value != null) return value;
 
@@ -24351,10 +24359,10 @@ define('yapp/core/model',[
          */
         updateJoints: function() {
             _.each(this.joints, function(constructor, tag) {
-                var currentvalue = this.get(tag);
-
+                var currentvalue = this.get(tag, null, {
+                    ignoreJoints: true
+                });
                 if (currentvalue == null) {
-                    logging.error("Error join on a non-existant attribute '"+tag+"'");
                     return;
                 }
 
@@ -24490,9 +24498,25 @@ define('yapp/utils/queue',[
                 this.empty = false;
                 var task = this.tasks.shift();
                 this.startTask(task);
+                this.trigger("tasks:next");
             } else {
                 this.empty = true;
-            } 
+                this.trigger("tasks:finish");
+            }      
+        },
+
+        /*
+         *  Return queue size
+         */
+        size: function() {
+            return _.size(this.tasks);
+        },
+
+        /*
+         *  Return true if tasks queue is finish
+         */
+        isComplete: function() {
+            return this.empty == true;
         }
     });
 
@@ -24887,6 +24911,9 @@ define('yapp/core/list',[
             this.collection.on("remove", function(elementmodel) {
                 this.removeModel(elementmodel)
             }, this);
+            this.collection.queue.on("tasks", function() {
+                this.render();
+            }, this);
 
             this.resetModels({
                 silent: true
@@ -25119,11 +25146,17 @@ define('yapp/core/list',[
          */
         render: function() {
             this.$(".yapp-list-message").remove();
-            if (this.count() == 0 && this.options.displayEmptyList) {
-                var el = this.displayEmptyList();
-                $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+            if (this.collection.queue.isComplete() == false) {
+                $("<div>", {
+                    "class": "yapp-list-message yapp-list-message-loading"
+                }).appendTo(this.$el);
+            } else {
+                if (this.count() == 0 && this.options.displayEmptyList) {
+                    var el = this.displayEmptyList();
+                    $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+                }
+                if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             }
-            if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             return this.ready();
         }
     }, {
@@ -25163,7 +25196,7 @@ define('yapp/vendors/underscore-more',[
     };
 
     isBasicObject = function(object) {
-        return (object.prototype === {}.prototype || object.prototype === Object.prototype) && _.isObject(object) && !_.isArray(object) && !_.isFunction(object) && !_.isDate(object) && !_.isRegExp(object) && !_.isArguments(object);
+        return (object != null && (object.prototype === {}.prototype || object.prototype === Object.prototype) && _.isObject(object) && !_.isArray(object) && !_.isFunction(object) && !_.isDate(object) && !_.isRegExp(object) && !_.isArguments(object));
     };
 
     basicObjects = function(object) {
@@ -25315,7 +25348,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1372775269555,"baseUrl":"/yapp.js/"}; });
+define('yapp/args',[],function() { return {"revision":1372954062898,"baseUrl":"/yapp.js/"}; });
 define('views/counter',[
     "yapp/yapp"
 ], function(yapp) {
@@ -25799,9 +25832,9 @@ define('text!ressources/code/cache/namespace.js',[],function () { return '// Cre
 
 define('text!ressources/code/ressources/load.js',[],function () { return 'yapp.Ressources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
 
-define('text!ressources/code/ressources/namespace.js',[],function () { return '// Configure templates to use http loader\nyapp.Ressources.addNamespace("templates", {\n    loader: "http",\n    base: "templates"\n});\n\n// Configure i18n to use internal content for languages\nyapp.Ressources.addNamespace("i18n", {\n    loader: "require",\n    base: "ressources/i18n",\n    mode: "text"\n});\n\n// Add a other namespace for your application\nyapp.Ressources.addNamespace("codes", {\n    loader: "require",\n    base: "ressources/codes",\n    mode: "text"\n});\n\nyapp.Ressources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
+define('text!ressources/code/ressources/namespace.js',[],function () { return '// Configure templates to use http loader\nyapp.Ressources.addNamespace("templates", {\n    loader: "http",\n    base: "templates"\n});\n\n// Configure i18n to use internal content for languages\nyapp.Ressources.addNamespace("i18n", {\n    loader: "require",\n    base: "ressources/i18n",\n    mode: "text"\n});\n\n// Add a other namespace for your application\nyapp.Ressources.addNamespace("codes", {\n    loader: "require",\n    base: "ressources/code",\n    mode: "text"\n});\n\nyapp.Ressources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
 
-define('text!ressources/code/ressources/loader.js',[],function () { return '// Simple http loader using yahoo queries\n// for getting page content\nyapp.Ressources.addLoader("yql", function(query, callback, config) {\n    _.defaults(config, {\n        version: "v1",\n        server: "https://query.yahooapis.com"\n    });\n\n    query = encodeURIComponent(query);\n\n    var url = config.url || config.server+"/"+config.version+"/public/yql";\n    url = url+"?format=json&q="+query+"&callback=?";\n\n    yapp.Requests.getJSON(url).then(function(data) {\n        if (data.query == null || data.query.results == null) {\n            return callback.reject();\n        }\n        return callback.resolve(data.query.results);\n    }, function() {\n        return callback.reject();\n    })\n});\n\n// Add a simple namespace for external pages\nyapp.Ressources.addNamespace("query", {\n    loader: "yql",\n    version: "v1"\n});\n\n\n// ...\n// yql could now be use anywhere with ressource loader\n\n// For exemple : get weather\nyapp.Ressources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {\n    var city = result.channel.location.city;\n    var condition = result.channel.item.condition.text;\n    alert("Weather in "+city+" is "+condition);\n}, function() {\n    alert("error when loading page !");\n})\n';});
+define('text!ressources/code/ressources/loader.js',[],function () { return '// Simple http loader using yahoo queries\n// for getting page content\nyapp.Ressources.addLoader("yql", function(query, callback, args, config) {\n    _.defaults(config, {\n        version: "v1",\n        server: "https://query.yahooapis.com"\n    });\n\n    query = encodeURIComponent(query);\n\n    var url = config.url || config.server+"/"+config.version+"/public/yql";\n    url = url+"?format=json&q="+query+"&callback=?";\n\n    yapp.Requests.getJSON(url).then(function(data) {\n        if (data.query == null || data.query.results == null) {\n            return callback.reject();\n        }\n        return callback.resolve(data.query.results);\n    }, function() {\n        return callback.reject();\n    })\n});\n\n// Add a simple namespace for external pages\nyapp.Ressources.addNamespace("query", {\n    loader: "yql",\n    version: "v1"\n});\n\n\n// ...\n// yql could now be use anywhere with ressource loader\n\n// For exemple : get weather\nyapp.Ressources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {\n    var city = result.channel.location.city;\n    var condition = result.channel.item.condition.text;\n    alert("Weather in "+city+" is "+condition);\n}, function() {\n    alert("error when loading page !");\n})\n';});
 
 define('ressources/ressources',[
     "yapp/yapp",
@@ -25868,12 +25901,13 @@ define('ressources/ressources',[
     return {}
 });
 require([
+    "Underscore",
     "yapp/yapp",
     "yapp/args",
 
     "views/views",
     "ressources/ressources"
-], function(yapp, args) {
+], function(_, yapp, args) {
     // Configure yapp
     yapp.configure(args);
 
@@ -25900,13 +25934,13 @@ require([
 
         initialize: function() {
             Application.__super__.initialize.apply(this, arguments);
-            var throttled = _.throttle(_.bind(function() {
+            var throttled = _.bind(_.throttle(function() {
                 if ($(window).scrollTop() > this.components.header.$("header").height()) {
                     this.components.header.$("header").addClass("close");
                 } else {
                     this.components.header.$("header").removeClass("close");
                 }
-            }, this), 250);
+            }, 250), this);
             $(window).scroll(throttled);
             return this;
         },
