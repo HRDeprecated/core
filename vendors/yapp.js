@@ -11352,8 +11352,9 @@ define('yapp/core/view',[
     "jQuery",
     "Underscore",
     "yapp/core/class",
-    "yapp/utils/template"
-], function($, _, Class, Template) {
+    "yapp/utils/template",
+    "yapp/utils/deferred"
+], function($, _, Class, Template, Deferred) {
 
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
     
@@ -11482,6 +11483,22 @@ define('yapp/core/view',[
         },
 
         /*
+         *  Wait after rendering
+         *  The callback will be call only when the view is ready
+         */
+        defer: function(callback) {
+            var d = new Deferred();
+            if (_.isFunction(callback)) d.done(callback);
+
+            this.on("ready", function() {
+                d.resolve(this);
+            }, this);
+            if (this.is_ready) d.resolve(this);
+
+            return d;
+        },
+
+        /*
          *  Render view
          */
         render: function() {
@@ -11541,11 +11558,7 @@ define('yapp/core/view',[
 
             var addComponent = _.bind(function(component) {
                 this.$("component[data-component='"+component.cid+"']").empty().append(component.$el);
-                var readyCallback = _.once(componentRendered);
-                component.on("ready", readyCallback);
-                if (component.is_ready) {
-                    readyCallback();
-                }
+                component.defer(_.once(componentRendered));
                 component.render();
             }, this);
             
