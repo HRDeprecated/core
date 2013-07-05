@@ -48,6 +48,8 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         Queue: Queue,
         I18n: I18n,
 
+        app: null,
+
         configure: function(args, options) {
             options = options || {};
             args = args || {};

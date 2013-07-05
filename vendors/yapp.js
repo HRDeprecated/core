@@ -12006,6 +12006,9 @@ define('yapp/core/application',[
          */
         run: function() {
             logging.log("Run application", this.name);
+
+            var yapp = require("yapp/yapp");
+            yapp.app = this;
             this.render();
             return this;
         },
@@ -13216,6 +13219,8 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         Deferred: Deferred,
         Queue: Queue,
         I18n: I18n,
+
+        app: null,
 
         configure: function(args, options) {
             options = options || {};

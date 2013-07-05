@@ -57,6 +57,9 @@ define([
          */
         run: function() {
             logging.log("Run application", this.name);
+
+            var yapp = require("yapp/yapp");
+            yapp.app = this;
             this.render();
             return this;
         },
