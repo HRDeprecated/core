@@ -287,6 +287,10 @@ define([
                 if (this._totalCount == null || this.hasMore() > 0 || options.refresh) {
                     this.options.startIndex = this.options.startIndex || 0;
                     d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
+                    if (!(d instanceof Deferred)) {
+                        d = new Deferred();
+                        d.resolve();      
+                    }
                     d.done(function() {
                         self.options.startIndex = self.options.startIndex + self.options.limit
                     });

@@ -216,6 +216,18 @@ define([
         },
 
         /*
+         *  Return items as a lists
+         */
+        getItemsList: function(i) {
+            var a = [];
+            _.each(this.items, function(item) {
+                var i = this.$(this.Item.prototype.tagName).index(item.$el);
+                a[i] = item;
+            }, this);
+            return a;
+        },
+
+        /*
          *  Filter the items list
          *  @filt : function to apply to each model
          *  @context

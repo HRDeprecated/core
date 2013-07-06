@@ -12699,6 +12699,10 @@ define('yapp/core/collection',[
                 if (this._totalCount == null || this.hasMore() > 0 || options.refresh) {
                     this.options.startIndex = this.options.startIndex || 0;
                     d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
+                    if (!(d instanceof Deferred)) {
+                        d = new Deferred();
+                        d.resolve();      
+                    }
                     d.done(function() {
                         self.options.startIndex = self.options.startIndex + self.options.limit
                     });
@@ -12953,6 +12957,18 @@ define('yapp/core/list',[
         getItems: function() {
             this.collection.getMore();
             return this;
+        },
+
+        /*
+         *  Return items as a lists
+         */
+        getItemsList: function(i) {
+            var a = [];
+            _.each(this.items, function(item) {
+                var i = this.$(this.Item.prototype.tagName).index(item.$el);
+                a[i] = item;
+            }, this);
+            return a;
         },
 
         /*
