@@ -20,11 +20,12 @@ define([
     "yapp/utils/deferred",
     "yapp/utils/queue",
     "yapp/utils/i18n",
+    "yapp/utils/views",
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {
     return {
         configs: configs,
         Class: Class,
@@ -47,6 +48,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         Deferred: Deferred,
         Queue: Queue,
         I18n: I18n,
+        views: views,
 
         app: null,
 

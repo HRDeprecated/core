@@ -36,36 +36,7 @@ define([
                     "configs": configs,
                     "urls": Urls,
                     "i18n": I18n,
-                    "utils": {
-                        "timeago": function(timestamp) {
-                            var current_timestamp = (new Date()).getTime() / 1000;
-                            var distance_in_minutes = Math.round((current_timestamp - timestamp)/60);
-
-                            var msgid = "error";
-                            
-                            if (distance_in_minutes < 0) {
-                                distance_in_minutes = 0;
-                            }
-                            
-                            if (distance_in_minutes < 1051199) { msgid = 'yearago'; }
-                            if (distance_in_minutes < 525960) { msgid =  'months'; }
-                            if (distance_in_minutes < 86400) { msgid = 'month'; }
-                            if (distance_in_minutes < 43200) { msgid =  'days'; }
-                            if (distance_in_minutes < 2880) { msgid = 'day'; }
-                            if (distance_in_minutes < 1440) { msgid = 'hours'; }
-                            if (distance_in_minutes < 90) { msgid = 'hour'; }
-                            if (distance_in_minutes < 45) { msgid =  'minutes'; }
-                            if (distance_in_minutes == 1) { msgid = 'minute'; }
-                            if (distance_in_minutes == 0) { msgid = 'seconds'; }
-
-                            return I18n.t("yapp.utils.timeago."+msgid, {
-                                "months": Math.floor(distance_in_minutes / 43200),
-                                "days": Math.floor(distance_in_minutes / 1440),
-                                "hours": Math.round(distance_in_minutes / 60),
-                                "minutes": distance_in_minutes
-                            });
-                        }
-                    }
+                    "utils": Template.utils
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
@@ -150,6 +121,38 @@ define([
     }, {
         /* Defaults options for template */
         options: {},
+
+        /* Defaults utils for templates */
+        utils: {
+            timeago: function(timestamp) {
+                var current_timestamp = (new Date()).getTime() / 1000;
+                var distance_in_minutes = Math.round((current_timestamp - timestamp)/60);
+
+                var msgid = "error";
+                
+                if (distance_in_minutes < 0) {
+                    distance_in_minutes = 0;
+                }
+                
+                if (distance_in_minutes < 1051199) { msgid = 'yearago'; }
+                if (distance_in_minutes < 525960) { msgid =  'months'; }
+                if (distance_in_minutes < 86400) { msgid = 'month'; }
+                if (distance_in_minutes < 43200) { msgid =  'days'; }
+                if (distance_in_minutes < 2880) { msgid = 'day'; }
+                if (distance_in_minutes < 1440) { msgid = 'hours'; }
+                if (distance_in_minutes < 90) { msgid = 'hour'; }
+                if (distance_in_minutes < 45) { msgid =  'minutes'; }
+                if (distance_in_minutes == 1) { msgid = 'minute'; }
+                if (distance_in_minutes == 0) { msgid = 'seconds'; }
+
+                return I18n.t("yapp.utils.timeago."+msgid, {
+                    "months": Math.floor(distance_in_minutes / 43200),
+                    "days": Math.floor(distance_in_minutes / 1440),
+                    "hours": Math.round(distance_in_minutes / 60),
+                    "minutes": distance_in_minutes
+                });
+            }
+        },
 
         /* Map of components constructor */
         components: {},
