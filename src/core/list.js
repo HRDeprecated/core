@@ -29,7 +29,8 @@ define([
             searchAttribute: null,
             displayEmptyList: true,
             displayHasMore: true,
-            loadAtInit: true
+            loadAtInit: true,
+            style: "default"
         },
         styles: {
             "default": ""
@@ -43,7 +44,7 @@ define([
          */
         initialize: function() {
             ListView.__super__.initialize.apply(this, arguments);
-            this.setRenderStyle("default");
+            this.setRenderStyle(this.options.style);
             this.items = {};
             if (this.options.collections instanceof Collection) {
                 this.collection = this.options.collection;
