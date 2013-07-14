@@ -46,7 +46,7 @@ define([
             ListView.__super__.initialize.apply(this, arguments);
             this.setRenderStyle(this.options.style);
             this.items = {};
-            if (this.options.collections instanceof Collection) {
+            if (this.options.collection instanceof Collection) {
                 this.collection = this.options.collection;
             } else {
                 this.collection = new this.Collection(this.options.collection);
