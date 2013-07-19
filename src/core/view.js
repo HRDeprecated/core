@@ -133,6 +133,20 @@ define([
         },
 
         /*
+         *  Empty the view html and prevent sub components
+         */
+        empty: function() {
+            // Detach components
+            this.eachComponent(function(component) {
+                component.$el.detach();
+            }, this);
+
+            // Empty the dom
+            this.$el.empty();
+            return this;
+        },
+
+        /*
          *  Wait after rendering
          *  The callback will be call only when the view is ready
          */
@@ -222,6 +236,21 @@ define([
 
             this.trigger("components:render");
             return this;   
+        },
+
+        /*
+         *  Iterate over the list of components
+         */
+        eachComponent: function(iterator, context) {
+            if (context != null) iterator = _.bind(iterator, context);
+            _.each(this.components, function(value, cid) {
+                if (_.isArray(value)) {
+                    _.each(value, iterator);
+                } else {
+                    iterator(value);
+                }
+            });
+            return this;
         },
 
         /*
