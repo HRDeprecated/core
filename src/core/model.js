@@ -144,6 +144,28 @@ define([
         },
 
         /*
+         *  Delete a attribute
+         *  @key : attribute key
+         */
+        del: function(key) {
+            var attrs, subattrs, scope, changes;
+
+            scope = key.split(".");
+            subattrs = this.attributes;
+            _.each(scope, function(key, i) {
+                if (i == (_.size(scope) - 1)) {
+                    delete subattrs[key];
+                } else {
+                    subattrs = subattrs[key];
+                }
+            });
+
+            this.trigger("set");
+            this.trigger("del");
+            return this;
+        },
+
+        /*
          *  Destroy the model
          */
         destroy: function(options) {

@@ -1,7 +1,9 @@
+rjs = "node_modules/requirejs/bin/r.js"
+
 desc "rebuild the vendors/yapp.js files for distribution"
 task :build do
-  check 'r.js', 'RequireJS', 'https://github.com/jrburke/r.js'
-  system 'r.js -o ./src/require-config.js'
+  check "#{rjs}", 'RequireJS', 'https://github.com/jrburke/r.js'
+  system "#{rjs} -o ./src/require-config.js"
 end
 
 desc "build the documentation in docs/build"
