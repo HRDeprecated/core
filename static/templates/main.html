@@ -15,7 +15,10 @@
                         from: new Date(2013, 4, 30 , 10, 0, 0, 0)
                     }) %>
                 </p>
-                <iframe src="https://friendco.de/widgets/button/codenow?style=horizontal&url=https%3A%2F%2Fgithub.com%2FFriendCode%2Fyapp.js.git&file=" frameborder="0" scrolling="no" frameborder="0" style="border:none; overflow:hidden;width: 160px;height: 30px;" allowTransparency="true"></iframe>
+                <p>
+                    <iframe src="http://ghbtns.com/github-btn.html?user=FriendCode&repo=yapp.js&type=watch&count=true"allowtransparency="true" frameborder="0" scrolling="0" width="85" height="20"></iframe>
+                    <iframe src="http://ghbtns.com/github-btn.html?user=FriendCode&repo=yapp.js&type=fork&count=true"allowtransparency="true" frameborder="0" scrolling="0" width="105" height="20"></iframe>
+                </p>
             </article>
         </section>
 
@@ -24,6 +27,14 @@
             <article>
                 <p>Simply install yapp.js using <b>NPM</b> :</p>
                 <p><code>npm install -g git+ssh://git@github.com:FriendCode/yapp.js.git#master</code>.</p>
+            </article>   
+        </section>
+
+        <section id="getstarted">
+            <h2><a href="<%- yapp.urls.route("getstarted") %>">Get started</a></h2>
+            <article>
+                <p>Yapp.js lets you create a simple base application using :</p>
+                <p><code>yapp.js new -d my_app</code></p>
             </article>   
         </section>
 
@@ -70,6 +81,18 @@
                 <p>After extending the <code>yapp.Application</code> class, you need to start your new application.</p>
                 <%= view.component("code", {code: "application/run.js"}) %>
             </article>
+
+            <article id="application/title">
+                <h3><a href="<%- yapp.urls.route("application/title") %>">title</a> <code>application.title([newValue, absolute])</code></h3>
+                <p>Get or set the page title, <b>title</b> could be relative to the application (format: <code>@appname - @title</code>) or absolute (format: <code>@title</code>). This method use <a href="<%- yapp.urls.route("application/head") %>">head</a>.</p>
+                <%= view.component("code", {code: "application/title.js"}) %>
+            </article>
+
+            <article id="application/head">
+                <h3><a href="<%- yapp.urls.route("application/head") %>">head</a> <code>application.head</code></h3>
+                <p>Property <code>head</code> of application let you easily manage page informations such as <b>title</b>, <b>metas</b>, <b>links</b>, <b>crawling</b>.</p>
+                <%= view.component("code", {code: "application/head.js"}) %>
+            </article>
         </section>
 
         <section id="view">
@@ -85,6 +108,28 @@
                 <%= view.component("code", {code: "view/template.js"}) %>
                 <p><code>template</code> name could alse be given by a function, for example :</p>
                 <%= view.component("code", {code: "view/template_function.js"}) %>
+            </article>
+            <article id="view/render">
+                <h3><a href="<%- yapp.urls.route("view/render") %>">render</a> <code>view.render()</code></h3>
+                <p>Render the view is easy using the method render, you can bind the events <code>"render"</code> (after rendering) or <code>"ready"</code> (first time rendering).</p>
+                <%= view.component("code", {code: "view/render.js"}) %>
+                <p>By default, view use <code>template</code> for rendering, but you can redefine <code>render</code> :</p>
+                <%= view.component("code", {code: "view/render_extend.js"}) %>
+            </article>
+            <article id="view/events">
+                <h3><a href="<%- yapp.urls.route("view/events") %>">events</a></h3>
+                <p>Events are written in the format <code>{"event selector": "callback"}</code>. The callback may be either the name of a method on the view, or a direct function body. Omitting the selector causes the event to be bound to the view's root element (<code>this.el</code>). By default, delegateEvents is called within the View's constructor for you, so if you have a simple events hash, all of your DOM events will always already be connected, and you will never have to call this function yourself.</p>
+
+                <p>The events property may also be defined as a function that returns an events hash, to make it easier to programmatically define your events, as well as inherit them from parent views.</p>
+
+                <p>Using delegated events provides a number of advantages over manually using jQuery to bind events to child elements during render. All attached callbacks are bound to the view before being handed off to jQuery, so when the callbacks are invoked, this continues to refer to the view object. When <code>delegateEvents</code> is run, perhaps with a different events hash, all callbacks are removed and delegated afresh — useful for views which need to behave differently when in different modes.</p>
+                <%= view.component("code", {code: "view/events.js"}) %>
+            </article>
+            <article id="view/components">
+                <h3><a href="<%- yapp.urls.route("view/components") %>">components</a></h3>
+                <p>Views in yapp can easily manage sub-views using components, these components can be added directly in the templates : <a href="<%- yapp.urls.route("template/components") %>">Learn more about it</a></p>
+                <p>Defining a view as a component for temlate is really easy :</p>
+                <%= view.component("code", {code: "view/component.js"}) %>
             </article>
         </section>
 
@@ -187,6 +232,11 @@
             <article id="model/has">
                 <h3><a href="<%- yapp.urls.route("model/has") %>">has</a> <code>model.has(attribute)</code></h3>
                 <p>Returns <code>true</code> if the attribute is set to a non-null or non-undefined value.</p>
+            </article>
+
+            <article id="model/clear">
+                <h3><a href="<%- yapp.urls.route("model/clear") %>">clear</a> <code>model.clear([options])</code></h3>
+                <p>Clear the object attributes, <code>options</code> can contain <code>silent</code> to not triggering events <b>change</b> and <b>clear</b>.</p>
             </article>
 
             <article id="model/tojson">

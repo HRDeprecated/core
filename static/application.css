@@ -87,18 +87,18 @@ pre .addition{background:#ddffdd;}
 pre .diff .change{background:#0086b3;}
 pre .chunk{color:#aaaaaa;}
 .component-codeviewer{padding:0.5em;border:1px solid #ddd;background-color:#f8f5ec;position:relative;min-height:26px;}.component-codeviewer .run{padding:5px;cursor:pointer;position:absolute;top:5px;right:5px;color:#f8f5ec;background:#444;}
-.page{margin-right:auto;margin-left:auto;width:100%;max-width:1200px;}.page .content{width:70%;-moz-box-sizing:border-box;box-sizing:border-box;-o-box-sizing:border-box;-webkit-box-sizing:border-box;float:right;padding:25px;}.page .content section{margin-bottom:2em;}.page .content section h2{border-bottom:2px solid #E74C3C;margin:0;color:#E74C3C;font-weight:normal;text-transform:uppercase;}.page .content section h2 a{color:inherit;text-decoration:none;}.page .content section h2 a:hover{text-decoration:none;}
+.page{margin-right:auto;margin-left:auto;width:100%;max-width:1200px;font-size:14px;}.page .content{width:72%;-moz-box-sizing:border-box;box-sizing:border-box;-o-box-sizing:border-box;-webkit-box-sizing:border-box;float:right;padding:25px;}.page .content section{margin-bottom:2em;}.page .content section h2{border-bottom:2px solid #E74C3C;margin:0;color:#E74C3C;font-weight:normal;text-transform:uppercase;}.page .content section h2 a{color:inherit;text-decoration:none;}.page .content section h2 a:hover{text-decoration:none;}
 .page .content section article{margin-bottom:3em;}.page .content section article h3{font-weight:normal;font-size:1.3em;}.page .content section article h3 code{color:#bbb;margin-left:1em;font-size:0.7em;float:right;margin-top:0.3em;}
 .page .content section article p code{padding:0px 3px;background:#fff;border:1px solid #ddd;zoom:1;}
 .page .content section.intro .title{font-size:3em;margin:0;margin-bottom:0.5em;}
-header{-moz-box-sizing:border-box;box-sizing:border-box;-o-box-sizing:border-box;-webkit-box-sizing:border-box;width:30%;float:left;padding:15px;}header.close{position:fixed;top:0px;bottom:0px;max-width:360px;}header.close .search-result{display:block !important;}
+header{-moz-box-sizing:border-box;box-sizing:border-box;-o-box-sizing:border-box;-webkit-box-sizing:border-box;width:28%;float:left;padding:15px;}header.close{position:fixed;top:0px;bottom:0px;max-width:360px;}header.close .search-result{display:block !important;}
 header.close .no-search-result{display:none !important;}
 header.close section.menus .menu{display:none;}
 header .search{margin-bottom:1.4em;}header .search input{font-size:1.2em;text-transform:uppercase;width:100%;border:none;padding:0.3em;font-weight:100;-moz-box-sizing:border-box;box-sizing:border-box;-o-box-sizing:border-box;-webkit-box-sizing:border-box;background:#f2f2f2;box-shadow:none;outline:none;}
 header .search-result{display:block;}
 header .no-search-result{display:none;}
 header section{margin-bottom:1.4em;}header section.title a{text-decoration:none;}
-header section.title h1{font-size:5em;margin:0px;color:#E74C3C;}
+header section.title h1{font-size:6em;margin:0px;color:#E74C3C;}
 header section.title p{font-size:1.5em;}
 header section.menus .menu{margin-bottom:2em;}header section.menus .menu a{text-decoration:none;}header section.menus .menu a:hover{text-decoration:none;}
 header section.menus .menu h3{border-bottom:2px solid #E74C3C;margin:0;color:#E74C3C;font-weight:normal;text-transform:uppercase;}

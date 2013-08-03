@@ -23336,36 +23336,7 @@ define('yapp/utils/template',[
                     "configs": configs,
                     "urls": Urls,
                     "i18n": I18n,
-                    "utils": {
-                        "timeago": function(timestamp) {
-                            var current_timestamp = (new Date()).getTime() / 1000;
-                            var distance_in_minutes = Math.round((current_timestamp - timestamp)/60);
-
-                            var msgid = "error";
-                            
-                            if (distance_in_minutes < 0) {
-                                distance_in_minutes = 0;
-                            }
-                            
-                            if (distance_in_minutes < 1051199) { msgid = 'yearago'; }
-                            if (distance_in_minutes < 525960) { msgid =  'months'; }
-                            if (distance_in_minutes < 86400) { msgid = 'month'; }
-                            if (distance_in_minutes < 43200) { msgid =  'days'; }
-                            if (distance_in_minutes < 2880) { msgid = 'day'; }
-                            if (distance_in_minutes < 1440) { msgid = 'hours'; }
-                            if (distance_in_minutes < 90) { msgid = 'hour'; }
-                            if (distance_in_minutes < 45) { msgid =  'minutes'; }
-                            if (distance_in_minutes == 1) { msgid = 'minute'; }
-                            if (distance_in_minutes == 0) { msgid = 'seconds'; }
-
-                            return I18n.t("yapp.utils.timeago."+msgid, {
-                                "months": Math.floor(distance_in_minutes / 43200),
-                                "days": Math.floor(distance_in_minutes / 1440),
-                                "hours": Math.round(distance_in_minutes / 60),
-                                "minutes": distance_in_minutes
-                            });
-                        }
-                    }
+                    "utils": Template.utils
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
@@ -23451,6 +23422,38 @@ define('yapp/utils/template',[
         /* Defaults options for template */
         options: {},
 
+        /* Defaults utils for templates */
+        utils: {
+            timeago: function(timestamp) {
+                var current_timestamp = (new Date()).getTime() / 1000;
+                var distance_in_minutes = Math.round((current_timestamp - timestamp)/60);
+
+                var msgid = "error";
+                
+                if (distance_in_minutes < 0) {
+                    distance_in_minutes = 0;
+                }
+                
+                if (distance_in_minutes < 1051199) { msgid = 'yearago'; }
+                if (distance_in_minutes < 525960) { msgid =  'months'; }
+                if (distance_in_minutes < 86400) { msgid = 'month'; }
+                if (distance_in_minutes < 43200) { msgid =  'days'; }
+                if (distance_in_minutes < 2880) { msgid = 'day'; }
+                if (distance_in_minutes < 1440) { msgid = 'hours'; }
+                if (distance_in_minutes < 90) { msgid = 'hour'; }
+                if (distance_in_minutes < 45) { msgid =  'minutes'; }
+                if (distance_in_minutes == 1) { msgid = 'minute'; }
+                if (distance_in_minutes == 0) { msgid = 'seconds'; }
+
+                return I18n.t("yapp.utils.timeago."+msgid, {
+                    "months": Math.floor(distance_in_minutes / 43200),
+                    "days": Math.floor(distance_in_minutes / 1440),
+                    "hours": Math.round(distance_in_minutes / 60),
+                    "minutes": distance_in_minutes
+                });
+            }
+        },
+
         /* Map of components constructor */
         components: {},
 
@@ -23480,8 +23483,9 @@ define('yapp/core/view',[
     "jQuery",
     "Underscore",
     "yapp/core/class",
-    "yapp/utils/template"
-], function($, _, Class, Template) {
+    "yapp/utils/template",
+    "yapp/utils/deferred"
+], function($, _, Class, Template, Deferred) {
 
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
     
@@ -23610,6 +23614,36 @@ define('yapp/core/view',[
         },
 
         /*
+         *  Empty the view html and prevent sub components
+         */
+        empty: function() {
+            // Detach components
+            this.eachComponent(function(component) {
+                component.$el.detach();
+            }, this);
+
+            // Empty the dom
+            this.$el.empty();
+            return this;
+        },
+
+        /*
+         *  Wait after rendering
+         *  The callback will be call only when the view is ready
+         */
+        defer: function(callback) {
+            var d = new Deferred();
+            if (_.isFunction(callback)) d.done(callback);
+
+            this.on("ready", function() {
+                d.resolve(this);
+            }, this);
+            if (this.is_ready) d.resolve(this);
+
+            return d;
+        },
+
+        /*
          *  Render view
          */
         render: function() {
@@ -23669,11 +23703,7 @@ define('yapp/core/view',[
 
             var addComponent = _.bind(function(component) {
                 this.$("component[data-component='"+component.cid+"']").empty().append(component.$el);
-                var readyCallback = _.once(componentRendered);
-                component.on("ready", readyCallback);
-                if (component.is_ready) {
-                    readyCallback();
-                }
+                component.defer(_.once(componentRendered));
                 component.render();
             }, this);
             
@@ -23687,6 +23717,21 @@ define('yapp/core/view',[
 
             this.trigger("components:render");
             return this;   
+        },
+
+        /*
+         *  Iterate over the list of components
+         */
+        eachComponent: function(iterator, context) {
+            if (context != null) iterator = _.bind(iterator, context);
+            _.each(this.components, function(value, cid) {
+                if (_.isArray(value)) {
+                    _.each(value, iterator);
+                } else {
+                    iterator(value);
+                }
+            });
+            return this;
         },
 
         /*
@@ -24121,6 +24166,9 @@ define('yapp/core/application',[
          */
         run: function() {
             logging.log("Run application", this.name);
+
+            var yapp = require("yapp/yapp");
+            yapp.app = this;
             this.render();
             return this;
         },
@@ -24305,6 +24353,28 @@ define('yapp/core/model',[
                 this.trigger("set", diffs);
             }
 
+            return this;
+        },
+
+        /*
+         *  Delete a attribute
+         *  @key : attribute key
+         */
+        del: function(key) {
+            var attrs, subattrs, scope, changes;
+
+            scope = key.split(".");
+            subattrs = this.attributes;
+            _.each(scope, function(key, i) {
+                if (i == (_.size(scope) - 1)) {
+                    delete subattrs[key];
+                } else {
+                    subattrs = subattrs[key];
+                }
+            });
+
+            this.trigger("set");
+            this.trigger("del");
             return this;
         },
 
@@ -24811,6 +24881,10 @@ define('yapp/core/collection',[
                 if (this._totalCount == null || this.hasMore() > 0 || options.refresh) {
                     this.options.startIndex = this.options.startIndex || 0;
                     d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
+                    if (!(d instanceof Deferred)) {
+                        d = new Deferred();
+                        d.resolve();      
+                    }
                     d.done(function() {
                         self.options.startIndex = self.options.startIndex + self.options.limit
                     });
@@ -24881,7 +24955,8 @@ define('yapp/core/list',[
             searchAttribute: null,
             displayEmptyList: true,
             displayHasMore: true,
-            loadAtInit: true
+            loadAtInit: true,
+            style: "default"
         },
         styles: {
             "default": ""
@@ -24895,9 +24970,9 @@ define('yapp/core/list',[
          */
         initialize: function() {
             ListView.__super__.initialize.apply(this, arguments);
-            this.setRenderStyle("default");
+            this.setRenderStyle(this.options.style);
             this.items = {};
-            if (this.options.collections instanceof Collection) {
+            if (this.options.collection instanceof Collection) {
                 this.collection = this.options.collection;
             } else {
                 this.collection = new this.Collection(this.options.collection);
@@ -25068,6 +25143,18 @@ define('yapp/core/list',[
         },
 
         /*
+         *  Return items as a lists
+         */
+        getItemsList: function(i) {
+            var a = [];
+            _.each(this.items, function(item) {
+                var i = this.$(this.Item.prototype.tagName).index(item.$el);
+                a[i] = item;
+            }, this);
+            return a;
+        },
+
+        /*
          *  Filter the items list
          *  @filt : function to apply to each model
          *  @context
@@ -25164,6 +25251,42 @@ define('yapp/core/list',[
     });
 
     return ListView;
+});
+define('yapp/utils/views',[
+    "Underscore",
+    "yapp/core/view",
+    "yapp/utils/template"
+], function(_, View, Template) {
+    
+    var RelativeDateView = View.extend({
+        tagName: "span",
+        className: "component-relativedate",
+        defaults: {
+            time: 0,
+            update: 1000*60,
+            updateD: 1.01,
+            className: ""
+        },
+
+        initialize: function(options) {
+            RelativeDateView.__super__.initialize.apply(this, arguments);
+            this.$el.addClass(this.options.className);
+            return this;
+        },
+
+        render: function() {
+            if (this.interval != null) clearInterval(this.interval);
+            this.interval = setInterval(_.bind(this.render, this), this.options.update); 
+            this.options.update = this.options.update*this.options.updateD;
+            this.$el.html(Template.utils.timeago(this.options.time));
+            return this.ready();
+        },
+    });
+    Template.registerComponent("yapp.date.relative", RelativeDateView);
+
+    return {
+        "RelativeDate": RelativeDateView
+    };
 });
 define('yapp/vendors/underscore-more',[
     "Underscore",
@@ -25304,11 +25427,12 @@ define('yapp/yapp',[
     "yapp/utils/deferred",
     "yapp/utils/queue",
     "yapp/utils/i18n",
+    "yapp/utils/views",
 
     "yapp/vendors/underscore-more"
 ], function(configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {
     return {
         configs: configs,
         Class: Class,
@@ -25331,6 +25455,9 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         Deferred: Deferred,
         Queue: Queue,
         I18n: I18n,
+        views: views,
+
+        app: null,
 
         configure: function(args, options) {
             options = options || {};
@@ -25348,7 +25475,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1372954062898,"baseUrl":"/yapp.js/"}; });
+define('yapp/args',[],function() { return {"revision":1375502869901,"baseUrl":"/yapp.js/"}; });
 define('views/counter',[
     "yapp/yapp"
 ], function(yapp) {
@@ -25742,9 +25869,9 @@ define('views/views',[
     });
 }());
 
-define('text!ressources/code/build/structure.txt',[],function () { return 'build/\nviews/\n    myview.js\nmodels/\n    mymodel.js\nstylesheets/\n    imports.less\nvendors/\n    external_library.js\nressources/\n    templates/\n        views/\n            myview.html\n        main.html\n    images/\n        favicon.png\nbuild.js';});
+define('text!ressources/code/build/structure.txt',[],function () { return 'build/\nviews/\n    myview.js\nmodels/\n    mymodel.js\nstylesheets/\n    imports.less\nvendors/\n    external_library.js\nressources/\n    templates/\n        views/\n            myview.html\n        main.html\n    images/\n        favicon.png\napplication.js\nbuild.js';});
 
-define('text!ressources/code/build/build.js',[],function () { return 'var yapp = require("yapp");\nvar path = require("path");\n\nexports.config = {\n    // Base directory for the application\n    "base": __dirname,\n\n    // Application name\n    "name": "MyApplication",\n\n    // Mode debug\n    "debug": true,\n\n    // Main entry point for application\n    "main": "main",\n\n    // Build output directory\n    "build": path.resolve(__dirname, "build"),\n\n    // Static files mappage\n    "static": {\n        "templates": path.resolve(__dirname, "ressources", "templates"),\n        "images": path.resolve(__dirname, "ressources", "images")\n    },\n\n    // Stylesheet entry point\n    "style": path.resolve(__dirname, "stylesheets/imports.less"),\n};';});
+define('text!ressources/code/build/build.js',[],function () { return 'var path = require("path");\n\nexports.config = {\n    // Base directory for the application\n    "base": __dirname,\n\n    // Application name\n    "name": "MyApplication",\n\n    // Mode debug\n    "debug": true,\n\n    // Main entry point for application\n    "main": "main",\n\n    // Build output directory\n    "build": path.resolve(__dirname, "build"),\n\n    // Static files mappage\n    "static": {\n        "templates": path.resolve(__dirname, "ressources", "templates"),\n        "images": path.resolve(__dirname, "ressources", "images")\n    },\n\n    // Stylesheet entry point\n    "style": path.resolve(__dirname, "stylesheets/imports.less"),\n};';});
 
 define('text!ressources/code/build/options.js',[],function () { return '{\n    // Base directory for the application\n    "base": null,\n\n    // Base url for the application\n    "baseUrl": "",\n\n    // Arguments for application\n    "args": {},\n\n    // Application name\n    "name": "untitled",\n\n    // Mode debug\n    // if debug is false then files are compressed for optimization\n    "debug": true,\n\n    // Main entry file for application\n    "main": null,\n\n    // Build directory for output\n    // directory is created if inexistant\n    "build": null,\n\n    // Output files\n    "out": {\n        "js":   "application.js",\n        "css":  "application.css",\n        "html": "index.html"\n    },\n\n    // Static files\n    // Map of {"directory": "absolute/path"}\n    "static": {},\n\n    // Index html\n    // if null : file is generated\n    // if non null : file is copying\n    "index": null,\n\n    // Stylesheets entry file\n    "style": null,\n\n    // Modules paths and shim for require\n    "paths": {},\n    "shim": {},\n\n    // Compilers\n    "compilers": {\n        "css": "lessc -x -O2 %s > %s",\n        "js":   "r.js -o %s"\n    }\n}';});
 
@@ -25754,9 +25881,21 @@ define('text!ressources/code/application/extend.js',[],function () { return 'req
 
 define('text!ressources/code/application/run.js',[],function () { return 'var app = new Application();\napp.run();';});
 
+define('text!ressources/code/application/title.js',[],function () { return 'app.title("Hello"); // Title will be "@appname - Hello"\napp.title("Hello", true) // Title will be "Hello"';});
+
+define('text!ressources/code/application/head.js',[],function () { return '// Set page title\napp.head.title("Hello");\n\n// Get page title\nvar title = app.head.title();\n\n// Set meta\napp.head.meta("author", "Samy Pessé");\n\n// Get meta\nvar author = app.head.meta("author");\n\n// Set description\napp.head.description("My application");\n\n// Get description\nvar description = app.head.description();\n\n// Set link\napp.head.link("icon", yapp.Urls.static("images/favicon.png"));\n\n// Get link\nvar favicon = app.head.link("icon");\n\n// Crawling\napp.head.setCrawling(false, false); // no index, no follow\napp.head.setCrawling(false, true); // no index, follow\napp.head.setCrawling(true, true); // index, follow';});
+
 define('text!ressources/code/view/extend.js',[],function () { return 'var TestView = yapp.View.extend({\n    tagName: "div",\n\n    className: "component-testview",\n\n    template: "views/test",\n\n    events: {\n        "click .button": "open"\n    }\n});';});
 
+define('text!ressources/code/view/render.js',[],function () { return 'var View = yapp.View.extend({\n\ttemplate: "test.html"\n});\nvar view = new View();\nview.$el.appendTo($("body"));\n\nsetInterval(function() {\n\tview.render();\n}, 1000)';});
+
+define('text!ressources/code/view/render_extend.js',[],function () { return 'var View = yapp.View.extend({\n\trender: function() {\n\t\tthis.$el.html("Hello World !");\n\n\t\t// Call "ready" to signal the component is ready\n\t\treturn this.ready();\n\t}\n});';});
+
 define('text!ressources/code/view/template.js',[],function () { return 'var ArticleView = yapp.View.extend({\n    template: "views/test",\n    templateContext: function() {\n        return {\n            votes: this.model.getVotes(),\n            article: this.model.attributes\n        }\n    }\n    \n    ...\n});';});
+
+define('text!ressources/code/view/component.js',[],function () { return 'var MyView = yapp.View.extend({\n\ttemplate: "myview.html",\n\tevents: {\n\t\t"click .btn": "open"\n\t},\n\topen: function() {\n\t\talert("It\'s open !");\n\t}\n});\n\n/* Register template component */\nyapp.View.Template.registerComponent("myview", MyView);';});
+
+define('text!ressources/code/view/events.js',[],function () { return 'var MyView = yapp.View.extend({\n\ttemplate: "myview.html",\n\tevents: {\n\t\t"click .btn-open": "open",\n\t\t"click .btn-close": "close"\n\t},\n\topen: function() {\n\t\talert("It\'s open !");\n\t},\n\tclose: function() {\n\t\talert("It\'s closed !");\n\t}\n});';});
 
 define('text!ressources/code/view/template_function.js',[],function () { return 'var ArticleView = yapp.View.extend({\n    template: function() {\n        if (this.model.get("type") == "video") {\n            return "views/article/video";\n        } else {\n            return "views/article/default";\n        }\n    }\n    ...\n});';});
 
@@ -25845,8 +25984,14 @@ define('ressources/ressources',[
     "text!ressources/code/build/module.js",
     "text!ressources/code/application/extend.js",
     "text!ressources/code/application/run.js",
+    "text!ressources/code/application/title.js",
+    "text!ressources/code/application/head.js",
     "text!ressources/code/view/extend.js",
+    "text!ressources/code/view/render.js",
+    "text!ressources/code/view/render_extend.js",
     "text!ressources/code/view/template.js",
+    "text!ressources/code/view/component.js",
+    "text!ressources/code/view/events.js",
     "text!ressources/code/view/template_function.js",
     "text!ressources/code/template/syntax.html",
     "text!ressources/code/template/components.html",
@@ -25913,7 +26058,7 @@ require([
 
     // Define base application
     var Application = yapp.Application.extend({
-        name: "Yapp.js Documentation",
+        name: "yapp.js",
         template: "main.html",
         metas: {
             "description": "Build large client-side application in a structured way.",
