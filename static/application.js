@@ -25475,7 +25475,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1375513197655,"baseUrl":"/yapp.js/"}; });
+define('yapp/args',[],function() { return {"revision":1375514402485,"baseUrl":"/yapp.js/"}; });
 define('views/counter',[
     "yapp/yapp"
 ], function(yapp) {
