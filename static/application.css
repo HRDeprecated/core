@@ -32,7 +32,7 @@ dl,menu,ol,ul{margin:1em 0;}
 dd{margin:0 0 0 40px;}
 menu,ol,ul{padding:0 0 0 40px;}
 nav ul,nav ol{list-style:none;list-style-image:none;}
-img{border:0;-ms-interpolation-mode:bicubic;}
+img{max-width:100%;border:0;-ms-interpolation-mode:bicubic;}
 svg:not(:root){overflow:hidden;}
 figure{margin:0;}
 form{margin:0;}
