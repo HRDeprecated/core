@@ -11,6 +11,8 @@ define([
     "text!ressources/code/view/render.js",
     "text!ressources/code/view/render_extend.js",
     "text!ressources/code/view/template.js",
+    "text!ressources/code/view/component.js",
+    "text!ressources/code/view/events.js",
     "text!ressources/code/view/template_function.js",
     "text!ressources/code/template/syntax.html",
     "text!ressources/code/template/components.html",

@@ -100,6 +100,21 @@
                 <p>By default, view use <code>template</code> for rendering, but you can redefine <code>render</code> :</p>
                 <%= view.component("code", {code: "view/render_extend.js"}) %>
             </article>
+            <article id="view/events">
+                <h3><a href="<%- yapp.urls.route("view/events") %>">events</a></h3>
+                <p>Events are written in the format <code>{"event selector": "callback"}</code>. The callback may be either the name of a method on the view, or a direct function body. Omitting the selector causes the event to be bound to the view's root element (<code>this.el</code>). By default, delegateEvents is called within the View's constructor for you, so if you have a simple events hash, all of your DOM events will always already be connected, and you will never have to call this function yourself.</p>
+
+                <p>The events property may also be defined as a function that returns an events hash, to make it easier to programmatically define your events, as well as inherit them from parent views.</p>
+
+                <p>Using delegated events provides a number of advantages over manually using jQuery to bind events to child elements during render. All attached callbacks are bound to the view before being handed off to jQuery, so when the callbacks are invoked, this continues to refer to the view object. When <code>delegateEvents</code> is run, perhaps with a different events hash, all callbacks are removed and delegated afresh — useful for views which need to behave differently when in different modes.</p>
+                <%= view.component("code", {code: "view/events.js"}) %>
+            </article>
+            <article id="view/components">
+                <h3><a href="<%- yapp.urls.route("view/components") %>">components</a></h3>
+                <p>Views in yapp can easily manage sub-views using components, these components can be added directly in the templates : <a href="<%- yapp.urls.route("template/components") %>">Learn more about it</a></p>
+                <p>Defining a view as a component for temlate is really easy :</p>
+                <%= view.component("code", {code: "view/component.js"}) %>
+            </article>
         </section>
 
         <section id="template">
