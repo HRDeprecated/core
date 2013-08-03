@@ -8,6 +8,8 @@ define([
     "text!ressources/code/application/extend.js",
     "text!ressources/code/application/run.js",
     "text!ressources/code/view/extend.js",
+    "text!ressources/code/view/render.js",
+    "text!ressources/code/view/render_extend.js",
     "text!ressources/code/view/template.js",
     "text!ressources/code/view/template_function.js",
     "text!ressources/code/template/syntax.html",

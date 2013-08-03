@@ -2,12 +2,13 @@
 
 // Requries
 var _ = require('underscore');
-
+var path = require('path');
 var _cli = require('commander');
 
 var createApp = require('../').app.createApp;
 
 var pkg = require('../package.json');
+var wrench = require('wrench');
 
 // Create a function
 // That creates the app then calls the given method
@@ -23,6 +24,21 @@ function main() {
     .command('all')
     .description('build application code and run it.')
     .action(appCall('all'));
+
+    _cli
+    .command('new')
+    .description('create a new application.')
+    .action(function() {
+        if (this.dir == null) {
+            console.log("Define application directory using option 'dir' (ex: yapp.js new -d my_app)");
+            return;
+        }
+        var defaultApp = path.resolve(__dirname, "../lib/defaults/app");
+        console.log("Create new application in "+this.dir);
+        wrench.copyDirSyncRecursive(defaultApp, this.dir, {
+            forceDelete: true
+        });
+    });
 
     _cli
     .command('build')

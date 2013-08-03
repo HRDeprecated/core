@@ -15,7 +15,6 @@
                         from: new Date(2013, 4, 30 , 10, 0, 0, 0)
                     }) %>
                 </p>
-                <iframe src="https://friendco.de/widgets/button/codenow?style=horizontal&url=https%3A%2F%2Fgithub.com%2FFriendCode%2Fyapp.js.git&file=" frameborder="0" scrolling="no" frameborder="0" style="border:none; overflow:hidden;width: 160px;height: 30px;" allowTransparency="true"></iframe>
             </article>
         </section>
 
@@ -24,6 +23,14 @@
             <article>
                 <p>Simply install yapp.js using <b>NPM</b> :</p>
                 <p><code>npm install -g git+ssh://git@github.com:FriendCode/yapp.js.git#master</code>.</p>
+            </article>   
+        </section>
+
+        <section id="getstarted">
+            <h2><a href="<%- yapp.urls.route("getstarted") %>">Get started</a></h2>
+            <article>
+                <p>Yapp.js lets you create a simple base application using :</p>
+                <p><code>yapp.js new -d my_app</code></p>
             </article>   
         </section>
 
@@ -85,6 +92,13 @@
                 <%= view.component("code", {code: "view/template.js"}) %>
                 <p><code>template</code> name could alse be given by a function, for example :</p>
                 <%= view.component("code", {code: "view/template_function.js"}) %>
+            </article>
+            <article id="view/render">
+                <h3><a href="<%- yapp.urls.route("view/render") %>">render</a> <code>view.render()</code></h3>
+                <p>Render the view is easy using the method render, you can bind the events <code>"render"</code> (after rendering) or <code>"ready"</code> (first time rendering).</p>
+                <%= view.component("code", {code: "view/render.js"}) %>
+                <p>By default, view use <code>template</code> for rendering, but you can redefine <code>render</code> :</p>
+                <%= view.component("code", {code: "view/render_extend.js"}) %>
             </article>
         </section>
 
