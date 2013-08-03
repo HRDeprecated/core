@@ -15,6 +15,10 @@
                         from: new Date(2013, 4, 30 , 10, 0, 0, 0)
                     }) %>
                 </p>
+                <p>
+                    <iframe src="http://ghbtns.com/github-btn.html?user=FriendCode&repo=yapp.js&type=watch&count=true"allowtransparency="true" frameborder="0" scrolling="0" width="85" height="20"></iframe>
+                    <iframe src="http://ghbtns.com/github-btn.html?user=FriendCode&repo=yapp.js&type=fork&count=true"allowtransparency="true" frameborder="0" scrolling="0" width="105" height="20"></iframe>
+                </p>
             </article>
         </section>
 
@@ -76,6 +80,18 @@
                 <h3><a href="<%- yapp.urls.route("application/run") %>">run</a> <code>application.run()</code></h3>
                 <p>After extending the <code>yapp.Application</code> class, you need to start your new application.</p>
                 <%= view.component("code", {code: "application/run.js"}) %>
+            </article>
+
+            <article id="application/title">
+                <h3><a href="<%- yapp.urls.route("application/title") %>">title</a> <code>application.title([newValue, absolute])</code></h3>
+                <p>Get or set the page title, <b>title</b> could be relative to the application (format: <code>@appname - @title</code>) or absolute (format: <code>@title</code>). This method use <a href="<%- yapp.urls.route("application/head") %>">head</a>.</p>
+                <%= view.component("code", {code: "application/title.js"}) %>
+            </article>
+
+            <article id="application/head">
+                <h3><a href="<%- yapp.urls.route("application/head") %>">head</a> <code>application.head</code></h3>
+                <p>Property <code>head</code> of application let you easily manage page informations such as <b>title</b>, <b>metas</b>, <b>links</b>, <b>crawling</b>.</p>
+                <%= view.component("code", {code: "application/head.js"}) %>
             </article>
         </section>
 
@@ -216,6 +232,11 @@
             <article id="model/has">
                 <h3><a href="<%- yapp.urls.route("model/has") %>">has</a> <code>model.has(attribute)</code></h3>
                 <p>Returns <code>true</code> if the attribute is set to a non-null or non-undefined value.</p>
+            </article>
+
+            <article id="model/clear">
+                <h3><a href="<%- yapp.urls.route("model/clear") %>">clear</a> <code>model.clear([options])</code></h3>
+                <p>Clear the object attributes, <code>options</code> can contain <code>silent</code> to not triggering events <b>change</b> and <b>clear</b>.</p>
             </article>
 
             <article id="model/tojson">

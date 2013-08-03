@@ -11,7 +11,7 @@ require([
 
     // Define base application
     var Application = yapp.Application.extend({
-        name: "Yapp.js Documentation",
+        name: "yapp.js",
         template: "main.html",
         metas: {
             "description": "Build large client-side application in a structured way.",

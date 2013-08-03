@@ -7,6 +7,8 @@ define([
     "text!ressources/code/build/module.js",
     "text!ressources/code/application/extend.js",
     "text!ressources/code/application/run.js",
+    "text!ressources/code/application/title.js",
+    "text!ressources/code/application/head.js",
     "text!ressources/code/view/extend.js",
     "text!ressources/code/view/render.js",
     "text!ressources/code/view/render_extend.js",
