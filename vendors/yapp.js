@@ -12894,7 +12894,7 @@ define('yapp/core/list',[
                 item.render();
             });
             item.render();
-            tag = this.Item.prototype.tagName;
+            tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
             if (options.at > 0) {
                 this.$(tag).eq(options.at-1).after(item.$el);
