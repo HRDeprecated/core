@@ -1,4 +1,16 @@
 
+define('yapp/shims',[],function() {
+    if(!Function.prototype.bind) {
+      Function.prototype.bind = function(newThis) {
+        var that = this;
+        return function(){ 
+          return that.apply(newThis, arguments); 
+        };
+      }
+    }
+
+    return {};
+});
 define('yapp/configs',['require'],function(args) {
     var Config = {
         // Revision
@@ -13278,6 +13290,7 @@ define('yapp/vendors/underscore-more',[
     return _;
 });
 define('yapp/yapp',[
+    "yapp/shims",
     "yapp/configs",
     "yapp/core/class",
     "yapp/core/view",
@@ -13302,9 +13315,9 @@ define('yapp/yapp',[
     "yapp/utils/views",
 
     "yapp/vendors/underscore-more"
-], function(configs, 
+], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {    
     return {
         configs: configs,
         Class: Class,

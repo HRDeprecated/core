@@ -1,4 +1,5 @@
 define([
+    "yapp/shims",
     "yapp/configs",
     "yapp/core/class",
     "yapp/core/view",
@@ -23,9 +24,9 @@ define([
     "yapp/utils/views",
 
     "yapp/vendors/underscore-more"
-], function(configs, 
+], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {    
     return {
         configs: configs,
         Class: Class,
