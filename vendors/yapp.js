@@ -20,7 +20,7 @@ define('yapp/configs',['require'],function(args) {
         "args": {},
 
         // Yapp version
-        "version": "0.0.1",
+        "version": "0.1.0",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
