@@ -12127,6 +12127,18 @@ define("jQuery", (function (global) {
 }(this)));
 
 
+define('yapp/shims',[],function() {
+    if(!Function.prototype.bind) {
+      Function.prototype.bind = function(newThis) {
+        var that = this;
+        return function(){ 
+          return that.apply(newThis, arguments); 
+        };
+      }
+    }
+
+    return {};
+});
 define('yapp/configs',['require'],function(args) {
     var Config = {
         // Revision
@@ -25022,7 +25034,7 @@ define('yapp/core/list',[
                 item.render();
             });
             item.render();
-            tag = this.Item.prototype.tagName;
+            tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
             if (options.at > 0) {
                 this.$(tag).eq(options.at-1).after(item.$el);
@@ -25406,6 +25418,7 @@ define('yapp/vendors/underscore-more',[
     return _;
 });
 define('yapp/yapp',[
+    "yapp/shims",
     "yapp/configs",
     "yapp/core/class",
     "yapp/core/view",
@@ -25430,9 +25443,9 @@ define('yapp/yapp',[
     "yapp/utils/views",
 
     "yapp/vendors/underscore-more"
-], function(configs, 
+], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {
+Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {    
     return {
         configs: configs,
         Class: Class,
@@ -25475,7 +25488,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1375514402485,"baseUrl":"/yapp.js/"}; });
+define('yapp/args',[],function() { return {"revision":1378037718911,"baseUrl":"/yapp.js/"}; });
 define('views/counter',[
     "yapp/yapp"
 ], function(yapp) {
@@ -25873,9 +25886,15 @@ define('text!ressources/code/build/structure.txt',[],function () { return 'build
 
 define('text!ressources/code/build/build.js',[],function () { return 'var path = require("path");\n\nexports.config = {\n    // Base directory for the application\n    "base": __dirname,\n\n    // Application name\n    "name": "MyApplication",\n\n    // Mode debug\n    "debug": true,\n\n    // Main entry point for application\n    "main": "main",\n\n    // Build output directory\n    "build": path.resolve(__dirname, "build"),\n\n    // Static files mappage\n    "static": {\n        "templates": path.resolve(__dirname, "ressources", "templates"),\n        "images": path.resolve(__dirname, "ressources", "images")\n    },\n\n    // Stylesheet entry point\n    "style": path.resolve(__dirname, "stylesheets/imports.less"),\n};';});
 
-define('text!ressources/code/build/options.js',[],function () { return '{\n    // Base directory for the application\n    "base": null,\n\n    // Base url for the application\n    "baseUrl": "",\n\n    // Arguments for application\n    "args": {},\n\n    // Application name\n    "name": "untitled",\n\n    // Mode debug\n    // if debug is false then files are compressed for optimization\n    "debug": true,\n\n    // Main entry file for application\n    "main": null,\n\n    // Build directory for output\n    // directory is created if inexistant\n    "build": null,\n\n    // Output files\n    "out": {\n        "js":   "application.js",\n        "css":  "application.css",\n        "html": "index.html"\n    },\n\n    // Static files\n    // Map of {"directory": "absolute/path"}\n    "static": {},\n\n    // Index html\n    // if null : file is generated\n    // if non null : file is copying\n    "index": null,\n\n    // Stylesheets entry file\n    "style": null,\n\n    // Modules paths and shim for require\n    "paths": {},\n    "shim": {},\n\n    // Compilers\n    "compilers": {\n        "css": "lessc -x -O2 %s > %s",\n        "js":   "r.js -o %s"\n    }\n}';});
+define('text!ressources/code/build/options.js',[],function () { return '{\n    // Base directory for the application\n    "base": null,\n\n    // Base url for the application\n    "baseUrl": "",\n\n    // Arguments for application\n    "args": {},\n\n    // Application name\n    "name": "untitled",\n\n    // Mode debug\n    // if debug is false then files are compressed for optimization\n    "debug": true,\n\n    // Main entry file for application\n    "main": null,\n\n    // Build directory for output\n    // directory is created if inexistant\n    "build": null,\n\n    // Output files\n    "out": {\n        "js":   "application.js",\n        "css":  "application.css",\n        "html": "index.html"\n    },\n\n    // Static files\n    // Map of {"directory": "absolute/path"}\n    "static": {},\n\n    // Index html\n    // if null : file is generated\n    // if non null : file is copying\n    "index": null,\n\n    // Stylesheets entry file\n    "style": null,\n\n    // Modules paths and shim for require\n    "paths": {},\n    "shim": {},\n\n    // Compilers\n    "compilers": {\n        "css": "lessc -x -O2 %s > %s",\n        "js":   "r.js -o %s"\n    },\n\n    // Arguments\n    "args": {}\n}';});
 
 define('text!ressources/code/build/module.js',[],function () { return 'define([\n    "yapp/yapp",\n    "mymodule"\n], function(yapp, mymodule) {\n    var module = {};\n    return module;\n});';});
+
+define('text!ressources/code/build/revision.js',[],function () { return 'alert("Revsion n°"+yapp.configs.revision+" : "+(new Date(yapp.configs.revision)));';});
+
+define('text!ressources/code/build/options_args.js',[],function () { return 'exports.config = {\n\t...\n    "args": {\n    \t"backendFacebookApi": true\n    },\n\t...\n};';});
+
+define('text!ressources/code/build/args.js',[],function () { return 'if (yapp.configs.args.backendFacebookApi) {\n\t// Add auth with facebook\n}';});
 
 define('text!ressources/code/application/extend.js',[],function () { return 'require([\n    "yapp/yapp",\n    "yapp/args"\n], function(yapp, args) {\n    yapp.configure(args, {\n        // options for yapp\n    });\n\n    var Application = yapp.Application.extend({\n        name: "Test Application",\n        template: "main"\n    });\n\n    ...\n});';});
 
@@ -25904,6 +25923,8 @@ define('text!ressources/code/template/syntax.html',[],function () { return '<div
 define('text!ressources/code/template/components.html',[],function () { return '<div>\n    <h1><%- category.title %></h1>\n\n    <% if (category.admin) { %>\n        <%= view.component("category/post", category) %>\n    <% } %>\n\n    <% _.each(articles, function(article) { %>\n        <%= view.component("article", article) %>\n    <% }); %>\n</div>';});
 
 define('text!ressources/code/template/components.js',[],function () { return 'var CateogoryView = yapp.View.extend({\n    template: "views/category",\n    templateContext: function() {\n        return {\n            category: this.model.attributes,\n            articles: this.model.getArticles()\n        }\n    }\n    \n    templateUpdated: function() {\n        _.each(this.components.article, function(article) {\n            article.on("click_edit", function() {\n                this.components["category/post"].open_editor(article.model);\n            });\n        });\n    }\n});';});
+
+define('text!ressources/code/template/load.js',[],function () { return '// Using HTTP\nyapp.Ressources.addNamespace("templates", {\n    loader: "http",\n    base: "templates"\t// Base directory for templates in the static directory\n});\n\n// Using Require\n// You need to include all the templates in the dependencies of a module\nyapp.Ressources.addNamespace("templates", {\n    loader: "require",\n    base: "ressources/templates",\n    mode: "text"\n});\n\n// Using your own ressources loader\nvar TEMPLATES = {\n\t"hello": "<b>Hello world !</b>"\n}\nyapp.Ressources.addLoader("mytemplates", function(query, callback, args, config) {\n    if (TEMPLATES[query] == null) {\n    \tcallback.reject();\n    } else {\n    \tcallback.resolve(TEMPLATES[query])\n    }\n});\nyapp.Ressources.addNamespace("templates", {\n    loader: "mytemplates"\n});';});
 
 define('text!ressources/code/class/extend.js',[],function () { return 'var Animal = yapp.Class.extend({\n    ...\n});\n\nvar Chat = Animal.extend({\n    ...\n});';});
 
@@ -25982,6 +26003,9 @@ define('ressources/ressources',[
     "text!ressources/code/build/build.js",
     "text!ressources/code/build/options.js",
     "text!ressources/code/build/module.js",
+    "text!ressources/code/build/revision.js",
+    "text!ressources/code/build/options_args.js",
+    "text!ressources/code/build/args.js",
     "text!ressources/code/application/extend.js",
     "text!ressources/code/application/run.js",
     "text!ressources/code/application/title.js",
@@ -25996,6 +26020,7 @@ define('ressources/ressources',[
     "text!ressources/code/template/syntax.html",
     "text!ressources/code/template/components.html",
     "text!ressources/code/template/components.js",
+    "text!ressources/code/template/load.js",
     "text!ressources/code/class/extend.js",
     "text!ressources/code/class/initialize.js",
     "text!ressources/code/class/defaults.js",

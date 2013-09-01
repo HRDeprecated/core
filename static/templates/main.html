@@ -5,15 +5,16 @@
             <article>
                 <p class="title">Build large client-side application in a structured way.</p>
                 <p>Yapp.js gives structure to client-side web application by bringing a complete build system
-                    with a a rich API similar in the base similar to Backbone.js.</p>
+                    with a a rich API similar to Backbone.js.</p>
                 <p>yapp.js is an open-source component of <a href="https://friendco.de">FriendCode</a>.</p>
                 <p>Current version is <b><%- yapp.configs.version %></b>, code is disponible on GitHub : <a href="https://github.com/FriendCode/yapp.js">FriendCode/yapp.js</a>.</p>
                 <p>
-                    Check it out a list of web-applications which are using yapp.js :
+                    Checkout a list of web-applications which are using yapp.js :
                     <ul>
                         <li><a href="https://friendco.de"><b>FriendCode</b></a>, Realtime collaborative code editor built for the cloud era.</li>
                         <li><a href="http://doks.io"><b>Doks.io</b></a>, Searching documentation made easy.</li>
                         <li><a href="https://github.com/SamyPesse/tv.js"><b>TV.js</b></a>, Apple TV for Torrent Streaming in JS (Node/Chrome).</li>
+                        <li><a href="https://github.com/FriendCode/gitrap"><b>GitRap</b></a>, Distributed Git based Forums.</li>
                     </ul>
                 </p>
                 <p>
@@ -26,6 +27,7 @@
                 <p>
                     <iframe src="http://ghbtns.com/github-btn.html?user=FriendCode&repo=yapp.js&type=watch&count=true"allowtransparency="true" frameborder="0" scrolling="0" width="85" height="20"></iframe>
                     <iframe src="http://ghbtns.com/github-btn.html?user=FriendCode&repo=yapp.js&type=fork&count=true"allowtransparency="true" frameborder="0" scrolling="0" width="105" height="20"></iframe>
+                    <iframe src="https://friendco.de/widgets/button/codenow?url=https%3A%2F%2Fgithub.com%2FFriendCode%2Fgitrap.git&file=&style=normal&private=true&create=false&prepare=false" frameborder="0" scrolling="no" frameborder="0" style="border:none; overflow:hidden;width: 190px;height: 20px;" allowTransparency="true"></iframe>
                 </p>
             </article>
         </section>
@@ -62,7 +64,7 @@
             </article>
             <article id="build/application">
                 <h3><a href="<%- yapp.urls.route("build/application") %>">Defining an application</a></h3>
-                <p>An application in yapp.js need a real base structure</p>
+                <p>An application in yapp.js need a base build configuration :</p>
                 <%= view.component("code", {code: "build/build.js"}) %>
                 <p>Here is a list of all the differents options for build process :</p>
                 <%= view.component("code", {code: "build/options.js"}) %>
@@ -71,12 +73,21 @@
                 <h3><a href="<%- yapp.urls.route("build/run") %>">Build &amp; Run your application</a></h3>
                 <p>For building, simply run in a command line tool : <code>yapp.js all</code>.</p>
                 <p>You can also <b>only build</b> with : <code>yapp.js build</code>.</p>
-                <p>Or <b>only run</b> the simple server with : <code>yapp.js run</code>.</p>
+                <p>Or <b>only run</b> the simple static server with : <code>yapp.js run</code>.</p>
             </article>
             <article id="build/module">
                 <h3><a href="<%- yapp.urls.route("build/module") %>">Modularity</a></h3>
                 <p>Yapp.js uses <a href="http://requirejs.org/">require.js</a> as module loader.</p>
                 <%= view.component("code", {code: "build/module.js"}) %>
+            </article> 
+            <article id="build/args">
+                <h3><a href="<%- yapp.urls.route("build/args") %>">Arguments and revisions</a></h3>
+                <p>Each build use a unique revision timestamp, this revision id is useful for avoiding cache during ressources requests.</p>
+                <%= view.component("code", {code: "build/revision.js", run: true}) %>
+                <p>The build process can pass arguments to the client side application :</p>
+                <%= view.component("code", {code: "build/options_args.js"}) %>
+                <p>And arguments are simply accessible in the client side :</p>
+                <%= view.component("code", {code: "build/args.js"}) %>
             </article>   
         </section>
 
@@ -120,6 +131,7 @@
             <article id="view/template">
                 <h3><a href="<%- yapp.urls.route("view/template") %>">template</a></h3>
                 <p>Views in yapp.js can easily uses templates by defining property <code>template</code> with the template name and uses <code>templateContext</code> to return the variables for the template.</p>
+                <p>For using templates, you need to specify the ressource loader for templates :  <a href="<%- yapp.urls.route("template/load") %>"><code>Templating/Loading</code></a>.</p>
                 <%= view.component("code", {code: "view/template.js"}) %>
                 <p><code>template</code> name could alse be given by a function, for example :</p>
                 <%= view.component("code", {code: "view/template_function.js"}) %>
@@ -163,6 +175,11 @@
                 <%= view.component("code", {code: "template/components.html"}) %>
                 <p>You can after that easily access to components views in your view :</p>
                 <%= view.component("code", {code: "template/components.js"}) %>
+            </article>
+            <article id="template/load">
+                <h3><a href="<%- yapp.urls.route("template/load") %>">Loading</a></h3>
+                <p>For using templates, you need to specify to yapp how to load a template by name. Templates use the ressources namespace "templates" :</p>
+                <%= view.component("code", {code: "template/load.js"}) %>
             </article>
         </section>
 
@@ -229,7 +246,7 @@
             </article>
 
             <article id="model/initialize">
-                <h3><a href="<%- yapp.urls.route("model/initialize") %>">constructor / initialize</a> <code>new yapp.Model([attributes], [options]) </code></h3>
+                <h3><a href="<%- yapp.urls.route("model/initialize") %>">constructor / initialize</a> <code>new yapp.Model([options], [attributes]) </code></h3>
                 <p>When creating an instance of a model, you can pass in the initial values of the <b>attributes</b>, which will be <a href="<%- yapp.urls.route("model/set") %>">set</a> on the model. If you define an initialize function, it will be invoked when the model is created.</p>
             </article>
 
