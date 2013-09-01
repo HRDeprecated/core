@@ -12148,7 +12148,7 @@ define('yapp/configs',['require'],function(args) {
         "args": {},
 
         // Yapp version
-        "version": "0.0.1",
+        "version": "0.1.0",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -25488,7 +25488,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1378042200122,"baseUrl":"/yapp.js/"}; });
+define('yapp/args',[],function() { return {"revision":1378057502258,"baseUrl":"/yapp.js/"}; });
 define('views/counter',[
     "yapp/yapp"
 ], function(yapp) {
@@ -25960,7 +25960,7 @@ define('text!ressources/code/requests/get.js',[],function () { return 'yapp.Requ
 
 define('text!ressources/code/requests/getjson.js',[],function () { return 'yapp.Requests.getJSON("https://api.github.com/repos/FriendCode/yapp.js").then(function(data) {\n    alert("Yapp.js github repo has "+data.watchers_count+" watchers");\n}, function() {\n    alert("Error !");\n})';});
 
-define('text!ressources/code/requests/post.js',[],function () { return 'yapp.Requests.get("mybackend/test.php").then(function() {\n    alert("Weird ... it wasn\'t suppose to work");\n}, function() {\n    alert("Error ! (don\'t worry it\'s normal ;) )");\n})';});
+define('text!ressources/code/requests/post.js',[],function () { return 'yapp.Requests.post("mybackend/test.php").then(function() {\n    alert("Weird ... it wasn\'t suppose to work");\n}, function() {\n    alert("Error ! (don\'t worry it\'s normal ;) )");\n})';});
 
 define('text!ressources/code/logger/namespace.js',[],function () { return '// Namespace for a model : into navigator console\nvar log_user = yapp.Logger.addNamespace("users");\n\nlog_user.error("Invalid user (don\'t have \'name\') :", {\n    username: "Samy" \n});\n\n// Namespace for urgent logs\nvar log_urgent = yapp.Logger.addNamespace("urgent", function() {\n    var args = Array.prototype.slice.call(arguments);\n    alert(args.join(" "));\n});\n\nlog_urgent.warn("Error in rendering view \'user\'");\n\n';});
 
