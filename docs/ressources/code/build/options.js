@@ -49,5 +49,8 @@
     "compilers": {
         "css": "lessc -x -O2 %s > %s",
         "js":   "r.js -o %s"
-    }
+    },
+
+    // Arguments
+    "args": {}
 }

@@ -1,0 +1,1 @@
+alert("Revsion n°"+yapp.configs.revision+" : "+(new Date(yapp.configs.revision)));
