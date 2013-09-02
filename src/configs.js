@@ -7,7 +7,7 @@ define(function(args) {
         "args": {},
 
         // Yapp version
-        "version": "0.1.0",
+        "version": "0.1.1",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -20,8 +20,8 @@ define(function(args) {
         // Static files directory (relative to baseUrl)
         "staticDirectory": "static",
 
-        // Configurations for ressources loading
-        "ressources": {
+        // Configurations for resources loading
+        "resources": {
             /* Default loader */
             "loader": "http"
         },

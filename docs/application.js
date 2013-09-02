@@ -4,7 +4,7 @@ require([
     "yapp/args",
 
     "views/views",
-    "ressources/ressources"
+    "resources/resources"
 ], function(_, yapp, args) {
     // Configure yapp
     yapp.configure(args);

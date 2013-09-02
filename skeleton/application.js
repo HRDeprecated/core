@@ -3,7 +3,7 @@ require([
     "yapp/args",
 
     "views/imports",
-    "ressources/imports"
+    "resources/imports"
 ], function(yapp, args) {
     // Configure yapp
     yapp.configure(args);

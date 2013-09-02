@@ -21,7 +21,7 @@ define([
             return this;
         },
         render: function() {
-            yapp.Ressources.load("codes", this.options.code).always(_.bind(function(content) {
+            yapp.Resources.load("codes", this.options.code).always(_.bind(function(content) {
                 this.code = content;
                 this.$el.html(hljs.highlightAuto(this.code).value);
                 if (this.options.run) {

@@ -4,9 +4,9 @@ define([
     "yapp/core/class",
     "yapp/utils/logger",
     "yapp/utils/urls",
-    "yapp/utils/ressources",
+    "yapp/utils/resources",
     "yapp/utils/i18n"
-], function(_, configs, Class, Logger, Urls, Ressources, I18n) {
+], function(_, configs, Class, Logger, Urls, Resources, I18n) {
     var Template = Class.extend({
         defaults: {
             /* Template id */
@@ -94,7 +94,7 @@ define([
         load: function(template) {
             var self = this;
             this.template = template || this.template;
-            Ressources.load("templates", this.template).then(function(content) {
+            Resources.load("templates", this.template).then(function(content) {
                 self.setContent(content);
                 self.trigger("loaded");
             }, function() {

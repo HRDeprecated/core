@@ -1,6 +1,6 @@
 // Simple http loader using yahoo queries
 // for getting page content
-yapp.Ressources.addLoader("yql", function(query, callback, args, config) {
+yapp.Resources.addLoader("yql", function(query, callback, args, config) {
     _.defaults(config, {
         version: "v1",
         server: "https://query.yahooapis.com"
@@ -22,7 +22,7 @@ yapp.Ressources.addLoader("yql", function(query, callback, args, config) {
 });
 
 // Add a simple namespace for external pages
-yapp.Ressources.addNamespace("query", {
+yapp.Resources.addNamespace("query", {
     loader: "yql",
     version: "v1"
 });
@@ -32,7 +32,7 @@ yapp.Ressources.addNamespace("query", {
 // yql could now be use anywhere with ressource loader
 
 // For exemple : get weather
-yapp.Ressources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {
+yapp.Resources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {
     var city = result.channel.location.city;
     var condition = result.channel.item.condition.text;
     alert("Weather in "+city+" is "+condition);

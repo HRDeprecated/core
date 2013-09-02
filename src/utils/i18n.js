@@ -4,9 +4,9 @@ define([
     "yapp/configs",
     "yapp/utils/urls",
     "yapp/utils/logger",
-    "yapp/utils/ressources",
+    "yapp/utils/resources",
     "yapp/utils/deferred"
-], function($, _, configs, Urls, Logger, Ressources, Deferred) {
+], function($, _, configs, Urls, Logger, Resources, Deferred) {
     var logging = Logger.addNamespace("i18n");
     var I18n = {};
 
@@ -58,7 +58,7 @@ define([
             });
             return Deferred.when.apply(Deferred, d);
         }
-        return Ressources.load("i18n", lng).then(function(content) {
+        return Resources.load("i18n", lng).then(function(content) {
             // use "eval" here because content is from a trusted source
             if (_.isString(content)) content = eval('(' + content + ')');//JSON.parse(content);
             I18n.translations[lng] = content;

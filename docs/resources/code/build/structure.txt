@@ -7,7 +7,7 @@ stylesheets/
     imports.less
 vendors/
     external_library.js
-ressources/
+resources/
     templates/
         views/
             myview.html

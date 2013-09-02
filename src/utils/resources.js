@@ -8,10 +8,10 @@ define([
     "yapp/utils/deferred",
 ], function(_, configs, Logger, Cache, Requests, Urls, Deferred) {
 
-    var logging = Logger.addNamespace("ressources");
-    var cache = Cache.namespace("ressources");
+    var logging = Logger.addNamespace("resources");
+    var cache = Cache.namespace("resources");
 
-    var Ressources = {
+    var Resources = {
         loaders: {},
         namespaces: {},
 
@@ -20,15 +20,15 @@ define([
          */
         load: function(namespace, ressource, args, options) {
             var d = new Deferred();
-            var namespace_configs = _.extend({}, Ressources.namespaces[namespace] || {}, options || {});
-            var loader = namespace_configs.loader || configs.ressources.loader;
+            var namespace_configs = _.extend({}, Resources.namespaces[namespace] || {}, options || {});
+            var loader = namespace_configs.loader || configs.resources.loader;
             
-            if (Ressources.loaders[loader] == null) {
+            if (Resources.loaders[loader] == null) {
                 logging.error("Loader doesn't exists ", loader, "namespace=",namespace);
                 d.reject();
                 return d;
             }
-            Ressources.loaders[loader](ressource, d, args, namespace_configs);
+            Resources.loaders[loader](ressource, d, args, namespace_configs);
             return d;
         },
 
@@ -38,7 +38,7 @@ define([
          *  @loader : loader function
          */
         addLoader: function(name, loader) {
-            Ressources.loaders[name] = loader;
+            Resources.loaders[name] = loader;
         },
 
         /*
@@ -49,17 +49,17 @@ define([
         addNamespace: function(name, config) {
             config = config || {};
             config = _.defaults(config, {
-                loader: configs.ressources.loader
+                loader: configs.resources.loader
             });
             config = _.extend(config, {
                 namespace: name
             });
-            Ressources.namespaces[name] = config;
+            Resources.namespaces[name] = config;
         }
     };
 
     // Require loader
-    Ressources.addLoader("require", function(ressourcename, callback, args, config) {  
+    Resources.addLoader("require", function(ressourcename, callback, args, config) {  
         _.defaults(config, {
             mode: "text",
             base: "",
@@ -78,7 +78,7 @@ define([
     });
 
     // HTTP loader
-    Ressources.addLoader("http", function(ressourcename, callback, args, config) {
+    Resources.addLoader("http", function(ressourcename, callback, args, config) {
         _.defaults(config, {
             base: "./",
             extension: ""
@@ -100,5 +100,5 @@ define([
         });
     });
 
-    return Ressources;
+    return Resources;
 });

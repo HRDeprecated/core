@@ -1,5 +1,5 @@
 // Configure loading of i18n translations
-yapp.Ressources.addNamespace("i18n", {
+yapp.Resources.addNamespace("i18n", {
     loader: "http",
     base: "i18n",
     extension: ".json"

@@ -17,7 +17,7 @@ define([
     "yapp/utils/storage",
     "yapp/utils/cache",
     "yapp/utils/template",
-    "yapp/utils/ressources",
+    "yapp/utils/resources",
     "yapp/utils/deferred",
     "yapp/utils/queue",
     "yapp/utils/i18n",
@@ -26,7 +26,7 @@ define([
     "yapp/vendors/underscore-more"
 ], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I18n, views) {    
+Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I18n, views) {    
     return {
         configs: configs,
         Class: Class,
@@ -45,7 +45,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Ressources, Deferred, Queue, I
         Requests: Requests,
         Urls: Urls,
         Template: Template,
-        Ressources: Ressources,
+        Resources: Resources,
         Deferred: Deferred,
         Queue: Queue,
         I18n: I18n,

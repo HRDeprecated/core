@@ -1,24 +1,24 @@
 // Configure templates to use http loader
-yapp.Ressources.addNamespace("templates", {
+yapp.Resources.addNamespace("templates", {
     loader: "http",
     base: "templates"
 });
 
 // Configure i18n to use internal content for languages
-yapp.Ressources.addNamespace("i18n", {
+yapp.Resources.addNamespace("i18n", {
     loader: "require",
-    base: "ressources/i18n",
+    base: "resources/i18n",
     mode: "text"
 });
 
 // Add a other namespace for your application
-yapp.Ressources.addNamespace("codes", {
+yapp.Resources.addNamespace("codes", {
     loader: "require",
-    base: "ressources/code",
+    base: "resources/code",
     mode: "text"
 });
 
-yapp.Ressources.load("codes", "urls/base.js").then(function(code) {
+yapp.Resources.load("codes", "urls/base.js").then(function(code) {
     alert("Code loaded : "+code);
 }, function() {
     alert("error when loading code !");

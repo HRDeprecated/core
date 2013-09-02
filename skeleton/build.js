@@ -21,9 +21,9 @@ exports.config = {
 
     // Static files
     "static": {
-        "templates": path.resolve(__dirname, "ressources", "templates"),
-        "i18n": path.resolve(__dirname, "ressources", "i18n"),
-        "images": path.resolve(__dirname, "ressources", "images"),
+        "templates": path.resolve(__dirname, "resources", "templates"),
+        "i18n": path.resolve(__dirname, "resources", "i18n"),
+        "images": path.resolve(__dirname, "resources", "images"),
     },
 
     // Stylesheets
