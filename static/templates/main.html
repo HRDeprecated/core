@@ -36,16 +36,9 @@
             <h2><a href="<%- yapp.urls.route("install") %>">Installation</a></h2>
             <article>
                 <p>Simply install yapp.js using <b>NPM</b> :</p>
-                <p><code>npm install -g yapp.js</code>.</p>
+                <p><code>npm install -g yapp.js</code></p>
                 <p>or</p>
-                <p><code>npm install -g git+https://github.com/FriendCode/yapp.js.git#master</code>.</p>
-            </article>   
-        </section>
-
-        <section id="arch">
-            <h2><a href="<%- yapp.urls.route("arch") %>">Architecture</a></h2>
-            <article>
-                <p><img src="<%- yapp.urls.static("images/arch.png") %>" /></p>
+                <p><code>npm install -g git+https://github.com/FriendCode/yapp.js.git#master</code></p>
             </article>   
         </section>
 
@@ -84,7 +77,7 @@
             </article> 
             <article id="build/args">
                 <h3><a href="<%- yapp.urls.route("build/args") %>">Arguments and revisions</a></h3>
-                <p>Each build use a unique revision timestamp, this revision id is useful for avoiding cache during ressources requests.</p>
+                <p>Each build use a unique revision timestamp, this revision id is useful for avoiding cache during resources requests.</p>
                 <%= view.component("code", {code: "build/revision.js", run: true}) %>
                 <p>The build process can pass arguments to the client side application :</p>
                 <%= view.component("code", {code: "build/options_args.js"}) %>
@@ -180,7 +173,7 @@
             </article>
             <article id="template/load">
                 <h3><a href="<%- yapp.urls.route("template/load") %>">Loading</a></h3>
-                <p>For using templates, you need to specify to yapp how to load a template by name. Templates use the ressources namespace "templates" :</p>
+                <p>For using templates, you need to specify to yapp how to load a template by name. Templates use the resources namespace "templates" :</p>
                 <%= view.component("code", {code: "template/load.js"}) %>
             </article>
         </section>
@@ -454,7 +447,7 @@
             <h2><a href="<%- yapp.urls.route("storage") %>">Storage</a></h2>
             <p>The module <b>Storage</b> is a simple interface to the navigator <code>localStorage</code>.</p>
             <p>It supports storage of complex object and not just string.</p>
-            <p>For gestion of cached values or ressources, use instead module <a href="<%- yapp.urls.route("cache") %>"><b>Cache</b></a>.</p>
+            <p>For gestion of cached values or resources, use instead module <a href="<%- yapp.urls.route("cache") %>"><b>Cache</b></a>.</p>
 
             <article id="storage/get">
                 <h3><a href="<%- yapp.urls.route("storage/get") %>">get</a> <code>yapp.Storage.get(key)</code></h3>
@@ -519,32 +512,32 @@
             </article>
         </section>
 
-        <section id="ressources">
-            <h2><a href="<%- yapp.urls.route("ressources") %>">Ressources</a></h2>
-            <p>The module <b>Ressources</b> let you load ressources (such as templates, ...) in a standart way.</p>
+        <section id="resources">
+            <h2><a href="<%- yapp.urls.route("resources") %>">Resources</a></h2>
+            <p>The module <b>Resources</b> let you load resources (such as templates, ...) in a standart way.</p>
 
-            <article id="ressources/load">
-                <h3><a href="<%- yapp.urls.route("ressources/load") %>">load</a> <code>yapp.Ressources.load(namespace, ressource)</code></h3>
+            <article id="resources/load">
+                <h3><a href="<%- yapp.urls.route("resources/load") %>">load</a> <code>yapp.Resources.load(namespace, ressource)</code></h3>
                 <p>Load a ressource in a namespace and return a <a href="<%- yapp.urls.route("deferred") %>"><code>Deferred</code></a>.</p>
-                <%= view.component("code", {code: "ressources/load.js", run: true}) %>
+                <%= view.component("code", {code: "resources/load.js", run: true}) %>
             </article>
 
-            <article id="ressources/addNamespace">
-                <h3><a href="<%- yapp.urls.route("ressources/addNamespace") %>">addNamespace</a> <code>yapp.Ressources.addNamespace(namespace, options)</code></h3>
-                <p>Add a namespaces for ressources with options for loading.</p>
-                <%= view.component("code", {code: "ressources/namespace.js", run: true}) %>
+            <article id="resources/addNamespace">
+                <h3><a href="<%- yapp.urls.route("resources/addNamespace") %>">addNamespace</a> <code>yapp.Resources.addNamespace(namespace, options)</code></h3>
+                <p>Add a namespaces for resources with options for loading.</p>
+                <%= view.component("code", {code: "resources/namespace.js", run: true}) %>
             </article>
 
-            <article id="ressources/addLoader">
-                <h3><a href="<%- yapp.urls.route("ressources/addLoader") %>">addLoader</a> <code>yapp.Ressources.addLoader(name, handler)</code></h3>
-                <p>Add a new loader for loading ressources.</p>
+            <article id="resources/addLoader">
+                <h3><a href="<%- yapp.urls.route("resources/addLoader") %>">addLoader</a> <code>yapp.Resources.addLoader(name, handler)</code></h3>
+                <p>Add a new loader for loading resources.</p>
                 <p>Base loader are :
                     <ul>
-                        <li><b>http</b> : Load ressources using http requests and caching</li>
-                        <li><b>require</b> : Load ressources from application source code using require</li>
+                        <li><b>http</b> : Load resources using http requests and caching</li>
+                        <li><b>require</b> : Load resources from application source code using require</li>
                     </ul>
                 </p>
-                <%= view.component("code", {code: "ressources/loader.js", run: true}) %>
+                <%= view.component("code", {code: "resources/loader.js", run: true}) %>
             </article>
         </section>
     </div>
