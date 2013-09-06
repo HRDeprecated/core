@@ -10949,12 +10949,38 @@ define('yapp/utils/requests',[
         /*
          *  Method for a PUT method
          *  @url : url to request 
-         *  @args : arguments for POST
+         *  @args : arguments for PUT
          *  @callback : callback for results
          */
         put: function(url, args, options) {
             return Requests._execute(url, options, {
                 method: "PUT",
+                params: args
+            });
+        },
+
+        /*
+         *  Method for a DELETE method
+         *  @url : url to request 
+         *  @args : arguments for DELETE
+         *  @callback : callback for results
+         */
+        delete: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "DELETE",
+                params: args
+            });
+        },
+
+        /*
+         *  Method for a HEAD method
+         *  @url : url to request 
+         *  @args : arguments for HEAD
+         *  @callback : callback for results
+         */
+        head: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "HEAD",
                 params: args
             });
         }
