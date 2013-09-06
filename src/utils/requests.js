@@ -96,6 +96,19 @@ define([
                 method: "POST",
                 params: args
             });
+        },
+
+        /*
+         *  Method for a PUT method
+         *  @url : url to request 
+         *  @args : arguments for POST
+         *  @callback : callback for results
+         */
+        put: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "PUT",
+                params: args
+            });
         }
     });
     return Requests;
