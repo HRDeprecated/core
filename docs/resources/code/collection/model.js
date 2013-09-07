@@ -1,3 +1,3 @@
-var Library = yapp.Collection.extend({
+var Library = hr.Collection.extend({
     model: Book
 });

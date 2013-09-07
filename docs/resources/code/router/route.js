@@ -1,4 +1,4 @@
-var router = new yapp.Router();
+var router = new hr.Router();
 router.route("test/home", "home", function() {
     alert("home !");
 });

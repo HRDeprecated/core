@@ -5,7 +5,7 @@ define([
     var eventSplitter = /\s+/;
 
     /*
-     *  yapp.Class is the base for objects in yapp
+     *  hr.Class is the base for objects in hr
      */
     var Class = function(options) {
         this.options = _.extend({}, options || {});

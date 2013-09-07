@@ -1,6 +1,6 @@
 define([
     "Underscore",
-    "yapp/configs"
+    "hr/configs"
 ], function(_, configs) {
     var Urls = {
         /*

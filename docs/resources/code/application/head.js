@@ -17,7 +17,7 @@ app.head.description("My application");
 var description = app.head.description();
 
 // Set link
-app.head.link("icon", yapp.Urls.static("images/favicon.png"));
+app.head.link("icon", hr.Urls.static("images/favicon.png"));
 
 // Get link
 var favicon = app.head.link("icon");

@@ -1,7 +1,7 @@
 define([
-    "yapp/yapp",
+    "hr/hr",
     "mymodule"
-], function(yapp, mymodule) {
+], function(hr, mymodule) {
     var module = {};
     return module;
 });

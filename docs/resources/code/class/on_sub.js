@@ -1,4 +1,4 @@
-var object = new yapp.Class();
+var object = new hr.Class();
 
 object.on("parent", function() {
     alert("event parent");

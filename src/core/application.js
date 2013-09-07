@@ -1,10 +1,10 @@
 define([
     "jQuery",
     "Underscore",
-    "yapp/core/view",
-    "yapp/core/head",
-    "yapp/core/router",
-    "yapp/utils/logger"
+    "hr/core/view",
+    "hr/core/head",
+    "hr/core/router",
+    "hr/utils/logger"
 ], function($, _, View, Head, Router, Logger) {
 
     var logging = Logger.addNamespace("application");
@@ -58,8 +58,8 @@ define([
         run: function() {
             logging.log("Run application", this.name);
 
-            var yapp = require("yapp/yapp");
-            yapp.app = this;
+            var hr = require("hr/hr");
+            hr.app = this;
             this.render();
             return this;
         },

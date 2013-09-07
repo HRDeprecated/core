@@ -1,1 +1,1 @@
-alert("Revsion n°"+yapp.configs.revision+" : "+(new Date(yapp.configs.revision)));
+alert("Revsion n°"+hr.configs.revision+" : "+(new Date(hr.configs.revision)));

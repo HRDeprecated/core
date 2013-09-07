@@ -1,4 +1,4 @@
-var View = yapp.View.extend({
+var View = hr.View.extend({
 	render: function() {
 		this.$el.html("Hello World !");
 

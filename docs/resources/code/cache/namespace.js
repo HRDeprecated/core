@@ -1,8 +1,8 @@
 // Create a first cache namespace for users
-var users = yapp.Cache.namespace("users");
+var users = hr.Cache.namespace("users");
 
 // Create a second cache namespace for articles
-var articles = yapp.Cache.namespace("articles");
+var articles = hr.Cache.namespace("articles");
 
 users.set("samy", {
     name: "Samy Pessé"

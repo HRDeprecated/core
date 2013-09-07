@@ -1,6 +1,6 @@
 rjs = "node_modules/requirejs/bin/r.js"
 
-desc "rebuild the vendors/yapp.js files for distribution"
+desc "rebuild the vendors/hr.js files for distribution"
 task :build do
   check "#{rjs}", 'RequireJS', 'https://github.com/jrburke/r.js'
   system "#{rjs} -o ./src/require-config.js"
@@ -8,17 +8,17 @@ end
 
 desc "build the documentation in docs/build"
 task :doc do
-  system './bin/yapp.js -d docs build'
+  system './bin/hr.js -d docs build'
 end
 
 desc "run the documentation website"
 task :run do
-  system './bin/yapp.js -d docs all'
+  system './bin/hr.js -d docs all'
 end
 
 desc "run the sample"
 task :sample do
-  system './bin/yapp.js -d skeleton all'
+  system './bin/hr.js -d skeleton all'
 end
 
 desc "install dependencies using npm"

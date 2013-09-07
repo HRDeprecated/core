@@ -1,10 +1,10 @@
 define([
     "Underscore",
-    "yapp/core/class",
-    "yapp/core/model",
-    "yapp/utils/logger",
-    "yapp/utils/deferred",
-    "yapp/utils/queue"
+    "hr/core/class",
+    "hr/core/model",
+    "hr/utils/logger",
+    "hr/utils/deferred",
+    "hr/utils/queue"
 ], function(_, Class, Model, Logger, Deferred, Queue) {
     var logging = Logger.addNamespace("collections");
 

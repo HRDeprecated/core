@@ -1,8 +1,8 @@
 define([
     "Underscore",
-    "yapp/core/view",
-    "yapp/utils/logger",
-    "yapp/core/collection"
+    "hr/core/view",
+    "hr/utils/logger",
+    "hr/core/collection"
 ], function(_, View, Logger, Collection) {
 
     var logging = Logger.addNamespace("lists");
@@ -294,7 +294,7 @@ define([
          */
         displayHasMore: function() {
             var btn = $("<div>", {
-                "class": "alert yapp-list-message yapp-list-message-more",
+                "class": "alert hr-list-message hr-list-message-more",
                 "data-list-action": "showmore",
                 "text": this.hasMore(),
             });
@@ -306,15 +306,15 @@ define([
          *  Render the list
          */
         render: function() {
-            this.$(".yapp-list-message").remove();
+            this.$(".hr-list-message").remove();
             if (this.collection.queue.isComplete() == false) {
                 $("<div>", {
-                    "class": "yapp-list-message yapp-list-message-loading"
+                    "class": "hr-list-message hr-list-message-loading"
                 }).appendTo(this.$el);
             } else {
                 if (this.count() == 0 && this.options.displayEmptyList) {
                     var el = this.displayEmptyList();
-                    $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+                    $(el).addClass("hr-list-message hr-list-message-empty").appendTo(this.$el);
                 }
                 if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             }

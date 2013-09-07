@@ -1,4 +1,4 @@
-var TestView = yapp.View.extend({
+var TestView = hr.View.extend({
     tagName: "div",
 
     className: "component-testview",

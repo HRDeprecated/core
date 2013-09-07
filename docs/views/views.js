@@ -1,9 +1,9 @@
 define([
-    "yapp/yapp",
+    "hr/hr",
 
     "views/counter",
     "views/code",
-], function(yapp) {
+], function(hr) {
 
     return {}
 });

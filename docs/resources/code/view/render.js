@@ -1,4 +1,4 @@
-var View = yapp.View.extend({
+var View = hr.View.extend({
 	template: "test.html"
 });
 var view = new View();

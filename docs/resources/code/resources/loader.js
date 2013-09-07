@@ -1,6 +1,6 @@
 // Simple http loader using yahoo queries
 // for getting page content
-yapp.Resources.addLoader("yql", function(query, callback, args, config) {
+hr.Resources.addLoader("yql", function(query, callback, args, config) {
     _.defaults(config, {
         version: "v1",
         server: "https://query.yahooapis.com"
@@ -11,7 +11,7 @@ yapp.Resources.addLoader("yql", function(query, callback, args, config) {
     var url = config.url || config.server+"/"+config.version+"/public/yql";
     url = url+"?format=json&q="+query+"&callback=?";
 
-    yapp.Requests.getJSON(url).then(function(data) {
+    hr.Requests.getJSON(url).then(function(data) {
         if (data.query == null || data.query.results == null) {
             return callback.reject();
         }
@@ -22,7 +22,7 @@ yapp.Resources.addLoader("yql", function(query, callback, args, config) {
 });
 
 // Add a simple namespace for external pages
-yapp.Resources.addNamespace("query", {
+hr.Resources.addNamespace("query", {
     loader: "yql",
     version: "v1"
 });
@@ -32,7 +32,7 @@ yapp.Resources.addNamespace("query", {
 // yql could now be use anywhere with ressource loader
 
 // For exemple : get weather
-yapp.Resources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {
+hr.Resources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {
     var city = result.channel.location.city;
     var condition = result.channel.item.condition.text;
     alert("Weather in "+city+" is "+condition);

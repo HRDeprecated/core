@@ -1,9 +1,9 @@
 define([
     "jQuery",
     "Underscore",
-    "yapp/core/class",
-    "yapp/utils/template",
-    "yapp/utils/deferred"
+    "hr/core/class",
+    "hr/utils/template",
+    "hr/utils/deferred"
 ], function($, _, Class, Template, Deferred) {
 
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;

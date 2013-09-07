@@ -1,1 +1,1 @@
-alert(yapp.Urls.static("favicon.png"));
+alert(hr.Urls.static("favicon.png"));

@@ -1,29 +1,29 @@
 define([
-    "yapp/shims",
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/core/view",
-    "yapp/core/application",
-    "yapp/core/head",
-    "yapp/core/history",
-    "yapp/core/router",
-    "yapp/core/model",
-    "yapp/core/collection",
-    "yapp/core/list",
+    "hr/shims",
+    "hr/configs",
+    "hr/core/class",
+    "hr/core/view",
+    "hr/core/application",
+    "hr/core/head",
+    "hr/core/history",
+    "hr/core/router",
+    "hr/core/model",
+    "hr/core/collection",
+    "hr/core/list",
 
-    "yapp/utils/logger",
-    "yapp/utils/requests",
-    "yapp/utils/urls",
-    "yapp/utils/storage",
-    "yapp/utils/cache",
-    "yapp/utils/template",
-    "yapp/utils/resources",
-    "yapp/utils/deferred",
-    "yapp/utils/queue",
-    "yapp/utils/i18n",
-    "yapp/utils/views",
+    "hr/utils/logger",
+    "hr/utils/requests",
+    "hr/utils/urls",
+    "hr/utils/storage",
+    "hr/utils/cache",
+    "hr/utils/template",
+    "hr/utils/resources",
+    "hr/utils/deferred",
+    "hr/utils/queue",
+    "hr/utils/i18n",
+    "hr/utils/views",
 
-    "yapp/vendors/underscore-more"
+    "hr/vendors/underscore-more"
 ], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
 Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I18n, views) {    
@@ -57,7 +57,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I1
             options = options || {};
             args = args || {};
             if (args.revision == null) {
-                Logger.logging.error("Error invalid configuration for yapp");
+                Logger.logging.error("Error invalid configuration for hr");
                 return;
             }
 

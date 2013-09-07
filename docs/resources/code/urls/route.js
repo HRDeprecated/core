@@ -1,1 +1,1 @@
-alert(yapp.Urls.route("article/:id", {id: 1234}));
+alert(hr.Urls.route("article/:id", {id: 1234}));

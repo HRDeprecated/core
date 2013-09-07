@@ -1,4 +1,4 @@
-var Person = yapp.Class.extend({
+var Person = hr.Class.extend({
     defaults: {
         firstname: "",
         lastname: ""

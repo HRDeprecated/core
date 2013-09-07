@@ -1,14 +1,14 @@
 ({
-    name: "yapp/yapp",
+    name: "hr/hr",
     baseUrl: './',
-    out: '../vendors/yapp.js',
-    include: ["yapp/yapp"],
+    out: '../vendors/hr.js',
+    include: ["hr/hr"],
     optimize: "none",
     paths: {
         'Underscore':     '../vendors/underscore',
         'jQuery':         '../vendors/jquery',
         'text':           '../vendors/require-text',
-        'yapp': './',
+        'hr': './',
     },
     shim: {
         'Underscore': {

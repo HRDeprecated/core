@@ -1,1 +1,1 @@
-alert(yapp.Urls.base("index.html"));
+alert(hr.Urls.base("index.html"));

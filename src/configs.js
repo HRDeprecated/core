@@ -6,7 +6,7 @@ define(function(args) {
         // Arguments
         "args": {},
 
-        // Yapp version
+        // Hr version
         "version": "0.1.1",
 
         // Log level

@@ -1,4 +1,4 @@
-var Library = yapp.Collection.extend({
+var Library = hr.Collection.extend({
 
     model: function(attrs, options) {
         if (condition) {

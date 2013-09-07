@@ -1,5 +1,5 @@
-var r = new yapp.Requests({
-    url: yapp.Urls.static("templates/header.html"),
+var r = new hr.Requests({
+    url: hr.Urls.static("templates/header.html"),
 
     /*
     Some others options with defaults values :

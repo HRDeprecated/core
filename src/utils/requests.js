@@ -1,8 +1,8 @@
 define([
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger",
-    "yapp/utils/deferred"
+    "hr/configs",
+    "hr/core/class",
+    "hr/utils/logger",
+    "hr/utils/deferred"
 ], function(configs, Class, Logger, Deferred) {
     
     var logging = Logger.addNamespace("requests");

@@ -1,4 +1,4 @@
-var ArticleView = yapp.View.extend({
+var ArticleView = hr.View.extend({
     template: function() {
         if (this.model.get("type") == "video") {
             return "views/article/video";

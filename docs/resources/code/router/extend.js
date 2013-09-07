@@ -1,4 +1,4 @@
-var Router = yapp.Router.extend({
+var Router = hr.Router.extend({
     routes: {
         "home": "home",                    // #/home
         "user/:id": "user",                // #/user/samy

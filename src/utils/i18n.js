@@ -1,11 +1,11 @@
 define([
     "jQuery",
     "Underscore",
-    "yapp/configs",
-    "yapp/utils/urls",
-    "yapp/utils/logger",
-    "yapp/utils/resources",
-    "yapp/utils/deferred"
+    "hr/configs",
+    "hr/utils/urls",
+    "hr/utils/logger",
+    "hr/utils/resources",
+    "hr/utils/deferred"
 ], function($, _, configs, Urls, Logger, Resources, Deferred) {
     var logging = Logger.addNamespace("i18n");
     var I18n = {};
@@ -29,7 +29,7 @@ define([
 
         _.extend(options, {
             "_": _,
-            "yapp": {
+            "hr": {
                 "configs": configs,
                 "urls": Urls
             }

@@ -1,7 +1,7 @@
 define([
     "Underscore",
-    "yapp/core/class",
-    "yapp/utils/deferred"
+    "hr/core/class",
+    "hr/utils/deferred"
 ], function(_, Class, Deferred) {
     var Queue = Class.extend({
         /*

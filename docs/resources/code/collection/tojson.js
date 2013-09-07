@@ -1,4 +1,4 @@
-var collection = new yapp.Collection({
+var collection = new hr.Collection({
     models: [
         {name: "Tim", age: 5},
         {name: "Ida", age: 26},

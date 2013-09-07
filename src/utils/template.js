@@ -1,11 +1,11 @@
 define([
     "Underscore",
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger",
-    "yapp/utils/urls",
-    "yapp/utils/resources",
-    "yapp/utils/i18n"
+    "hr/configs",
+    "hr/core/class",
+    "hr/utils/logger",
+    "hr/utils/urls",
+    "hr/utils/resources",
+    "hr/utils/i18n"
 ], function(_, configs, Class, Logger, Urls, Resources, I18n) {
     var Template = Class.extend({
         defaults: {
@@ -32,7 +32,7 @@ define([
             // Init template context
             _.extend(this.args, {
                 "_": _,
-                "yapp": {
+                "hr": {
                     "configs": configs,
                     "urls": Urls,
                     "i18n": I18n,
@@ -145,7 +145,7 @@ define([
                 if (distance_in_minutes == 1) { msgid = 'minute'; }
                 if (distance_in_minutes == 0) { msgid = 'seconds'; }
 
-                return I18n.t("yapp.utils.timeago."+msgid, {
+                return I18n.t("hr.utils.timeago."+msgid, {
                     "months": Math.floor(distance_in_minutes / 43200),
                     "days": Math.floor(distance_in_minutes / 1440),
                     "hours": Math.round(distance_in_minutes / 60),

@@ -1,1 +1,0 @@
-web: ./bin/yapp.js -d skeleton all

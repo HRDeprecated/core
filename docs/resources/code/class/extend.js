@@ -1,4 +1,4 @@
-var Animal = yapp.Class.extend({
+var Animal = hr.Class.extend({
     ...
 });
 

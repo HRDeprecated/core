@@ -1,24 +1,24 @@
 require([
     "Underscore",
-    "yapp/yapp",
-    "yapp/args",
+    "hr/hr",
+    "hr/args",
 
     "views/views",
     "resources/resources"
-], function(_, yapp, args) {
-    // Configure yapp
-    yapp.configure(args);
+], function(_, hr, args) {
+    // Configure hr
+    hr.configure(args);
 
     // Define base application
-    var Application = yapp.Application.extend({
-        name: "yapp.js",
+    var Application = hr.Application.extend({
+        name: "hr.js",
         template: "main.html",
         metas: {
             "description": "Build large client-side application in a structured way.",
             "author": "Samy Pessé"
         },
         links: {
-            "icon": yapp.Urls.static("images/favicon.png")
+            "icon": hr.Urls.static("images/favicon.png")
         },
         events: {
             "submit .search": "search",

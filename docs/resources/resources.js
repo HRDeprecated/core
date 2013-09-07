@@ -1,5 +1,5 @@
 define([
-    "yapp/yapp",
+    "hr/hr",
 
     "text!resources/code/build/structure.txt",
     "text!resources/code/build/build.js",
@@ -58,14 +58,14 @@ define([
     "text!resources/code/resources/load.js",
     "text!resources/code/resources/namespace.js",
     "text!resources/code/resources/loader.js",
-], function(yapp) {
+], function(hr) {
 
-    yapp.Resources.addNamespace("templates", {
+    hr.Resources.addNamespace("templates", {
         loader: "http",
         base: "templates"
     });
 
-     yapp.Resources.addNamespace("codes", {
+     hr.Resources.addNamespace("codes", {
         loader: "require",
         base: "resources/code",
         mode: "text"

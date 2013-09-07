@@ -1,6 +1,6 @@
 define([
     "Underscore",
-    "yapp/core/class",
+    "hr/core/class",
 ], function(_, Class) {    
     /* 
     * Deferred is an implementation of the Promise pattern, which allows

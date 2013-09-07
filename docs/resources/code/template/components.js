@@ -1,4 +1,4 @@
-var CateogoryView = yapp.View.extend({
+var CateogoryView = hr.View.extend({
     template: "views/category",
     templateContext: function() {
         return {

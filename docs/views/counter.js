@@ -1,12 +1,12 @@
 define([
-    "yapp/yapp"
-], function(yapp) {
+    "hr/hr"
+], function(hr) {
     /*
      *  This view is a simple component for importing template
      *  in a template.
      *  <%= view.component("counter", {from: }) %>
      */
-    var CounterView = yapp.View.extend({
+    var CounterView = hr.View.extend({
         tagName: "div",
         className: "component-counter",
         template: "views/counter.html",
@@ -48,6 +48,6 @@ define([
     });
 
     /* Register template component */
-    yapp.View.Template.registerComponent("counter", CounterView);
+    hr.View.Template.registerComponent("counter", CounterView);
     return CounterView;
 });

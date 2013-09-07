@@ -1,4 +1,4 @@
-var ArticleView = yapp.View.extend({
+var ArticleView = hr.View.extend({
     template: "views/test",
     templateContext: function() {
         return {

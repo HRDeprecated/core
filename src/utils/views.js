@@ -1,7 +1,7 @@
 define([
     "Underscore",
-    "yapp/core/view",
-    "yapp/utils/template"
+    "hr/core/view",
+    "hr/utils/template"
 ], function(_, View, Template) {
     
     var RelativeDateView = View.extend({
@@ -28,7 +28,7 @@ define([
             return this.ready();
         },
     });
-    Template.registerComponent("yapp.date.relative", RelativeDateView);
+    Template.registerComponent("hr.date.relative", RelativeDateView);
 
     return {
         "RelativeDate": RelativeDateView

@@ -1,6 +1,6 @@
 define([
-    "yapp/configs",
-    "yapp/core/class"
+    "hr/configs",
+    "hr/core/class"
 ], function(configs, Class) {
     var Logger = Class.extend({
         /*

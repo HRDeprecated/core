@@ -5,10 +5,10 @@ exports.config = {
     "base": __dirname,
 
     // Base url for the application
-    "baseUrl": "/yapp.js/",
+    "baseUrl": "/hr.js/",
 
     // Application name
-    "name": "Yapp Documentation",
+    "name": "HappyRhino Documentation",
 
     // Mode debug
     "debug": true,

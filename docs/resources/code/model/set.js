@@ -1,4 +1,4 @@
-var article = new yapp.Model({}, {
+var article = new hr.Model({}, {
     "title": "My first article",
     "description": "It's my first article on this website",
     "author": "samy",

@@ -1,4 +1,4 @@
-var MyView = yapp.View.extend({
+var MyView = hr.View.extend({
 	template: "myview.html",
 	events: {
 		"click .btn-open": "open",

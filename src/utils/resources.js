@@ -1,11 +1,11 @@
 define([
     "Underscore",
-    "yapp/configs",
-    "yapp/utils/logger",
-    "yapp/utils/cache",
-    "yapp/utils/requests",
-    "yapp/utils/urls",
-    "yapp/utils/deferred",
+    "hr/configs",
+    "hr/utils/logger",
+    "hr/utils/cache",
+    "hr/utils/requests",
+    "hr/utils/urls",
+    "hr/utils/deferred",
 ], function(_, configs, Logger, Cache, Requests, Urls, Deferred) {
 
     var logging = Logger.addNamespace("resources");

@@ -30,7 +30,7 @@ function main() {
     .description('create a new application.')
     .action(function() {
         if (this.dir == null) {
-            console.log("Define application directory using option 'dir' (ex: yapp.js new -d my_app)");
+            console.log("Define application directory using option 'dir' (ex: hr.js new -d my_app)");
             return;
         }
         var defaultApp = path.resolve(__dirname, "../lib/defaults/app");

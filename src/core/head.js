@@ -1,7 +1,7 @@
 define([
     "jQuery",
     "Underscore",
-    "yapp/core/view"
+    "hr/core/view"
 ], function($, _, View) {
     var Head = View.extend({
         el: $("head"),

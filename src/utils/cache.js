@@ -1,8 +1,8 @@
 define([
     "Underscore",
-    "yapp/configs",
-    "yapp/utils/logger",
-    "yapp/utils/storage"
+    "hr/configs",
+    "hr/utils/logger",
+    "hr/utils/storage"
 ], function(_, configs, Logger, Storage) {
 
     var logging = Logger.addNamespace("cache");

@@ -1,12 +1,12 @@
 define([
-    "yapp/yapp",
+    "hr/hr",
     "highlight"
-], function(yapp, hljs) {
+], function(hr, hljs) {
     /*
      *  This view is a simple component for displaying a code viewer
      *  <%= view.component("code", {code: "test.js"}) %>
      */
-    var CodeView = yapp.View.extend({
+    var CodeView = hr.View.extend({
         tagName: "pre",
         className: "component-codeviewer",
         events: {
@@ -21,7 +21,7 @@ define([
             return this;
         },
         render: function() {
-            yapp.Resources.load("codes", this.options.code).always(_.bind(function(content) {
+            hr.Resources.load("codes", this.options.code).always(_.bind(function(content) {
                 this.code = content;
                 this.$el.html(hljs.highlightAuto(this.code).value);
                 if (this.options.run) {
@@ -41,6 +41,6 @@ define([
     });
 
     /* Register template component */
-    yapp.View.Template.registerComponent("code", CodeView);
+    hr.View.Template.registerComponent("code", CodeView);
     return CodeView;
 });

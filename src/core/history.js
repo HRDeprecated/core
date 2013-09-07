@@ -1,10 +1,10 @@
 define([
     "jQuery",
     "Underscore",
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger",
-    "yapp/utils/urls",
+    "hr/configs",
+    "hr/core/class",
+    "hr/utils/logger",
+    "hr/utils/urls",
 ], function($, _, configs, Class, Logger, Urls) {
 
     var logging = Logger.addNamespace("history");

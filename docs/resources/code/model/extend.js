@@ -1,4 +1,4 @@
-var Author = yapp.Model.extend({
+var Author = hr.Model.extend({
     defaults: {
         "name": "",
         "fullname": ""
@@ -12,7 +12,7 @@ var Author = yapp.Model.extend({
     }
 });
 
-var Article = yapp.Model.extend({
+var Article = hr.Model.extend({
     defaults: {
         "title": "",
         "description": "No description for this article",
