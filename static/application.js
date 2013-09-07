@@ -12127,7 +12127,7 @@ define("jQuery", (function (global) {
 }(this)));
 
 
-define('yapp/shims',[],function() {
+define('hr/shims',[],function() {
     if(!Function.prototype.bind) {
       Function.prototype.bind = function(newThis) {
         var that = this;
@@ -12139,7 +12139,7 @@ define('yapp/shims',[],function() {
 
     return {};
 });
-define('yapp/configs',['require'],function(args) {
+define('hr/configs',['require'],function(args) {
     var Config = {
         // Revision
         "revision": 0,
@@ -12147,7 +12147,7 @@ define('yapp/configs',['require'],function(args) {
         // Arguments
         "args": {},
 
-        // Yapp version
+        // Hr version
         "version": "0.1.1",
 
         // Log level
@@ -13413,14 +13413,14 @@ define("Underscore", (function (global) {
     };
 }(this)));
 
-define('yapp/core/class',[
+define('hr/core/class',[
     "Underscore",
 ], function(_) {
     // Regular expression used to split event strings.
     var eventSplitter = /\s+/;
 
     /*
-     *  yapp.Class is the base for objects in yapp
+     *  hr.Class is the base for objects in hr
      */
     var Class = function(options) {
         this.options = _.extend({}, options || {});
@@ -22458,9 +22458,9 @@ define("jQuery", (function (global) {
     };
 }(this)));
 
-define('yapp/utils/logger',[
-    "yapp/configs",
-    "yapp/core/class"
+define('hr/utils/logger',[
+    "hr/configs",
+    "hr/core/class"
 ], function(configs, Class) {
     var Logger = Class.extend({
         /*
@@ -22553,9 +22553,9 @@ define('yapp/utils/logger',[
 
     return Logger;
 });
-define('yapp/utils/urls',[
+define('hr/utils/urls',[
     "Underscore",
-    "yapp/configs"
+    "hr/configs"
 ], function(_, configs) {
     var Urls = {
         /*
@@ -22636,10 +22636,10 @@ define('yapp/utils/urls',[
 
     return Urls;
 });
-define('yapp/utils/storage',[
+define('hr/utils/storage',[
     "Underscore",
-    "yapp/configs",
-    "yapp/utils/logger"
+    "hr/configs",
+    "hr/utils/logger"
 ], function(_, configs, Logger) {
 
     var logging = Logger.addNamespace("storage");
@@ -22729,11 +22729,11 @@ define('yapp/utils/storage',[
 
     return Storage;
 });
-define('yapp/utils/cache',[
+define('hr/utils/cache',[
     "Underscore",
-    "yapp/configs",
-    "yapp/utils/logger",
-    "yapp/utils/storage"
+    "hr/configs",
+    "hr/utils/logger",
+    "hr/utils/storage"
 ], function(_, configs, Logger, Storage) {
 
     var logging = Logger.addNamespace("cache");
@@ -22855,9 +22855,9 @@ define('yapp/utils/cache',[
 
     return Cache;
 });
-define('yapp/utils/deferred',[
+define('hr/utils/deferred',[
     "Underscore",
-    "yapp/core/class",
+    "hr/core/class",
 ], function(_, Class) {    
     /* 
     * Deferred is an implementation of the Promise pattern, which allows
@@ -22974,11 +22974,11 @@ define('yapp/utils/deferred',[
 
     return Deferred;
 });
-define('yapp/utils/requests',[
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger",
-    "yapp/utils/deferred"
+define('hr/utils/requests',[
+    "hr/configs",
+    "hr/core/class",
+    "hr/utils/logger",
+    "hr/utils/deferred"
 ], function(configs, Class, Logger, Deferred) {
     
     var logging = Logger.addNamespace("requests");
@@ -23072,18 +23072,57 @@ define('yapp/utils/requests',[
                 method: "POST",
                 params: args
             });
+        },
+
+        /*
+         *  Method for a PUT method
+         *  @url : url to request 
+         *  @args : arguments for PUT
+         *  @callback : callback for results
+         */
+        put: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "PUT",
+                params: args
+            });
+        },
+
+        /*
+         *  Method for a DELETE method
+         *  @url : url to request 
+         *  @args : arguments for DELETE
+         *  @callback : callback for results
+         */
+        delete: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "DELETE",
+                params: args
+            });
+        },
+
+        /*
+         *  Method for a HEAD method
+         *  @url : url to request 
+         *  @args : arguments for HEAD
+         *  @callback : callback for results
+         */
+        head: function(url, args, options) {
+            return Requests._execute(url, options, {
+                method: "HEAD",
+                params: args
+            });
         }
     });
     return Requests;
 });
-define('yapp/utils/resources',[
+define('hr/utils/resources',[
     "Underscore",
-    "yapp/configs",
-    "yapp/utils/logger",
-    "yapp/utils/cache",
-    "yapp/utils/requests",
-    "yapp/utils/urls",
-    "yapp/utils/deferred",
+    "hr/configs",
+    "hr/utils/logger",
+    "hr/utils/cache",
+    "hr/utils/requests",
+    "hr/utils/urls",
+    "hr/utils/deferred",
 ], function(_, configs, Logger, Cache, Requests, Urls, Deferred) {
 
     var logging = Logger.addNamespace("resources");
@@ -23180,14 +23219,14 @@ define('yapp/utils/resources',[
 
     return Resources;
 });
-define('yapp/utils/i18n',[
+define('hr/utils/i18n',[
     "jQuery",
     "Underscore",
-    "yapp/configs",
-    "yapp/utils/urls",
-    "yapp/utils/logger",
-    "yapp/utils/resources",
-    "yapp/utils/deferred"
+    "hr/configs",
+    "hr/utils/urls",
+    "hr/utils/logger",
+    "hr/utils/resources",
+    "hr/utils/deferred"
 ], function($, _, configs, Urls, Logger, Resources, Deferred) {
     var logging = Logger.addNamespace("i18n");
     var I18n = {};
@@ -23211,7 +23250,7 @@ define('yapp/utils/i18n',[
 
         _.extend(options, {
             "_": _,
-            "yapp": {
+            "hr": {
                 "configs": configs,
                 "urls": Urls
             }
@@ -23310,14 +23349,14 @@ define('yapp/utils/i18n',[
 
     return I18n;
 });
-define('yapp/utils/template',[
+define('hr/utils/template',[
     "Underscore",
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger",
-    "yapp/utils/urls",
-    "yapp/utils/resources",
-    "yapp/utils/i18n"
+    "hr/configs",
+    "hr/core/class",
+    "hr/utils/logger",
+    "hr/utils/urls",
+    "hr/utils/resources",
+    "hr/utils/i18n"
 ], function(_, configs, Class, Logger, Urls, Resources, I18n) {
     var Template = Class.extend({
         defaults: {
@@ -23344,7 +23383,7 @@ define('yapp/utils/template',[
             // Init template context
             _.extend(this.args, {
                 "_": _,
-                "yapp": {
+                "hr": {
                     "configs": configs,
                     "urls": Urls,
                     "i18n": I18n,
@@ -23457,7 +23496,7 @@ define('yapp/utils/template',[
                 if (distance_in_minutes == 1) { msgid = 'minute'; }
                 if (distance_in_minutes == 0) { msgid = 'seconds'; }
 
-                return I18n.t("yapp.utils.timeago."+msgid, {
+                return I18n.t("hr.utils.timeago."+msgid, {
                     "months": Math.floor(distance_in_minutes / 43200),
                     "days": Math.floor(distance_in_minutes / 1440),
                     "hours": Math.round(distance_in_minutes / 60),
@@ -23491,12 +23530,12 @@ define('yapp/utils/template',[
 
     return Template;
 });
-define('yapp/core/view',[
+define('hr/core/view',[
     "jQuery",
     "Underscore",
-    "yapp/core/class",
-    "yapp/utils/template",
-    "yapp/utils/deferred"
+    "hr/core/class",
+    "hr/utils/template",
+    "hr/utils/deferred"
 ], function($, _, Class, Template, Deferred) {
 
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -23785,10 +23824,10 @@ define('yapp/core/view',[
 
     return View;
 });
-define('yapp/core/head',[
+define('hr/core/head',[
     "jQuery",
     "Underscore",
-    "yapp/core/view"
+    "hr/core/view"
 ], function($, _, View) {
     var Head = View.extend({
         el: $("head"),
@@ -23925,13 +23964,13 @@ define('yapp/core/head',[
 
     return Head;
 });
-define('yapp/core/history',[
+define('hr/core/history',[
     "jQuery",
     "Underscore",
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/utils/logger",
-    "yapp/utils/urls",
+    "hr/configs",
+    "hr/core/class",
+    "hr/utils/logger",
+    "hr/utils/urls",
 ], function($, _, configs, Class, Logger, Urls) {
 
     var logging = Logger.addNamespace("history");
@@ -24023,12 +24062,12 @@ define('yapp/core/history',[
 
     return History;
 });
-define('yapp/core/router',[
+define('hr/core/router',[
     "jQuery",
     "Underscore",
-    "yapp/core/class",
-    "yapp/core/history",
-    "yapp/utils/logger",
+    "hr/core/class",
+    "hr/core/history",
+    "hr/utils/logger",
 ], function($, _, Class, History, Logger) {
 
     // Add specifif logs handler
@@ -24119,13 +24158,13 @@ define('yapp/core/router',[
 
     return Router;
 });
-define('yapp/core/application',[
+define('hr/core/application',[
     "jQuery",
     "Underscore",
-    "yapp/core/view",
-    "yapp/core/head",
-    "yapp/core/router",
-    "yapp/utils/logger"
+    "hr/core/view",
+    "hr/core/head",
+    "hr/core/router",
+    "hr/utils/logger"
 ], function($, _, View, Head, Router, Logger) {
 
     var logging = Logger.addNamespace("application");
@@ -24179,8 +24218,8 @@ define('yapp/core/application',[
         run: function() {
             logging.log("Run application", this.name);
 
-            var yapp = require("yapp/yapp");
-            yapp.app = this;
+            var hr = require("hr/hr");
+            hr.app = this;
             this.render();
             return this;
         },
@@ -24223,10 +24262,10 @@ define('yapp/core/application',[
 
     return Application;
 });
-define('yapp/core/model',[
+define('hr/core/model',[
     "Underscore",
-    "yapp/core/class",
-    "yapp/utils/logger"
+    "hr/core/class",
+    "hr/utils/logger"
 ], function(_, Class, Logger) {
     var logging = Logger.addNamespace("models");
 
@@ -24518,10 +24557,10 @@ define('yapp/core/model',[
 
     return Model;
 });
-define('yapp/utils/queue',[
+define('hr/utils/queue',[
     "Underscore",
-    "yapp/core/class",
-    "yapp/utils/deferred"
+    "hr/core/class",
+    "hr/utils/deferred"
 ], function(_, Class, Deferred) {
     var Queue = Class.extend({
         /*
@@ -24604,13 +24643,13 @@ define('yapp/utils/queue',[
 
     return Queue;
 });
-define('yapp/core/collection',[
+define('hr/core/collection',[
     "Underscore",
-    "yapp/core/class",
-    "yapp/core/model",
-    "yapp/utils/logger",
-    "yapp/utils/deferred",
-    "yapp/utils/queue"
+    "hr/core/class",
+    "hr/core/model",
+    "hr/utils/logger",
+    "hr/utils/deferred",
+    "hr/utils/queue"
 ], function(_, Class, Model, Logger, Deferred, Queue) {
     var logging = Logger.addNamespace("collections");
 
@@ -24936,11 +24975,11 @@ define('yapp/core/collection',[
 
     return Collection;
 });
-define('yapp/core/list',[
+define('hr/core/list',[
     "Underscore",
-    "yapp/core/view",
-    "yapp/utils/logger",
-    "yapp/core/collection"
+    "hr/core/view",
+    "hr/utils/logger",
+    "hr/core/collection"
 ], function(_, View, Logger, Collection) {
 
     var logging = Logger.addNamespace("lists");
@@ -25232,7 +25271,7 @@ define('yapp/core/list',[
          */
         displayHasMore: function() {
             var btn = $("<div>", {
-                "class": "alert yapp-list-message yapp-list-message-more",
+                "class": "alert hr-list-message hr-list-message-more",
                 "data-list-action": "showmore",
                 "text": this.hasMore(),
             });
@@ -25244,15 +25283,15 @@ define('yapp/core/list',[
          *  Render the list
          */
         render: function() {
-            this.$(".yapp-list-message").remove();
+            this.$(".hr-list-message").remove();
             if (this.collection.queue.isComplete() == false) {
                 $("<div>", {
-                    "class": "yapp-list-message yapp-list-message-loading"
+                    "class": "hr-list-message hr-list-message-loading"
                 }).appendTo(this.$el);
             } else {
                 if (this.count() == 0 && this.options.displayEmptyList) {
                     var el = this.displayEmptyList();
-                    $(el).addClass("yapp-list-message yapp-list-message-empty").appendTo(this.$el);
+                    $(el).addClass("hr-list-message hr-list-message-empty").appendTo(this.$el);
                 }
                 if (this.hasMore() > 0 && this.options.displayHasMore) this.displayHasMore();
             }
@@ -25264,10 +25303,10 @@ define('yapp/core/list',[
 
     return ListView;
 });
-define('yapp/utils/views',[
+define('hr/utils/views',[
     "Underscore",
-    "yapp/core/view",
-    "yapp/utils/template"
+    "hr/core/view",
+    "hr/utils/template"
 ], function(_, View, Template) {
     
     var RelativeDateView = View.extend({
@@ -25294,13 +25333,13 @@ define('yapp/utils/views',[
             return this.ready();
         },
     });
-    Template.registerComponent("yapp.date.relative", RelativeDateView);
+    Template.registerComponent("hr.date.relative", RelativeDateView);
 
     return {
         "RelativeDate": RelativeDateView
     };
 });
-define('yapp/vendors/underscore-more',[
+define('hr/vendors/underscore-more',[
     "Underscore",
     "jQuery",
 ], function(_, $) {
@@ -25417,32 +25456,32 @@ define('yapp/vendors/underscore-more',[
 
     return _;
 });
-define('yapp/yapp',[
-    "yapp/shims",
-    "yapp/configs",
-    "yapp/core/class",
-    "yapp/core/view",
-    "yapp/core/application",
-    "yapp/core/head",
-    "yapp/core/history",
-    "yapp/core/router",
-    "yapp/core/model",
-    "yapp/core/collection",
-    "yapp/core/list",
+define('hr/hr',[
+    "hr/shims",
+    "hr/configs",
+    "hr/core/class",
+    "hr/core/view",
+    "hr/core/application",
+    "hr/core/head",
+    "hr/core/history",
+    "hr/core/router",
+    "hr/core/model",
+    "hr/core/collection",
+    "hr/core/list",
 
-    "yapp/utils/logger",
-    "yapp/utils/requests",
-    "yapp/utils/urls",
-    "yapp/utils/storage",
-    "yapp/utils/cache",
-    "yapp/utils/template",
-    "yapp/utils/resources",
-    "yapp/utils/deferred",
-    "yapp/utils/queue",
-    "yapp/utils/i18n",
-    "yapp/utils/views",
+    "hr/utils/logger",
+    "hr/utils/requests",
+    "hr/utils/urls",
+    "hr/utils/storage",
+    "hr/utils/cache",
+    "hr/utils/template",
+    "hr/utils/resources",
+    "hr/utils/deferred",
+    "hr/utils/queue",
+    "hr/utils/i18n",
+    "hr/utils/views",
 
-    "yapp/vendors/underscore-more"
+    "hr/vendors/underscore-more"
 ], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
 Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I18n, views) {    
@@ -25476,7 +25515,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I1
             options = options || {};
             args = args || {};
             if (args.revision == null) {
-                Logger.logging.error("Error invalid configuration for yapp");
+                Logger.logging.error("Error invalid configuration for hr");
                 return;
             }
 
@@ -25488,16 +25527,16 @@ Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I1
         }
     }
 });
-define('yapp/args',[],function() { return {"revision":1378099808643,"baseUrl":"/yapp.js/"}; });
+define('hr/args',[],function() { return {"revision":1378592382780,"baseUrl":"/hr.js/"}; });
 define('views/counter',[
-    "yapp/yapp"
-], function(yapp) {
+    "hr/hr"
+], function(hr) {
     /*
      *  This view is a simple component for importing template
      *  in a template.
      *  <%= view.component("counter", {from: }) %>
      */
-    var CounterView = yapp.View.extend({
+    var CounterView = hr.View.extend({
         tagName: "div",
         className: "component-counter",
         template: "views/counter.html",
@@ -25539,7 +25578,7 @@ define('views/counter',[
     });
 
     /* Register template component */
-    yapp.View.Template.registerComponent("counter", CounterView);
+    hr.View.Template.registerComponent("counter", CounterView);
     return CounterView;
 });
 var hljs=new function(){function l(o){return o.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;")}function b(p){for(var o=p.firstChild;o;o=o.nextSibling){if(o.nodeName=="CODE"){return o}if(!(o.nodeType==3&&o.nodeValue.match(/\s+/))){break}}}function h(p,o){return Array.prototype.map.call(p.childNodes,function(q){if(q.nodeType==3){return o?q.nodeValue.replace(/\n/g,""):q.nodeValue}if(q.nodeName=="BR"){return"\n"}return h(q,o)}).join("")}function a(q){var p=(q.className+" "+q.parentNode.className).split(/\s+/);p=p.map(function(r){return r.replace(/^language-/,"")});for(var o=0;o<p.length;o++){if(e[p[o]]||p[o]=="no-highlight"){return p[o]}}}function c(q){var o=[];(function p(r,s){for(var t=r.firstChild;t;t=t.nextSibling){if(t.nodeType==3){s+=t.nodeValue.length}else{if(t.nodeName=="BR"){s+=1}else{if(t.nodeType==1){o.push({event:"start",offset:s,node:t});s=p(t,s);o.push({event:"stop",offset:s,node:t})}}}}return s})(q,0);return o}function j(x,v,w){var p=0;var y="";var r=[];function t(){if(x.length&&v.length){if(x[0].offset!=v[0].offset){return(x[0].offset<v[0].offset)?x:v}else{return v[0].event=="start"?x:v}}else{return x.length?x:v}}function s(A){function z(B){return" "+B.nodeName+'="'+l(B.value)+'"'}return"<"+A.nodeName+Array.prototype.map.call(A.attributes,z).join("")+">"}while(x.length||v.length){var u=t().splice(0,1)[0];y+=l(w.substr(p,u.offset-p));p=u.offset;if(u.event=="start"){y+=s(u.node);r.push(u.node)}else{if(u.event=="stop"){var o,q=r.length;do{q--;o=r[q];y+=("</"+o.nodeName.toLowerCase()+">")}while(o!=u.node);r.splice(q,1);while(q<r.length){y+=s(r[q]);q++}}}}return y+l(w.substr(p))}function f(q){function o(s,r){return RegExp(s,"m"+(q.cI?"i":"")+(r?"g":""))}function p(y,w){if(y.compiled){return}y.compiled=true;var s=[];if(y.k){var r={};function z(A,t){t.split(" ").forEach(function(B){var C=B.split("|");r[C[0]]=[A,C[1]?Number(C[1]):1];s.push(C[0])})}y.lR=o(y.l||hljs.IR,true);if(typeof y.k=="string"){z("keyword",y.k)}else{for(var x in y.k){if(!y.k.hasOwnProperty(x)){continue}z(x,y.k[x])}}y.k=r}if(w){if(y.bWK){y.b="\\b("+s.join("|")+")\\s"}y.bR=o(y.b?y.b:"\\B|\\b");if(!y.e&&!y.eW){y.e="\\B|\\b"}if(y.e){y.eR=o(y.e)}y.tE=y.e||"";if(y.eW&&w.tE){y.tE+=(y.e?"|":"")+w.tE}}if(y.i){y.iR=o(y.i)}if(y.r===undefined){y.r=1}if(!y.c){y.c=[]}for(var v=0;v<y.c.length;v++){if(y.c[v]=="self"){y.c[v]=y}p(y.c[v],y)}if(y.starts){p(y.starts,w)}var u=[];for(var v=0;v<y.c.length;v++){u.push(y.c[v].b)}if(y.tE){u.push(y.tE)}if(y.i){u.push(y.i)}y.t=u.length?o(u.join("|"),true):{exec:function(t){return null}}}p(q)}function d(D,E){function o(r,M){for(var L=0;L<M.c.length;L++){var K=M.c[L].bR.exec(r);if(K&&K.index==0){return M.c[L]}}}function s(K,r){if(K.e&&K.eR.test(r)){return K}if(K.eW){return s(K.parent,r)}}function t(r,K){return K.i&&K.iR.test(r)}function y(L,r){var K=F.cI?r[0].toLowerCase():r[0];return L.k.hasOwnProperty(K)&&L.k[K]}function G(){var K=l(w);if(!A.k){return K}var r="";var N=0;A.lR.lastIndex=0;var L=A.lR.exec(K);while(L){r+=K.substr(N,L.index-N);var M=y(A,L);if(M){v+=M[1];r+='<span class="'+M[0]+'">'+L[0]+"</span>"}else{r+=L[0]}N=A.lR.lastIndex;L=A.lR.exec(K)}return r+K.substr(N)}function z(){if(A.sL&&!e[A.sL]){return l(w)}var r=A.sL?d(A.sL,w):g(w);if(A.r>0){v+=r.keyword_count;B+=r.r}return'<span class="'+r.language+'">'+r.value+"</span>"}function J(){return A.sL!==undefined?z():G()}function I(L,r){var K=L.cN?'<span class="'+L.cN+'">':"";if(L.rB){x+=K;w=""}else{if(L.eB){x+=l(r)+K;w=""}else{x+=K;w=r}}A=Object.create(L,{parent:{value:A}});B+=L.r}function C(K,r){w+=K;if(r===undefined){x+=J();return 0}var L=o(r,A);if(L){x+=J();I(L,r);return L.rB?0:r.length}var M=s(A,r);if(M){if(!(M.rE||M.eE)){w+=r}x+=J();do{if(A.cN){x+="</span>"}A=A.parent}while(A!=M.parent);if(M.eE){x+=l(r)}w="";if(M.starts){I(M.starts,"")}return M.rE?0:r.length}if(t(r,A)){throw"Illegal"}w+=r;return r.length||1}var F=e[D];f(F);var A=F;var w="";var B=0;var v=0;var x="";try{var u,q,p=0;while(true){A.t.lastIndex=p;u=A.t.exec(E);if(!u){break}q=C(E.substr(p,u.index-p),u[0]);p=u.index+q}C(E.substr(p));return{r:B,keyword_count:v,value:x,language:D}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:l(E)}}else{throw H}}}function g(s){var o={keyword_count:0,r:0,value:l(s)};var q=o;for(var p in e){if(!e.hasOwnProperty(p)){continue}var r=d(p,s);r.language=p;if(r.keyword_count+r.r>q.keyword_count+q.r){q=r}if(r.keyword_count+r.r>o.keyword_count+o.r){q=o;o=r}}if(q.language){o.second_best=q}return o}function i(q,p,o){if(p){q=q.replace(/^((<[^>]+>|\t)+)/gm,function(r,v,u,t){return v.replace(/\t/g,p)})}if(o){q=q.replace(/\n/g,"<br>")}return q}function m(r,u,p){var v=h(r,p);var t=a(r);if(t=="no-highlight"){return}var w=t?d(t,v):g(v);t=w.language;var o=c(r);if(o.length){var q=document.createElement("pre");q.innerHTML=w.value;w.value=j(o,c(q),v)}w.value=i(w.value,u,p);var s=r.className;if(!s.match("(\\s|^)(language-)?"+t+"(\\s|$)")){s=s?(s+" "+t):t}r.innerHTML=w.value;r.className=s;r.result={language:t,kw:w.keyword_count,re:w.r};if(w.second_best){r.second_best={language:w.second_best.language,kw:w.second_best.keyword_count,re:w.second_best.r}}}function n(){if(n.called){return}n.called=true;Array.prototype.map.call(document.getElementsByTagName("pre"),b).filter(Boolean).forEach(function(o){m(o,hljs.tabReplace)})}function k(){window.addEventListener("DOMContentLoaded",n,false);window.addEventListener("load",n,false)}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=m;this.initHighlighting=n;this.initHighlightingOnLoad=k;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.BE={b:"\\\\[\\s\\S]",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(q,r){var o={};for(var p in q){o[p]=q[p]}if(r){for(var p in r){o[p]=r[p]}}return o}}();hljs.LANGUAGES.javascript=function(a){return{k:{keyword:"in if for while finally var new function do return void else break catch instanceof with throw case default try this switch continue typeof delete let yield const",literal:"true false null undefined NaN Infinity"},c:[a.ASM,a.QSM,a.CLCM,a.CBLCLM,a.CNM,{b:"("+a.RSR+"|\\b(case|return|throw)\\b)\\s*",k:"return throw case",c:[a.CLCM,a.CBLCLM,{cN:"regexp",b:"/",e:"/[gim]*",i:"\\n",c:[{b:"\\\\/"}]},{b:"<",e:">;",sL:"xml"}],r:0},{cN:"function",bWK:true,e:"{",k:"function",c:[{cN:"title",b:"[A-Za-z$_][0-9A-Za-z$_]*"},{cN:"params",b:"\\(",e:"\\)",c:[a.CLCM,a.CBLCLM],i:"[\"'\\(]"}],i:"\\[|%"}]}}(hljs);hljs.LANGUAGES.css=function(a){var b={cN:"function",b:a.IR+"\\(",e:"\\)",c:[a.NM,a.ASM,a.QSM]};return{cI:true,i:"[=/|']",c:[a.CBLCLM,{cN:"id",b:"\\#[A-Za-z0-9_-]+"},{cN:"class",b:"\\.[A-Za-z0-9_-]+",r:0},{cN:"attr_selector",b:"\\[",e:"\\]",i:"$"},{cN:"pseudo",b:":(:)?[a-zA-Z0-9\\_\\-\\+\\(\\)\\\"\\']+"},{cN:"at_rule",b:"@(font-face|page)",l:"[a-z-]+",k:"font-face page"},{cN:"at_rule",b:"@",e:"[{;]",eE:true,k:"import page media charset",c:[b,a.ASM,a.QSM,a.NM]},{cN:"tag",b:a.IR,r:0},{cN:"rules",b:"{",e:"}",i:"[^\\s]",r:0,c:[a.CBLCLM,{cN:"rule",b:"[^\\s]",rB:true,e:";",eW:true,c:[{cN:"attribute",b:"[A-Z\\_\\.\\-]+",e:":",eE:true,i:"[^\\s]",starts:{cN:"value",eW:true,eE:true,c:[b,a.NM,a.QSM,a.ASM,a.CBLCLM,{cN:"hexcolor",b:"\\#[0-9A-F]+"},{cN:"important",b:"!important"}]}}]}]}]}}(hljs);hljs.LANGUAGES.xml=function(a){var c="[A-Za-z0-9\\._:-]+";var b={eW:true,c:[{cN:"attribute",b:c,r:0},{b:'="',rB:true,e:'"',c:[{cN:"value",b:'"',eW:true}]},{b:"='",rB:true,e:"'",c:[{cN:"value",b:"'",eW:true}]},{b:"=",c:[{cN:"value",b:"[^\\s/>]+"}]}]};return{cI:true,c:[{cN:"pi",b:"<\\?",e:"\\?>",r:10},{cN:"doctype",b:"<!DOCTYPE",e:">",r:10,c:[{b:"\\[",e:"\\]"}]},{cN:"comment",b:"<!--",e:"-->",r:10},{cN:"cdata",b:"<\\!\\[CDATA\\[",e:"\\]\\]>",r:10},{cN:"tag",b:"<style(?=\\s|>|$)",e:">",k:{title:"style"},c:[b],starts:{e:"</style>",rE:true,sL:"css"}},{cN:"tag",b:"<script(?=\\s|>|$)",e:">",k:{title:"script"},c:[b],starts:{e:"<\/script>",rE:true,sL:"javascript"}},{b:"<%",e:"%>",sL:"vbscript"},{cN:"tag",b:"</?",e:"/?>",c:[{cN:"title",b:"[^ />]+"},b]}]}}(hljs);
@@ -25551,14 +25590,14 @@ define("highlight", (function (global) {
 }(this)));
 
 define('views/code',[
-    "yapp/yapp",
+    "hr/hr",
     "highlight"
-], function(yapp, hljs) {
+], function(hr, hljs) {
     /*
      *  This view is a simple component for displaying a code viewer
      *  <%= view.component("code", {code: "test.js"}) %>
      */
-    var CodeView = yapp.View.extend({
+    var CodeView = hr.View.extend({
         tagName: "pre",
         className: "component-codeviewer",
         events: {
@@ -25573,7 +25612,7 @@ define('views/code',[
             return this;
         },
         render: function() {
-            yapp.Resources.load("codes", this.options.code).always(_.bind(function(content) {
+            hr.Resources.load("codes", this.options.code).always(_.bind(function(content) {
                 this.code = content;
                 this.$el.html(hljs.highlightAuto(this.code).value);
                 if (this.options.run) {
@@ -25593,15 +25632,15 @@ define('views/code',[
     });
 
     /* Register template component */
-    yapp.View.Template.registerComponent("code", CodeView);
+    hr.View.Template.registerComponent("code", CodeView);
     return CodeView;
 });
 define('views/views',[
-    "yapp/yapp",
+    "hr/hr",
 
     "views/counter",
     "views/code",
-], function(yapp) {
+], function(hr) {
 
     return {}
 });
@@ -25888,49 +25927,49 @@ define('text!resources/code/build/build.js',[],function () { return 'var path = 
 
 define('text!resources/code/build/options.js',[],function () { return '{\n    // Base directory for the application\n    "base": null,\n\n    // Base url for the application\n    "baseUrl": "",\n\n    // Arguments for application\n    "args": {},\n\n    // Application name\n    "name": "untitled",\n\n    // Mode debug\n    // if debug is false then files are compressed for optimization\n    "debug": true,\n\n    // Main entry file for application\n    "main": null,\n\n    // Build directory for output\n    // directory is created if inexistant\n    "build": null,\n\n    // Output files\n    "out": {\n        "js":   "application.js",\n        "css":  "application.css",\n        "html": "index.html"\n    },\n\n    // Static files\n    // Map of {"directory": "absolute/path"}\n    "static": {},\n\n    // Index html\n    // if null : file is generated\n    // if non null : file is copying\n    "index": null,\n\n    // Stylesheets entry file\n    "style": null,\n\n    // Modules paths and shim for require\n    "paths": {},\n    "shim": {},\n\n    // Compilers\n    "compilers": {\n        "css": "lessc -x -O2 %s > %s",\n        "js":   "r.js -o %s"\n    },\n\n    // Arguments\n    "args": {}\n}';});
 
-define('text!resources/code/build/module.js',[],function () { return 'define([\n    "yapp/yapp",\n    "mymodule"\n], function(yapp, mymodule) {\n    var module = {};\n    return module;\n});';});
+define('text!resources/code/build/module.js',[],function () { return 'define([\n    "hr/hr",\n    "mymodule"\n], function(hr, mymodule) {\n    var module = {};\n    return module;\n});';});
 
-define('text!resources/code/build/revision.js',[],function () { return 'alert("Revsion n°"+yapp.configs.revision+" : "+(new Date(yapp.configs.revision)));';});
+define('text!resources/code/build/revision.js',[],function () { return 'alert("Revsion n°"+hr.configs.revision+" : "+(new Date(hr.configs.revision)));';});
 
 define('text!resources/code/build/options_args.js',[],function () { return 'exports.config = {\n\t...\n    "args": {\n    \t"backendFacebookApi": true\n    },\n\t...\n};';});
 
-define('text!resources/code/build/args.js',[],function () { return 'if (yapp.configs.args.backendFacebookApi) {\n\t// Add auth with facebook\n}';});
+define('text!resources/code/build/args.js',[],function () { return 'if (hr.configs.args.backendFacebookApi) {\n\t// Add auth with facebook\n}';});
 
-define('text!resources/code/application/extend.js',[],function () { return 'require([\n    "yapp/yapp",\n    "yapp/args"\n], function(yapp, args) {\n    yapp.configure(args, {\n        // options for yapp\n    });\n\n    var Application = yapp.Application.extend({\n        name: "Test Application",\n        template: "main"\n    });\n\n    ...\n});';});
+define('text!resources/code/application/extend.js',[],function () { return 'require([\n    "hr/hr",\n    "hr/args"\n], function(hr, args) {\n    hr.configure(args, {\n        // options for hr\n    });\n\n    var Application = hr.Application.extend({\n        name: "Test Application",\n        template: "main"\n    });\n\n    ...\n});';});
 
 define('text!resources/code/application/run.js',[],function () { return 'var app = new Application();\napp.run();';});
 
 define('text!resources/code/application/title.js',[],function () { return 'app.title("Hello"); // Title will be "@appname - Hello"\napp.title("Hello", true) // Title will be "Hello"';});
 
-define('text!resources/code/application/head.js',[],function () { return '// Set page title\napp.head.title("Hello");\n\n// Get page title\nvar title = app.head.title();\n\n// Set meta\napp.head.meta("author", "Samy Pessé");\n\n// Get meta\nvar author = app.head.meta("author");\n\n// Set description\napp.head.description("My application");\n\n// Get description\nvar description = app.head.description();\n\n// Set link\napp.head.link("icon", yapp.Urls.static("images/favicon.png"));\n\n// Get link\nvar favicon = app.head.link("icon");\n\n// Crawling\napp.head.setCrawling(false, false); // no index, no follow\napp.head.setCrawling(false, true); // no index, follow\napp.head.setCrawling(true, true); // index, follow';});
+define('text!resources/code/application/head.js',[],function () { return '// Set page title\napp.head.title("Hello");\n\n// Get page title\nvar title = app.head.title();\n\n// Set meta\napp.head.meta("author", "Samy Pessé");\n\n// Get meta\nvar author = app.head.meta("author");\n\n// Set description\napp.head.description("My application");\n\n// Get description\nvar description = app.head.description();\n\n// Set link\napp.head.link("icon", hr.Urls.static("images/favicon.png"));\n\n// Get link\nvar favicon = app.head.link("icon");\n\n// Crawling\napp.head.setCrawling(false, false); // no index, no follow\napp.head.setCrawling(false, true); // no index, follow\napp.head.setCrawling(true, true); // index, follow';});
 
-define('text!resources/code/view/extend.js',[],function () { return 'var TestView = yapp.View.extend({\n    tagName: "div",\n\n    className: "component-testview",\n\n    template: "views/test",\n\n    events: {\n        "click .button": "open"\n    }\n});';});
+define('text!resources/code/view/extend.js',[],function () { return 'var TestView = hr.View.extend({\n    tagName: "div",\n\n    className: "component-testview",\n\n    template: "views/test",\n\n    events: {\n        "click .button": "open"\n    }\n});';});
 
-define('text!resources/code/view/render.js',[],function () { return 'var View = yapp.View.extend({\n\ttemplate: "test.html"\n});\nvar view = new View();\nview.$el.appendTo($("body"));\n\nsetInterval(function() {\n\tview.render();\n}, 1000)';});
+define('text!resources/code/view/render.js',[],function () { return 'var View = hr.View.extend({\n\ttemplate: "test.html"\n});\nvar view = new View();\nview.$el.appendTo($("body"));\n\nsetInterval(function() {\n\tview.render();\n}, 1000)';});
 
-define('text!resources/code/view/render_extend.js',[],function () { return 'var View = yapp.View.extend({\n\trender: function() {\n\t\tthis.$el.html("Hello World !");\n\n\t\t// Call "ready" to signal the component is ready\n\t\treturn this.ready();\n\t}\n});';});
+define('text!resources/code/view/render_extend.js',[],function () { return 'var View = hr.View.extend({\n\trender: function() {\n\t\tthis.$el.html("Hello World !");\n\n\t\t// Call "ready" to signal the component is ready\n\t\treturn this.ready();\n\t}\n});';});
 
-define('text!resources/code/view/template.js',[],function () { return 'var ArticleView = yapp.View.extend({\n    template: "views/test",\n    templateContext: function() {\n        return {\n            votes: this.model.getVotes(),\n            article: this.model.attributes\n        }\n    }\n    \n    ...\n});';});
+define('text!resources/code/view/template.js',[],function () { return 'var ArticleView = hr.View.extend({\n    template: "views/test",\n    templateContext: function() {\n        return {\n            votes: this.model.getVotes(),\n            article: this.model.attributes\n        }\n    }\n    \n    ...\n});';});
 
-define('text!resources/code/view/component.js',[],function () { return 'var MyView = yapp.View.extend({\n\ttemplate: "myview.html",\n\tevents: {\n\t\t"click .btn": "open"\n\t},\n\topen: function() {\n\t\talert("It\'s open !");\n\t}\n});\n\n/* Register template component */\nyapp.View.Template.registerComponent("myview", MyView);';});
+define('text!resources/code/view/component.js',[],function () { return 'var MyView = hr.View.extend({\n\ttemplate: "myview.html",\n\tevents: {\n\t\t"click .btn": "open"\n\t},\n\topen: function() {\n\t\talert("It\'s open !");\n\t}\n});\n\n/* Register template component */\nhr.View.Template.registerComponent("myview", MyView);';});
 
-define('text!resources/code/view/events.js',[],function () { return 'var MyView = yapp.View.extend({\n\ttemplate: "myview.html",\n\tevents: {\n\t\t"click .btn-open": "open",\n\t\t"click .btn-close": "close"\n\t},\n\topen: function() {\n\t\talert("It\'s open !");\n\t},\n\tclose: function() {\n\t\talert("It\'s closed !");\n\t}\n});';});
+define('text!resources/code/view/events.js',[],function () { return 'var MyView = hr.View.extend({\n\ttemplate: "myview.html",\n\tevents: {\n\t\t"click .btn-open": "open",\n\t\t"click .btn-close": "close"\n\t},\n\topen: function() {\n\t\talert("It\'s open !");\n\t},\n\tclose: function() {\n\t\talert("It\'s closed !");\n\t}\n});';});
 
-define('text!resources/code/view/template_function.js',[],function () { return 'var ArticleView = yapp.View.extend({\n    template: function() {\n        if (this.model.get("type") == "video") {\n            return "views/article/video";\n        } else {\n            return "views/article/default";\n        }\n    }\n    ...\n});';});
+define('text!resources/code/view/template_function.js',[],function () { return 'var ArticleView = hr.View.extend({\n    template: function() {\n        if (this.model.get("type") == "video") {\n            return "views/article/video";\n        } else {\n            return "views/article/default";\n        }\n    }\n    ...\n});';});
 
 define('text!resources/code/template/syntax.html',[],function () { return '<div>\n    <h1><%- title %></h1>\n    <% _.each(articles, function(article) { %>\n        <article>\n            <h2><%- article.title %></h2>\n            <p><%- article.content %></p>\n        </article>\n    <% }); %>\n</div>';});
 
 define('text!resources/code/template/components.html',[],function () { return '<div>\n    <h1><%- category.title %></h1>\n\n    <% if (category.admin) { %>\n        <%= view.component("category/post", category) %>\n    <% } %>\n\n    <% _.each(articles, function(article) { %>\n        <%= view.component("article", article) %>\n    <% }); %>\n</div>';});
 
-define('text!resources/code/template/components.js',[],function () { return 'var CateogoryView = yapp.View.extend({\n    template: "views/category",\n    templateContext: function() {\n        return {\n            category: this.model.attributes,\n            articles: this.model.getArticles()\n        }\n    }\n    \n    templateUpdated: function() {\n        _.each(this.components.article, function(article) {\n            article.on("click_edit", function() {\n                this.components["category/post"].open_editor(article.model);\n            });\n        });\n    }\n});';});
+define('text!resources/code/template/components.js',[],function () { return 'var CateogoryView = hr.View.extend({\n    template: "views/category",\n    templateContext: function() {\n        return {\n            category: this.model.attributes,\n            articles: this.model.getArticles()\n        }\n    }\n    \n    templateUpdated: function() {\n        _.each(this.components.article, function(article) {\n            article.on("click_edit", function() {\n                this.components["category/post"].open_editor(article.model);\n            });\n        });\n    }\n});';});
 
-define('text!resources/code/template/load.js',[],function () { return '// Using HTTP\nyapp.Resources.addNamespace("templates", {\n    loader: "http",\n    base: "templates"\t// Base directory for templates in the static directory\n});\n\n// Using Require\n// You need to include all the templates in the dependencies of a module\nyapp.Resources.addNamespace("templates", {\n    loader: "require",\n    base: "resources/templates",\n    mode: "text"\n});\n\n// Using your own resources loader\nvar TEMPLATES = {\n\t"hello": "<b>Hello world !</b>"\n}\nyapp.Resources.addLoader("mytemplates", function(query, callback, args, config) {\n    if (TEMPLATES[query] == null) {\n    \tcallback.reject();\n    } else {\n    \tcallback.resolve(TEMPLATES[query])\n    }\n});\nyapp.Resources.addNamespace("templates", {\n    loader: "mytemplates"\n});';});
+define('text!resources/code/template/load.js',[],function () { return '// Using HTTP\nhr.Resources.addNamespace("templates", {\n    loader: "http",\n    base: "templates"\t// Base directory for templates in the static directory\n});\n\n// Using Require\n// You need to include all the templates in the dependencies of a module\nhr.Resources.addNamespace("templates", {\n    loader: "require",\n    base: "resources/templates",\n    mode: "text"\n});\n\n// Using your own resources loader\nvar TEMPLATES = {\n\t"hello": "<b>Hello world !</b>"\n}\nhr.Resources.addLoader("mytemplates", function(query, callback, args, config) {\n    if (TEMPLATES[query] == null) {\n    \tcallback.reject();\n    } else {\n    \tcallback.resolve(TEMPLATES[query])\n    }\n});\nhr.Resources.addNamespace("templates", {\n    loader: "mytemplates"\n});';});
 
-define('text!resources/code/class/extend.js',[],function () { return 'var Animal = yapp.Class.extend({\n    ...\n});\n\nvar Chat = Animal.extend({\n    ...\n});';});
+define('text!resources/code/class/extend.js',[],function () { return 'var Animal = hr.Class.extend({\n    ...\n});\n\nvar Chat = Animal.extend({\n    ...\n});';});
 
-define('text!resources/code/class/initialize.js',[],function () { return 'var Person = yapp.Class.extend({\n    defaults: {\n        firstname: "",\n        lastname: ""\n    },\n\n    get_fullname: function() {\n        return this.options.firstname + " " + this.options.lastname;\n    }\n});\n\nvar samy = new Person({\n    firstname: "Samy",\n    lastname: "Pesse"\n});\nalert(samy.get_fullname());';});
+define('text!resources/code/class/initialize.js',[],function () { return 'var Person = hr.Class.extend({\n    defaults: {\n        firstname: "",\n        lastname: ""\n    },\n\n    get_fullname: function() {\n        return this.options.firstname + " " + this.options.lastname;\n    }\n});\n\nvar samy = new Person({\n    firstname: "Samy",\n    lastname: "Pesse"\n});\nalert(samy.get_fullname());';});
 
-define('text!resources/code/class/defaults.js',[],function () { return 'var Person = yapp.Class.extend({\n    defaults: {\n        firstname: "",\n        lastname: "nobody"\n    }\n});\n\nvar nobody = new Person();\nalert(nobody.options.lastname);';});
+define('text!resources/code/class/defaults.js',[],function () { return 'var Person = hr.Class.extend({\n    defaults: {\n        firstname: "",\n        lastname: "nobody"\n    }\n});\n\nvar nobody = new Person();\nalert(nobody.options.lastname);';});
 
 define('text!resources/code/class/on.js',[],function () { return 'nobody.on("change:firstname change:lastname", function() { ... });';});
 
@@ -25938,66 +25977,66 @@ define('text!resources/code/class/on_all.js',[],function () { return 'proxy.on("
 
 define('text!resources/code/class/on_map.js',[],function () { return 'book.on({\n    "change:title": titleView.update,\n    "change:author": authorPane.update,\n    "destroy": bookView.remove\n});';});
 
-define('text!resources/code/class/on_sub.js',[],function () { return 'var object = new yapp.Class();\n\nobject.on("parent", function() {\n    alert("event parent");\n});\nobject.on("parent:child", function() {\n    alert("event child");\n});\n\n// Trigger only "parent"\nobject.trigger("parent");\n\n// Trigger "parent:child" and "parent"\nobject.trigger("parent:child");';});
+define('text!resources/code/class/on_sub.js',[],function () { return 'var object = new hr.Class();\n\nobject.on("parent", function() {\n    alert("event parent");\n});\nobject.on("parent:child", function() {\n    alert("event child");\n});\n\n// Trigger only "parent"\nobject.trigger("parent");\n\n// Trigger "parent:child" and "parent"\nobject.trigger("parent:child");';});
 
 define('text!resources/code/class/off.js',[],function () { return '// Removes just the `onChange` callback.\nobject.off("change", onChange);\n\n// Removes all "change" callbacks.\nobject.off("change");\n\n// Removes the `onChange` callback for all events.\nobject.off(null, onChange);\n\n// Removes all callbacks for `context` for all events.\nobject.off(null, null, context);\n\n// Removes all callbacks on `object`.\nobject.off();';});
 
-define('text!resources/code/model/extend.js',[],function () { return 'var Author = yapp.Model.extend({\n    defaults: {\n        "name": "",\n        "fullname": ""\n    },\n}, {\n    getByArticle: function(article) {\n        return new Author({}, {\n            "name": article.get("author"),\n            "fullname": "Mr. "+article.get("author").toUpperCase()\n        })\n    }\n});\n\nvar Article = yapp.Model.extend({\n    defaults: {\n        "title": "",\n        "description": "No description for this article",\n        "content": "",\n        "author": "nobody",\n        "interactions": {\n            "comments": "",\n            "likes": ""\n        }\n    },\n\n    joints: {\n        "author": Author.getByArticle\n    }\n});\n\nvar article = new Article({}, {\n    "title": "My first article",\n    "description": "It\'s my first article on this website",\n    "author": "samy"\n});\n\nalert(article.get("title") + " by " + article.get("author.fullname"));\n\n\n';});
+define('text!resources/code/model/extend.js',[],function () { return 'var Author = hr.Model.extend({\n    defaults: {\n        "name": "",\n        "fullname": ""\n    },\n}, {\n    getByArticle: function(article) {\n        return new Author({}, {\n            "name": article.get("author"),\n            "fullname": "Mr. "+article.get("author").toUpperCase()\n        })\n    }\n});\n\nvar Article = hr.Model.extend({\n    defaults: {\n        "title": "",\n        "description": "No description for this article",\n        "content": "",\n        "author": "nobody",\n        "interactions": {\n            "comments": "",\n            "likes": ""\n        }\n    },\n\n    joints: {\n        "author": Author.getByArticle\n    }\n});\n\nvar article = new Article({}, {\n    "title": "My first article",\n    "description": "It\'s my first article on this website",\n    "author": "samy"\n});\n\nalert(article.get("title") + " by " + article.get("author.fullname"));\n\n\n';});
 
-define('text!resources/code/model/set.js',[],function () { return 'var article = new yapp.Model({}, {\n    "title": "My first article",\n    "description": "It\'s my first article on this website",\n    "author": "samy",\n    "interactions": {\n        "comments": 0,\n        "likes": 0\n    }\n});\narticle.on("change:interactions.likes", function() {\n    alert("like occurs on the article");\n});\n\narticle.set("interactions.likes", 1);';});
+define('text!resources/code/model/set.js',[],function () { return 'var article = new hr.Model({}, {\n    "title": "My first article",\n    "description": "It\'s my first article on this website",\n    "author": "samy",\n    "interactions": {\n        "comments": 0,\n        "likes": 0\n    }\n});\narticle.on("change:interactions.likes", function() {\n    alert("like occurs on the article");\n});\n\narticle.set("interactions.likes", 1);';});
 
-define('text!resources/code/model/tojson.js',[],function () { return 'var artist = new yapp.Model({}, {\n    firstName: "Wassily",\n    lastName: "Kandinsky"\n});\n\nartist.set({birthday: "December 16, 1866"});\n\nalert(JSON.stringify(artist));';});
+define('text!resources/code/model/tojson.js',[],function () { return 'var artist = new hr.Model({}, {\n    firstName: "Wassily",\n    lastName: "Kandinsky"\n});\n\nartist.set({birthday: "December 16, 1866"});\n\nalert(JSON.stringify(artist));';});
 
-define('text!resources/code/collection/model.js',[],function () { return 'var Library = yapp.Collection.extend({\n    model: Book\n});';});
+define('text!resources/code/collection/model.js',[],function () { return 'var Library = hr.Collection.extend({\n    model: Book\n});';});
 
-define('text!resources/code/collection/model_polymorphic.js',[],function () { return 'var Library = yapp.Collection.extend({\n\n    model: function(attrs, options) {\n        if (condition) {\n            return new PublicDocument(attrs, options);\n        } else {\n            return new PrivateDocument(attrs, options);\n        }\n    }\n\n});';});
+define('text!resources/code/collection/model_polymorphic.js',[],function () { return 'var Library = hr.Collection.extend({\n\n    model: function(attrs, options) {\n        if (condition) {\n            return new PublicDocument(attrs, options);\n        } else {\n            return new PrivateDocument(attrs, options);\n        }\n    }\n\n});';});
 
-define('text!resources/code/collection/tojson.js',[],function () { return 'var collection = new yapp.Collection({\n    models: [\n        {name: "Tim", age: 5},\n        {name: "Ida", age: 26},\n        {name: "Rob", age: 55}\n    ]\n});\n\nalert(JSON.stringify(collection));';});
+define('text!resources/code/collection/tojson.js',[],function () { return 'var collection = new hr.Collection({\n    models: [\n        {name: "Tim", age: 5},\n        {name: "Ida", age: 26},\n        {name: "Rob", age: 55}\n    ]\n});\n\nalert(JSON.stringify(collection));';});
 
-define('text!resources/code/requests/class.js',[],function () { return 'var r = new yapp.Requests({\n    url: yapp.Urls.static("templates/header.html"),\n\n    /*\n    Some others options with defaults values :\n        method: "GET",\n        params: {},\n        dataType: "text"\n    */\n});\nr.on("done", function(content) {\n    alert("content size is " + content.length);\n});\nr.on("error", function() {\n    alert("Error in the request!");\n})\nr.execute();';});
+define('text!resources/code/requests/class.js',[],function () { return 'var r = new hr.Requests({\n    url: hr.Urls.static("templates/header.html"),\n\n    /*\n    Some others options with defaults values :\n        method: "GET",\n        params: {},\n        dataType: "text"\n    */\n});\nr.on("done", function(content) {\n    alert("content size is " + content.length);\n});\nr.on("error", function() {\n    alert("Error in the request!");\n})\nr.execute();';});
 
-define('text!resources/code/requests/get.js',[],function () { return 'yapp.Requests.get(yapp.Urls.static("templates/header.html")).then(function() {\n    alert("Nice requests !");\n}, function() {\n    alert("Error !");\n})';});
+define('text!resources/code/requests/get.js',[],function () { return 'hr.Requests.get(hr.Urls.static("templates/header.html")).then(function() {\n    alert("Nice requests !");\n}, function() {\n    alert("Error !");\n})';});
 
-define('text!resources/code/requests/getjson.js',[],function () { return 'yapp.Requests.getJSON("https://api.github.com/repos/FriendCode/yapp.js").then(function(data) {\n    alert("Yapp.js github repo has "+data.watchers_count+" watchers");\n}, function() {\n    alert("Error !");\n})';});
+define('text!resources/code/requests/getjson.js',[],function () { return 'hr.Requests.getJSON("https://api.github.com/repos/FriendCode/hr.js").then(function(data) {\n    alert("HappyRhino github repo has "+data.watchers_count+" watchers");\n}, function() {\n    alert("Error !");\n})';});
 
-define('text!resources/code/requests/post.js',[],function () { return 'yapp.Requests.post("mybackend/test.php").then(function() {\n    alert("Weird ... it wasn\'t suppose to work");\n}, function() {\n    alert("Error ! (don\'t worry it\'s normal ;) )");\n})';});
+define('text!resources/code/requests/post.js',[],function () { return 'hr.Requests.post("mybackend/test.php").then(function() {\n    alert("Weird ... it wasn\'t suppose to work");\n}, function() {\n    alert("Error ! (don\'t worry it\'s normal ;) )");\n})';});
 
-define('text!resources/code/logger/namespace.js',[],function () { return '// Namespace for a model : into navigator console\nvar log_user = yapp.Logger.addNamespace("users");\n\nlog_user.error("Invalid user (don\'t have \'name\') :", {\n    username: "Samy" \n});\n\n// Namespace for urgent logs\nvar log_urgent = yapp.Logger.addNamespace("urgent", function() {\n    var args = Array.prototype.slice.call(arguments);\n    alert(args.join(" "));\n});\n\nlog_urgent.warn("Error in rendering view \'user\'");\n\n';});
+define('text!resources/code/logger/namespace.js',[],function () { return '// Namespace for a model : into navigator console\nvar log_user = hr.Logger.addNamespace("users");\n\nlog_user.error("Invalid user (don\'t have \'name\') :", {\n    username: "Samy" \n});\n\n// Namespace for urgent logs\nvar log_urgent = hr.Logger.addNamespace("urgent", function() {\n    var args = Array.prototype.slice.call(arguments);\n    alert(args.join(" "));\n});\n\nlog_urgent.warn("Error in rendering view \'user\'");\n\n';});
 
-define('text!resources/code/logger/logging.js',[],function () { return '// log message visible only when configuration "logLevel": "log"\nyapp.Logger.logging.log("a log message");\n\n// log message visible only when configuration "logLevel": "log" or "debug"\nyapp.Logger.logging.debug("a debug message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warn"\nyapp.Logger.logging.warn("a warning message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warn" or "error"\nyapp.Logger.logging.error("an error message");\n\n// if "logLevel": "none" => no log message are outputed';});
+define('text!resources/code/logger/logging.js',[],function () { return '// log message visible only when configuration "logLevel": "log"\nhr.Logger.logging.log("a log message");\n\n// log message visible only when configuration "logLevel": "log" or "debug"\nhr.Logger.logging.debug("a debug message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warn"\nhr.Logger.logging.warn("a warning message");\n\n// log message visible only when configuration "logLevel": "log" or "debug" or "warn" or "error"\nhr.Logger.logging.error("an error message");\n\n// if "logLevel": "none" => no log message are outputed';});
 
-define('text!resources/code/router/extend.js',[],function () { return 'var Router = yapp.Router.extend({\n    routes: {\n        "home": "home",                    // #/home\n        "user/:id": "user",                // #/user/samy\n        "search/:query":        "search",  // #/search/kiwis\n        "search/:query/p:page": "search"   // #/search/kiwis/p7\n    }\n});\n\n\nvar router = new Router();\nrouter.on("route:home", function() {\n    ...\n});\nrouter.on("route:user", function() {\n    ...\n});\nrouter.on("route:search", function() {\n    ...\n});';});
+define('text!resources/code/router/extend.js',[],function () { return 'var Router = hr.Router.extend({\n    routes: {\n        "home": "home",                    // #/home\n        "user/:id": "user",                // #/user/samy\n        "search/:query":        "search",  // #/search/kiwis\n        "search/:query/p:page": "search"   // #/search/kiwis/p7\n    }\n});\n\n\nvar router = new Router();\nrouter.on("route:home", function() {\n    ...\n});\nrouter.on("route:user", function() {\n    ...\n});\nrouter.on("route:search", function() {\n    ...\n});';});
 
-define('text!resources/code/router/route.js',[],function () { return 'var router = new yapp.Router();\nrouter.route("test/home", "home", function() {\n    alert("home !");\n});\nrouter.route(/^test\\/(.*?)\\/edit$/, "edit", function(file) {\n    alert("Edit file "+file);\n});\nrouter.start();\n\nrouter.navigate("test/directory/test.txt/edit");';});
+define('text!resources/code/router/route.js',[],function () { return 'var router = new hr.Router();\nrouter.route("test/home", "home", function() {\n    alert("home !");\n});\nrouter.route(/^test\\/(.*?)\\/edit$/, "edit", function(file) {\n    alert("Edit file "+file);\n});\nrouter.start();\n\nrouter.navigate("test/directory/test.txt/edit");';});
 
-define('text!resources/code/urls/base.js',[],function () { return 'alert(yapp.Urls.base("index.html"));';});
+define('text!resources/code/urls/base.js',[],function () { return 'alert(hr.Urls.base("index.html"));';});
 
-define('text!resources/code/urls/static.js',[],function () { return 'alert(yapp.Urls.static("favicon.png"));';});
+define('text!resources/code/urls/static.js',[],function () { return 'alert(hr.Urls.static("favicon.png"));';});
 
-define('text!resources/code/urls/route.js',[],function () { return 'alert(yapp.Urls.route("article/:id", {id: 1234}));';});
+define('text!resources/code/urls/route.js',[],function () { return 'alert(hr.Urls.route("article/:id", {id: 1234}));';});
 
-define('text!resources/code/urls/rules.js',[],function () { return 'yapp.Urls.extendRules({\n     article: function() {\n        var args = Array.prototype.slice.call(arguments, 0);\n        args = _.map(args, function(section){\n            return section.replace(/ /g,"-");\n        });\n        args.splice(0,0, "articles");\n        return yapp.Urls.base.apply(yapp.Urls, args);\n     }\n});\n\nalert(yapp.Urls.article("my category", "my article"));';});
+define('text!resources/code/urls/rules.js',[],function () { return 'hr.Urls.extendRules({\n     article: function() {\n        var args = Array.prototype.slice.call(arguments, 0);\n        args = _.map(args, function(section){\n            return section.replace(/ /g,"-");\n        });\n        args.splice(0,0, "articles");\n        return hr.Urls.base.apply(hr.Urls, args);\n     }\n});\n\nalert(hr.Urls.article("my category", "my article"));';});
 
-define('text!resources/code/urls/template.html',[],function () { return '<% _.each(photos, function(photo) { %>\n    <a href="<%- yapp.urls.static("images", photo.Id, "1024.jpg") %>">\n        <img src="<%- yapp.urls.static("images", photo.Id, "128.jpg") %>" />\n    </a>\n    <a href="<%- yapp.urls.route("photos/comments/:Id", photo) %>">\n        <%- photo.comments %> Comments\n    </a>\n<% }); %>';});
+define('text!resources/code/urls/template.html',[],function () { return '<% _.each(photos, function(photo) { %>\n    <a href="<%- hr.urls.static("images", photo.Id, "1024.jpg") %>">\n        <img src="<%- hr.urls.static("images", photo.Id, "128.jpg") %>" />\n    </a>\n    <a href="<%- hr.urls.route("photos/comments/:Id", photo) %>">\n        <%- photo.comments %> Comments\n    </a>\n<% }); %>';});
 
-define('text!resources/code/i18n/load.js',[],function () { return '// Configure loading of i18n translations\nyapp.Resources.addNamespace("i18n", {\n    loader: "http",\n    base: "i18n",\n    extension: ".json"\n});\n\n// Load translations\nvar dEn = yapp.I18n.loadLocale("en");\nvar dFr = yapp.I18n.loadLocale("fr");\n\nyapp.Deferred.when(dEn, dFr).then(function() {\n    // Set locale to english\n    yapp.I18n.setCurrentLocale("en");\n    alert("In english : "+yapp.I18n.t("message.hello", {name: "Samy"}));\n\n    // Define locale during the translation\n    alert("In french : "+yapp.I18n.t("message.hello", {\n        name: "Samy",\n        locale: "fr"\n    }));  \n});';});
+define('text!resources/code/i18n/load.js',[],function () { return '// Configure loading of i18n translations\nhr.Resources.addNamespace("i18n", {\n    loader: "http",\n    base: "i18n",\n    extension: ".json"\n});\n\n// Load translations\nvar dEn = hr.I18n.loadLocale("en");\nvar dFr = hr.I18n.loadLocale("fr");\n\nhr.Deferred.when(dEn, dFr).then(function() {\n    // Set locale to english\n    hr.I18n.setCurrentLocale("en");\n    alert("In english : "+hr.I18n.t("message.hello", {name: "Samy"}));\n\n    // Define locale during the translation\n    alert("In french : "+hr.I18n.t("message.hello", {\n        name: "Samy",\n        locale: "fr"\n    }));  \n});';});
 
-define('text!resources/code/i18n/template.html',[],function () { return '<h1><%- yapp.i18n.t("homepage.title", {name: user.name}) %></h1>\n\n<% if (user.admin) { %>\n    <p><%= yapp.i18n.t("homepage.messages.admin", {name: user.name}) %></p>\n    <%- view.component("admin") %>\n<% } else { %>\n    <p><%= yapp.i18n.t("homepage.messages.user", {name: user.name}) %></p>\n<% } %>';});
+define('text!resources/code/i18n/template.html',[],function () { return '<h1><%- hr.i18n.t("homepage.title", {name: user.name}) %></h1>\n\n<% if (user.admin) { %>\n    <p><%= hr.i18n.t("homepage.messages.admin", {name: user.name}) %></p>\n    <%- view.component("admin") %>\n<% } else { %>\n    <p><%= hr.i18n.t("homepage.messages.user", {name: user.name}) %></p>\n<% } %>';});
 
 define('text!resources/code/i18n/en.json',[],function () { return '{\n    "lang": "English",\n    "homepage": {\n        "title": "Dashboard of <%- name %>"\n    },\n    "messages": {\n        "admin": "<%- name %>, you can administrate your profile below :",\n        "user": "<%- name %>, you should be admin to access this page"\n    }\n}';});
 
-define('text!resources/code/cache/key.js',[],function () { return '// Key and Value are strings\nyapp.Cache.set("test", "mykey", "myvalue");\n\n// Key is a number\nyapp.Cache.set("test", 4, "myvalue");\n\n// Value is a number\nyapp.Cache.set("test", "mykey2", 55);\n\n// Value is an object\nyapp.Cache.set("test", "me", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n});\n\n// Key is an object, Value is a Date\nyapp.Cache.set("lastconnexion", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n}, new Date(), 3600);';});
+define('text!resources/code/cache/key.js',[],function () { return '// Key and Value are strings\nhr.Cache.set("test", "mykey", "myvalue");\n\n// Key is a number\nhr.Cache.set("test", 4, "myvalue");\n\n// Value is a number\nhr.Cache.set("test", "mykey2", 55);\n\n// Value is an object\nhr.Cache.set("test", "me", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n});\n\n// Key is an object, Value is a Date\nhr.Cache.set("lastconnexion", {\n    "name": "John Doe",\n    "location": "San Francisco, CA"\n}, new Date(), 3600);';});
 
-define('text!resources/code/cache/namespace.js',[],function () { return '// Create a first cache namespace for users\nvar users = yapp.Cache.namespace("users");\n\n// Create a second cache namespace for articles\nvar articles = yapp.Cache.namespace("articles");\n\nusers.set("samy", {\n    name: "Samy Pessé"\n});\narticles.set("samy", {\n    name: "Who is Samy?"\n});\n\nalert("User " + users.get("samy").name);\nalert("Article " + articles.get("samy").name);';});
+define('text!resources/code/cache/namespace.js',[],function () { return '// Create a first cache namespace for users\nvar users = hr.Cache.namespace("users");\n\n// Create a second cache namespace for articles\nvar articles = hr.Cache.namespace("articles");\n\nusers.set("samy", {\n    name: "Samy Pessé"\n});\narticles.set("samy", {\n    name: "Who is Samy?"\n});\n\nalert("User " + users.get("samy").name);\nalert("Article " + articles.get("samy").name);';});
 
-define('text!resources/code/resources/load.js',[],function () { return 'yapp.Resources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
+define('text!resources/code/resources/load.js',[],function () { return 'hr.Resources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
 
-define('text!resources/code/resources/namespace.js',[],function () { return '// Configure templates to use http loader\nyapp.Resources.addNamespace("templates", {\n    loader: "http",\n    base: "templates"\n});\n\n// Configure i18n to use internal content for languages\nyapp.Resources.addNamespace("i18n", {\n    loader: "require",\n    base: "resources/i18n",\n    mode: "text"\n});\n\n// Add a other namespace for your application\nyapp.Resources.addNamespace("codes", {\n    loader: "require",\n    base: "resources/code",\n    mode: "text"\n});\n\nyapp.Resources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
+define('text!resources/code/resources/namespace.js',[],function () { return '// Configure templates to use http loader\nhr.Resources.addNamespace("templates", {\n    loader: "http",\n    base: "templates"\n});\n\n// Configure i18n to use internal content for languages\nhr.Resources.addNamespace("i18n", {\n    loader: "require",\n    base: "resources/i18n",\n    mode: "text"\n});\n\n// Add a other namespace for your application\nhr.Resources.addNamespace("codes", {\n    loader: "require",\n    base: "resources/code",\n    mode: "text"\n});\n\nhr.Resources.load("codes", "urls/base.js").then(function(code) {\n    alert("Code loaded : "+code);\n}, function() {\n    alert("error when loading code !");\n})';});
 
-define('text!resources/code/resources/loader.js',[],function () { return '// Simple http loader using yahoo queries\n// for getting page content\nyapp.Resources.addLoader("yql", function(query, callback, args, config) {\n    _.defaults(config, {\n        version: "v1",\n        server: "https://query.yahooapis.com"\n    });\n\n    query = encodeURIComponent(query);\n\n    var url = config.url || config.server+"/"+config.version+"/public/yql";\n    url = url+"?format=json&q="+query+"&callback=?";\n\n    yapp.Requests.getJSON(url).then(function(data) {\n        if (data.query == null || data.query.results == null) {\n            return callback.reject();\n        }\n        return callback.resolve(data.query.results);\n    }, function() {\n        return callback.reject();\n    })\n});\n\n// Add a simple namespace for external pages\nyapp.Resources.addNamespace("query", {\n    loader: "yql",\n    version: "v1"\n});\n\n\n// ...\n// yql could now be use anywhere with ressource loader\n\n// For exemple : get weather\nyapp.Resources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {\n    var city = result.channel.location.city;\n    var condition = result.channel.item.condition.text;\n    alert("Weather in "+city+" is "+condition);\n}, function() {\n    alert("error when loading page !");\n})\n';});
+define('text!resources/code/resources/loader.js',[],function () { return '// Simple http loader using yahoo queries\n// for getting page content\nhr.Resources.addLoader("yql", function(query, callback, args, config) {\n    _.defaults(config, {\n        version: "v1",\n        server: "https://query.yahooapis.com"\n    });\n\n    query = encodeURIComponent(query);\n\n    var url = config.url || config.server+"/"+config.version+"/public/yql";\n    url = url+"?format=json&q="+query+"&callback=?";\n\n    hr.Requests.getJSON(url).then(function(data) {\n        if (data.query == null || data.query.results == null) {\n            return callback.reject();\n        }\n        return callback.resolve(data.query.results);\n    }, function() {\n        return callback.reject();\n    })\n});\n\n// Add a simple namespace for external pages\nhr.Resources.addNamespace("query", {\n    loader: "yql",\n    version: "v1"\n});\n\n\n// ...\n// yql could now be use anywhere with ressource loader\n\n// For exemple : get weather\nhr.Resources.load("query", "select * from weather.forecast where woeid=2502265").then(function(result) {\n    var city = result.channel.location.city;\n    var condition = result.channel.item.condition.text;\n    alert("Weather in "+city+" is "+condition);\n}, function() {\n    alert("error when loading page !");\n})\n';});
 
 define('resources/resources',[
-    "yapp/yapp",
+    "hr/hr",
 
     "text!resources/code/build/structure.txt",
     "text!resources/code/build/build.js",
@@ -26056,14 +26095,14 @@ define('resources/resources',[
     "text!resources/code/resources/load.js",
     "text!resources/code/resources/namespace.js",
     "text!resources/code/resources/loader.js",
-], function(yapp) {
+], function(hr) {
 
-    yapp.Resources.addNamespace("templates", {
+    hr.Resources.addNamespace("templates", {
         loader: "http",
         base: "templates"
     });
 
-     yapp.Resources.addNamespace("codes", {
+     hr.Resources.addNamespace("codes", {
         loader: "require",
         base: "resources/code",
         mode: "text"
@@ -26072,25 +26111,25 @@ define('resources/resources',[
 });
 require([
     "Underscore",
-    "yapp/yapp",
-    "yapp/args",
+    "hr/hr",
+    "hr/args",
 
     "views/views",
     "resources/resources"
-], function(_, yapp, args) {
-    // Configure yapp
-    yapp.configure(args);
+], function(_, hr, args) {
+    // Configure hr
+    hr.configure(args);
 
     // Define base application
-    var Application = yapp.Application.extend({
-        name: "yapp.js",
+    var Application = hr.Application.extend({
+        name: "hr.js",
         template: "main.html",
         metas: {
             "description": "Build large client-side application in a structured way.",
             "author": "Samy Pessé"
         },
         links: {
-            "icon": yapp.Urls.static("images/favicon.png")
+            "icon": hr.Urls.static("images/favicon.png")
         },
         events: {
             "submit .search": "search",
