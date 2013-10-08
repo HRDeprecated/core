@@ -115,7 +115,7 @@ define([
 
             if (_.isArray(model)) {
                 _.each(model, function(m) {
-                    this.add(m, options);
+                    this.add(m, _.clone(options));
                 }, this);
                 return this;
             }
@@ -128,7 +128,7 @@ define([
             }
 
             options = _.defaults(options || {}, {
-                at: _.size(this.models),
+                at: this.models.length,
                 merge: false,
                 silent: false
             });

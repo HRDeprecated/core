@@ -12630,7 +12630,7 @@ define('hr/core/collection',[
 
             if (_.isArray(model)) {
                 _.each(model, function(m) {
-                    this.add(m, options);
+                    this.add(m, _.clone(options));
                 }, this);
                 return this;
             }
@@ -12643,7 +12643,7 @@ define('hr/core/collection',[
             }
 
             options = _.defaults(options || {}, {
-                at: _.size(this.models),
+                at: this.models.length,
                 merge: false,
                 silent: false
             });
@@ -13275,6 +13275,7 @@ define('hr/vendors/underscore-more',[
         sharedArrayKeys = _.intersection(arrays(destination), arrays(source));
         combine = function(key) {
             return source[key];
+            // Replace array and not replaced
             //return source[key] = _.union(destination[key], source[key]);
         };
         for (_j = 0, _len1 = sharedArrayKeys.length; _j < _len1; _j++) {
