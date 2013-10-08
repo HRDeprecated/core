@@ -17,11 +17,11 @@ define([
             if (s == null) {
                 return false;
             }
-            var r = new RegExp("/^(cache_"+configs.revision+")/");
+            var r = "cache_"+configs.revision;
             Object.keys(s).forEach(function(key){
-                   if (/^(cache_)/.test(key) && r.test(key) == false) {
-                       s.removeItem(key);
-                   }
+                if (key.indexOf(r) !== 0) {
+                    s.removeItem(key);
+                }
             });
         },
 

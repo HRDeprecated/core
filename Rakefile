@@ -16,6 +16,11 @@ task :run do
   system './bin/hr.js -d docs all'
 end
 
+desc "publish to npm"
+task :run do
+  system 'npm publish'
+end
+
 desc "run the sample"
 task :sample do
   system './bin/hr.js -d skeleton all'
