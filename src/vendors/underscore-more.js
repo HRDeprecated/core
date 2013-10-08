@@ -63,7 +63,9 @@ define([
         }
         sharedArrayKeys = _.intersection(arrays(destination), arrays(source));
         combine = function(key) {
-            return source[key] = _.union(destination[key], source[key]);
+            return source[key];
+            // Replace array and not replaced
+            //return source[key] = _.union(destination[key], source[key]);
         };
         for (_j = 0, _len1 = sharedArrayKeys.length; _j < _len1; _j++) {
             sharedArrayKey = sharedArrayKeys[_j];
