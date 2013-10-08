@@ -17,7 +17,7 @@ task :run do
 end
 
 desc "publish to npm"
-task :run do
+task :publish do
   system 'npm publish'
 end
 

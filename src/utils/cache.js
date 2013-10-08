@@ -17,9 +17,8 @@ define([
             if (s == null) {
                 return false;
             }
-            var r = "cache_"+configs.revision;
             Object.keys(s).forEach(function(key){
-                if (key.indexOf(r) !== 0) {
+                if (key.indexOf("cache_") == 0 && key.indexOf("cache_"+configs.revision) != 0) {
                     s.removeItem(key);
                 }
             });
