@@ -2,7 +2,7 @@
     "author": "Samy Pesse",
     "name": "hr.js",
     "description": "Client-side framework for structured applications.",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "keywords": [
         "clientside"
     ],

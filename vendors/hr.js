@@ -10621,7 +10621,7 @@ define('hr/utils/cache',[
                 return false;
             }
             Object.keys(s).forEach(function(key){
-                if (key.indexOf("cache_") == 0 && key.indexOf("cache_"+configs.revision) != 0) {
+                if (key.indexOf("cache_") == 0 && key.indexOf("cache_"+configs.revision) ) {
                     s.removeItem(key);
                 }
             });
@@ -10721,8 +10721,6 @@ define('hr/utils/cache',[
             return ncache;
         }
     };
-
-    Cache.init();
 
     return Cache;
 });
@@ -12090,6 +12088,7 @@ define('hr/core/application',[
             logging.log("Run application", this.name);
 
             var hr = require("hr/hr");
+            hr.Cache.init();
             hr.app = this;
             this.render();
             return this;

@@ -18,7 +18,7 @@ define([
                 return false;
             }
             Object.keys(s).forEach(function(key){
-                if (key.indexOf("cache_") == 0 && key.indexOf("cache_"+configs.revision) != 0) {
+                if (key.indexOf("cache_") == 0 && key.indexOf("cache_"+configs.revision) ) {
                     s.removeItem(key);
                 }
             });
@@ -118,8 +118,6 @@ define([
             return ncache;
         }
     };
-
-    Cache.init();
 
     return Cache;
 });

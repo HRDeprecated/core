@@ -59,6 +59,7 @@ define([
             logging.log("Run application", this.name);
 
             var hr = require("hr/hr");
+            hr.Cache.init();
             hr.app = this;
             this.render();
             return this;
