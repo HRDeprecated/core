@@ -221,7 +221,7 @@ define([
             if (_.size(this.components) == 0) { this.ready(); return this; }
 
             var addComponent = _.bind(function(component) {
-                this.$("component[data-component='"+component.cid+"']").empty().append(component.$el);
+                this.$("component[data-component='"+component.cid+"']").replaceWith(component.$el);
                 component.defer(_.once(componentRendered));
                 component.render();
             }, this);
