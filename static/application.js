@@ -12128,14 +12128,14 @@ define("jQuery", (function (global) {
 
 
 define('hr/shims',[],function() {
-    if(!Function.prototype.bind) {
-      Function.prototype.bind = function(newThis) {
-        var that = this;
-        return function(){ 
-          return that.apply(newThis, arguments); 
-        };
-      }
-    }
+	if(!Function.prototype.bind) {
+		Function.prototype.bind = function(newThis) {
+			var that = this;
+			return function(){ 
+				return that.apply(newThis, arguments); 
+			};
+		}
+	}
 
     return {};
 });
@@ -12148,7 +12148,7 @@ define('hr/configs',['require'],function(args) {
         "args": {},
 
         // Hr version
-        "version": "0.1.1",
+        "version": "0.1.7",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -22748,11 +22748,10 @@ define('hr/utils/cache',[
             if (s == null) {
                 return false;
             }
-            var r = new RegExp("/^(cache_"+configs.revision+")/");
             Object.keys(s).forEach(function(key){
-                   if (/^(cache_)/.test(key) && r.test(key) == false) {
-                       s.removeItem(key);
-                   }
+                if (key.indexOf("cache_") == 0 && key.indexOf("cache_"+configs.revision) ) {
+                    s.removeItem(key);
+                }
             });
         },
 
@@ -22850,8 +22849,6 @@ define('hr/utils/cache',[
             return ncache;
         }
     };
-
-    Cache.init();
 
     return Cache;
 });
@@ -23753,7 +23750,7 @@ define('hr/core/view',[
             if (_.size(this.components) == 0) { this.ready(); return this; }
 
             var addComponent = _.bind(function(component) {
-                this.$("component[data-component='"+component.cid+"']").empty().append(component.$el);
+                this.$("component[data-component='"+component.cid+"']").replaceWith(component.$el);
                 component.defer(_.once(componentRendered));
                 component.render();
             }, this);
@@ -24219,6 +24216,7 @@ define('hr/core/application',[
             logging.log("Run application", this.name);
 
             var hr = require("hr/hr");
+            hr.Cache.init();
             hr.app = this;
             this.render();
             return this;
@@ -24760,7 +24758,7 @@ define('hr/core/collection',[
 
             if (_.isArray(model)) {
                 _.each(model, function(m) {
-                    this.add(m, options);
+                    this.add(m, _.clone(options));
                 }, this);
                 return this;
             }
@@ -24773,7 +24771,7 @@ define('hr/core/collection',[
             }
 
             options = _.defaults(options || {}, {
-                at: _.size(this.models),
+                at: this.models.length,
                 merge: false,
                 silent: false
             });
@@ -25404,7 +25402,9 @@ define('hr/vendors/underscore-more',[
         }
         sharedArrayKeys = _.intersection(arrays(destination), arrays(source));
         combine = function(key) {
-            return source[key] = _.union(destination[key], source[key]);
+            return source[key];
+            // Replace array and not replaced
+            //return source[key] = _.union(destination[key], source[key]);
         };
         for (_j = 0, _len1 = sharedArrayKeys.length; _j < _len1; _j++) {
             sharedArrayKey = sharedArrayKeys[_j];
@@ -25485,7 +25485,7 @@ define('hr/hr',[
 ], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
 Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I18n, views) {    
-    return {
+    var hr = {
         configs: configs,
         Class: Class,
         View: View,
@@ -25525,9 +25525,13 @@ Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I1
                 baseUrl: args.baseUrl || ""
             });
         }
-    }
+    };
+
+    window.hr = hr;
+    
+    return hr;
 });
-define('hr/args',[],function() { return {"revision":1378592382780,"baseUrl":"/hr.js/"}; });
+define('hr/args',[],function() { return {"revision":1382275025121,"baseUrl":"/hr.js/"}; });
 define('views/counter',[
     "hr/hr"
 ], function(hr) {
@@ -25921,7 +25925,7 @@ define('views/views',[
     });
 }());
 
-define('text!resources/code/build/structure.txt',[],function () { return 'build/\nviews/\n    myview.js\nmodels/\n    mymodel.js\nstylesheets/\n    imports.less\nvendors/\n    external_library.js\nresources/\n    templates/\n        views/\n            myview.html\n        main.html\n    images/\n        favicon.png\napplication.js\nbuild.js';});
+define('text!resources/code/build/structure.txt',[],function () { return 'build/\nviews/\n    myview.js\nmodels/\n    mymodel.js\nvendors/\n    external_library.js\nresources/\n    templates/\n        views/\n            myview.html\n        main.html\n    images/\n        favicon.png\n    stylesheets/\n        imports.less\napplication.js\nbuild.js';});
 
 define('text!resources/code/build/build.js',[],function () { return 'var path = require("path");\n\nexports.config = {\n    // Base directory for the application\n    "base": __dirname,\n\n    // Application name\n    "name": "MyApplication",\n\n    // Mode debug\n    "debug": true,\n\n    // Main entry point for application\n    "main": "main",\n\n    // Build output directory\n    "build": path.resolve(__dirname, "build"),\n\n    // Static files mappage\n    "static": {\n        "templates": path.resolve(__dirname, "resources", "templates"),\n        "images": path.resolve(__dirname, "resources", "images")\n    },\n\n    // Stylesheet entry point\n    "style": path.resolve(__dirname, "stylesheets/imports.less"),\n};';});
 
@@ -26144,10 +26148,10 @@ require([
         initialize: function() {
             Application.__super__.initialize.apply(this, arguments);
             var throttled = _.bind(_.throttle(function() {
-                if ($(window).scrollTop() > this.components.header.$("header").height()) {
-                    this.components.header.$("header").addClass("close");
+                if ($(window).scrollTop() > this.components.lateralbar.$("#lateralbar").height()) {
+                    this.components.lateralbar.$("#lateralbar").addClass("close");
                 } else {
-                    this.components.header.$("header").removeClass("close");
+                    this.components.lateralbar.$("#lateralbar").removeClass("close");
                 }
             }, 250), this);
             $(window).scroll(throttled);
@@ -26164,7 +26168,7 @@ require([
 
             var query = this.$(".search input").val().toLowerCase();
 
-            this.$("header .menu").each(function() {
+            this.$("#lateralbar .menu").each(function() {
                 var n = 0;
                 $(this).removeClass("search-result");
                 $(this).removeClass("no-search-result");
