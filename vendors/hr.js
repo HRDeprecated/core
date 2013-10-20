@@ -1,13 +1,13 @@
 
 define('hr/shims',[],function() {
-    if(!Function.prototype.bind) {
-      Function.prototype.bind = function(newThis) {
-        var that = this;
-        return function(){ 
-          return that.apply(newThis, arguments); 
-        };
-      }
-    }
+	if(!Function.prototype.bind) {
+		Function.prototype.bind = function(newThis) {
+			var that = this;
+			return function(){ 
+				return that.apply(newThis, arguments); 
+			};
+		}
+	}
 
     return {};
 });
@@ -20,7 +20,7 @@ define('hr/configs',['require'],function(args) {
         "args": {},
 
         // Hr version
-        "version": "0.1.1",
+        "version": "0.1.7",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -13357,7 +13357,7 @@ define('hr/hr',[
 ], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
 Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I18n, views) {    
-    return {
+    var hr = {
         configs: configs,
         Class: Class,
         View: View,
@@ -13397,5 +13397,9 @@ Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I1
                 baseUrl: args.baseUrl || ""
             });
         }
-    }
+    };
+
+    window.hr = hr;
+    
+    return hr;
 });

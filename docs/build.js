@@ -27,7 +27,7 @@ exports.config = {
     },
 
     // Stylesheets
-    "style": path.resolve(__dirname, "stylesheets/imports.less"),
+    "style": path.resolve(__dirname, "resources/stylesheets/imports.less"),
 
     // Modules paths
     "paths": {

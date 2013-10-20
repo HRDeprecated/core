@@ -33,10 +33,10 @@ require([
         initialize: function() {
             Application.__super__.initialize.apply(this, arguments);
             var throttled = _.bind(_.throttle(function() {
-                if ($(window).scrollTop() > this.components.header.$("header").height()) {
-                    this.components.header.$("header").addClass("close");
+                if ($(window).scrollTop() > this.components.lateralbar.$("#lateralbar").height()) {
+                    this.components.lateralbar.$("#lateralbar").addClass("close");
                 } else {
-                    this.components.header.$("header").removeClass("close");
+                    this.components.lateralbar.$("#lateralbar").removeClass("close");
                 }
             }, 250), this);
             $(window).scroll(throttled);
@@ -53,7 +53,7 @@ require([
 
             var query = this.$(".search input").val().toLowerCase();
 
-            this.$("header .menu").each(function() {
+            this.$("#lateralbar .menu").each(function() {
                 var n = 0;
                 $(this).removeClass("search-result");
                 $(this).removeClass("no-search-result");

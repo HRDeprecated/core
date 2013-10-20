@@ -1,9 +1,9 @@
+<%= template.import("header.html", {}, "header") %>
 <div class="page">
-    <%= template.import("header.html", {}, "header") %>
+    <%= template.import("lateralbar.html", {}, "lateralbar") %>
     <div class="content">
         <section id="intro" class="intro">
             <article>
-                <p class="title">Build large client-side applications in a structured way.</p>
                 <p>HappyRhino gives structure to client-side web applications by bringing a complete build system
                     with a a rich API similar to Backbone.js.</p>
                 <p>hr.js is an open-source component of <a href="https://friendco.de">FriendCode</a>.</p>
@@ -14,6 +14,7 @@
                         <li><a href="https://friendco.de"><b>FriendCode</b></a>, Realtime collaborative code editor built for the cloud era.</li>
                         <li><a href="http://doks.io"><b>Doks.io</b></a>, Searching documentation made easy.</li>
                         <li><a href="https://github.com/SamyPesse/tv.js"><b>TV.js</b></a>, Apple TV for Torrent Streaming in JS (Node/Chrome).</li>
+                        <li><a href="http://www.reportr.io"><b>Reportr</b></a>, Your life's personal dashboard.</li>
                         <li><a href="https://github.com/FriendCode/gitrap"><b>GitRap</b></a>, Distributed Git based Forums.</li>
                     </ul>
                 </p>
@@ -27,7 +28,6 @@
                 <p>
                     <iframe src="http://ghbtns.com/github-btn.html?user=FriendCode&repo=hr.js&type=watch&count=true"allowtransparency="true" frameborder="0" scrolling="0" width="85" height="20"></iframe>
                     <iframe src="http://ghbtns.com/github-btn.html?user=FriendCode&repo=hr.js&type=fork&count=true"allowtransparency="true" frameborder="0" scrolling="0" width="105" height="20"></iframe>
-                    <iframe src="https://friendco.de/widgets/button/codenow?url=https%3A%2F%2Fgithub.com%2FFriendCode%2Fhr.js.git&file=&style=normal&private=true&create=false&prepare=false" frameborder="0" scrolling="no" frameborder="0" style="border:none; overflow:hidden;width: 190px;height: 20px;" allowTransparency="true"></iframe>
                 </p>
             </article>
         </section>
@@ -47,6 +47,9 @@
             <article>
                 <p>HappyRhino lets you create a simple base application using :</p>
                 <p><code>hr.js new -d my_app</code></p>
+                <p>Build and run your application using:</p>
+                <p><code>hr.js all -d my_app</code></p>
+                <p>And here is your first client-side application with HappyRhino!</p>
             </article>   
         </section>
 
@@ -59,7 +62,7 @@
             </article>
             <article id="build/application">
                 <h3><a href="<%- hr.urls.route("build/application") %>">Defining an application</a></h3>
-                <p>An application in hr.js need a base build configuration :</p>
+                <p>An application in hr.js need a base build configuration, this configuration is stored in a "build.js" file:</p>
                 <%= view.component("code", {code: "build/build.js"}) %>
                 <p>Here is a list of all the differents options for build process :</p>
                 <%= view.component("code", {code: "build/options.js"}) %>

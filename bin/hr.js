@@ -61,6 +61,8 @@ function main() {
     _cli
     .version(pkg.version)
     .parse(process.argv);
+
+    if (!_cli.args.length) _cli.help();
 }
 
 

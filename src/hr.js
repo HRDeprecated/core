@@ -27,7 +27,7 @@ define([
 ], function(shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
 Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I18n, views) {    
-    return {
+    var hr = {
         configs: configs,
         Class: Class,
         View: View,
@@ -67,5 +67,9 @@ Logger, Requests, Urls, Storage, Cache, Template, Resources, Deferred, Queue, I1
                 baseUrl: args.baseUrl || ""
             });
         }
-    }
+    };
+
+    window.hr = hr;
+    
+    return hr;
 })

@@ -3,8 +3,6 @@ views/
     myview.js
 models/
     mymodel.js
-stylesheets/
-    imports.less
 vendors/
     external_library.js
 resources/
@@ -14,5 +12,7 @@ resources/
         main.html
     images/
         favicon.png
+    stylesheets/
+        imports.less
 application.js
 build.js
