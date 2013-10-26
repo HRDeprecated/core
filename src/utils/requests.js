@@ -12,14 +12,15 @@ define([
             url: null,
             method: "GET",
             params: {},
-            dataType: "text"
+            dataType: "text",
+            options: {}
         },
 
         /*
          *  Execute the request
          */
         execute: function() {
-            this.xhr = $.ajax({
+            this.xhr = $.ajax(_.extend({}, {
                 "type":     this.options.method,
                 "url":      this.options.url,
                 "data":     this.options.params,
@@ -33,7 +34,7 @@ define([
                     logging.error("Error for request ", this.options);
                     this.trigger("error");
                 }
-            });
+            }, this.options.options));
             return this;
         }
     }, {
