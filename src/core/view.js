@@ -11,6 +11,7 @@ define([
     var View = Class.extend({
         tagName: "div",
         template: null,
+        templateLoader: "templates",
 
         /*
          *  Initialize a view
@@ -258,13 +259,15 @@ define([
          *  @tplname : template id
          *  @tplargs : contexts for template (if null, use templateContext)
          */
-        renderTemplate: function(tplname, tplargs) {
+        renderTemplate: function(tplname, tplargs, tplloader) {
             tplname = tplname || this.template;
             tplargs = tplargs || _.result(this, "templateContext");
+            tplloader = tplloader || _.result(this, "templateLoader");
 
             var tpl = new Template({
                 template: tplname,
                 args: tplargs,
+                loader: tplloader,
                 view: this
             });
             tpl.render();

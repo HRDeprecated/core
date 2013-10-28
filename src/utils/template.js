@@ -12,6 +12,9 @@ define([
             /* Template id */
             template: null,
 
+            /* Loader for the template */
+            loader: "templates",
+
             /* Context givent to template generation */
             args: {}
         },
@@ -94,7 +97,7 @@ define([
         load: function(template) {
             var self = this;
             this.template = template || this.template;
-            Resources.load("templates", this.template).then(function(content) {
+            Resources.load(this.options.loader, this.template).then(function(content) {
                 self.setContent(content);
                 self.trigger("loaded");
             }, function() {

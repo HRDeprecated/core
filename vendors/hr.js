@@ -11233,6 +11233,9 @@ define('hr/utils/template',[
             /* Template id */
             template: null,
 
+            /* Loader for the template */
+            loader: "templates",
+
             /* Context givent to template generation */
             args: {}
         },
@@ -11315,7 +11318,7 @@ define('hr/utils/template',[
         load: function(template) {
             var self = this;
             this.template = template || this.template;
-            Resources.load("templates", this.template).then(function(content) {
+            Resources.load(this.options.loader, this.template).then(function(content) {
                 self.setContent(content);
                 self.trigger("loaded");
             }, function() {
@@ -11413,6 +11416,7 @@ define('hr/core/view',[
     var View = Class.extend({
         tagName: "div",
         template: null,
+        templateLoader: "templates",
 
         /*
          *  Initialize a view
@@ -11660,13 +11664,15 @@ define('hr/core/view',[
          *  @tplname : template id
          *  @tplargs : contexts for template (if null, use templateContext)
          */
-        renderTemplate: function(tplname, tplargs) {
+        renderTemplate: function(tplname, tplargs, tplloader) {
             tplname = tplname || this.template;
             tplargs = tplargs || _.result(this, "templateContext");
+            tplloader = tplloader || _.result(this, "templateLoader");
 
             var tpl = new Template({
                 template: tplname,
                 args: tplargs,
+                loader: tplloader,
                 view: this
             });
             tpl.render();
