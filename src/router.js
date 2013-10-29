@@ -1,9 +1,9 @@
 define([
-    "jQuery",
-    "Underscore",
-    "hr/core/class",
-    "hr/core/history",
-    "hr/utils/logger",
+    "jquery",
+    "underscore",
+    "hr/class",
+    "hr/history",
+    "hr/logger",
 ], function($, _, Class, History, Logger) {
 
     // Add specifif logs handler

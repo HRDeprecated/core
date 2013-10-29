@@ -1,11 +1,11 @@
 define([
-    "Underscore",
-    "hr/core/class",
-    "hr/core/model",
-    "hr/utils/logger",
-    "hr/utils/deferred",
-    "hr/utils/queue"
-], function(_, Class, Model, Logger, Deferred, Queue) {
+    "underscore",
+    "q",
+    "hr/class",
+    "hr/model",
+    "hr/logger",
+    "hr/queue"
+], function(_, Q, Class, Model, Logger, Queue) {
     var logging = Logger.addNamespace("collections");
 
     var Collection = Class.extend({
@@ -286,17 +286,12 @@ define([
 
                 if (this._totalCount == null || this.hasMore() > 0 || options.refresh) {
                     this.options.startIndex = this.options.startIndex || 0;
-                    d = this[this.options.loader].apply(this, this.options.loaderArgs || []);
-                    if (!(d instanceof Deferred)) {
-                        d = new Deferred();
-                        d.resolve();      
-                    }
+                    d = Q(this[this.options.loader].apply(this, this.options.loaderArgs || []));
                     d.done(function() {
                         self.options.startIndex = self.options.startIndex + self.options.limit
                     });
                 } else {
-                    d = new Deferred();
-                    d.reject();
+                    d = Q.reject();
                 }
 
                 return d;
@@ -314,14 +309,14 @@ define([
         },
     });
 
-    // Underscore methods that we want to implement on the Collection.
+    // underscore methods that we want to implement on the Collection.
     var methods = ['forEach', 'each', 'map', 'reduce', 'reduceRight', 'find',
     'detect', 'filter', 'select', 'reject', 'every', 'all', 'some', 'any',
     'include', 'contains', 'invoke', 'max', 'min', 'sortBy', 'sortedIndex',
     'toArray', 'size', 'first', 'initial', 'rest', 'last', 'without', 'indexOf',
     'shuffle', 'lastIndexOf', 'isEmpty', 'groupBy'];
 
-    // Mix in each Underscore method as a proxy to `Collection#models`.
+    // Mix in each underscore method as a proxy to `Collection#models`.
     _.each(methods, function(method) {
         Collection.prototype[method] = function() {
             return _[method].apply(_, [this.models].concat(_.toArray(arguments)));

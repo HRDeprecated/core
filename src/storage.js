@@ -1,7 +1,7 @@
 define([
-    "Underscore",
+    "underscore",
     "hr/configs",
-    "hr/utils/logger"
+    "hr/logger"
 ], function(_, configs, Logger) {
 
     var logging = Logger.addNamespace("storage");

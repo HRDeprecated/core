@@ -1,5 +1,5 @@
 define([
-    "Underscore",
+    "underscore",
 ], function(_) {
     // Regular expression used to split event strings.
     var eventSplitter = /\s+/;
@@ -170,7 +170,7 @@ define([
 
         /*
          *  Implement fancy features of the Events API such as multiple event
-         *  names `"change blur"` and jQuery-style event maps `{change: action}`
+         *  names `"change blur"` and jquery-style event maps `{change: action}`
          *  in terms of the existing API.
         */
         multipleEvents: function(action, name, rest) {

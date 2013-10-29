@@ -1,7 +1,7 @@
 define([
-    "Underscore",
-    "hr/core/view",
-    "hr/utils/template"
+    "underscore",
+    "hr/view",
+    "hr/template"
 ], function(_, View, Template) {
     
     var RelativeDateView = View.extend({

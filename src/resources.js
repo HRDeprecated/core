@@ -1,12 +1,12 @@
 define([
-    "Underscore",
+    "underscore",
+    "q",
     "hr/configs",
-    "hr/utils/logger",
-    "hr/utils/cache",
-    "hr/utils/requests",
-    "hr/utils/urls",
-    "hr/utils/deferred",
-], function(_, configs, Logger, Cache, Requests, Urls, Deferred) {
+    "hr/logger",
+    "hr/cache",
+    "hr/requests",
+    "hr/urls"
+], function(_, q, configs, Logger, Cache, Requests, Urls) {
 
     var logging = Logger.addNamespace("resources");
     var cache = Cache.namespace("resources");
@@ -19,17 +19,17 @@ define([
          *  Load a ressource
          */
         load: function(namespace, ressource, args, options) {
-            var d = new Deferred();
+            var d = Q.defer();
             var namespace_configs = _.extend({}, Resources.namespaces[namespace] || {}, options || {});
             var loader = namespace_configs.loader || configs.resources.loader;
             
             if (Resources.loaders[loader] == null) {
                 logging.error("Loader doesn't exists ", loader, "namespace=",namespace);
                 d.reject();
-                return d;
+                return d.promise;
             }
             Resources.loaders[loader](ressource, d, args, namespace_configs);
-            return d;
+            return d.promise;
         },
 
         /*
@@ -72,7 +72,7 @@ define([
             var content = require(ressourcename);
             callback.resolve(content);
         } catch(err) {
-            logging.error("Error loading using require : ", ressourcename, err.message);
+            logging.exception(err, "Error loading using require:");
             callback.reject(null);
         }
     });

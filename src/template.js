@@ -1,12 +1,14 @@
 define([
-    "Underscore",
+    "underscore",
     "hr/configs",
-    "hr/core/class",
-    "hr/utils/logger",
-    "hr/utils/urls",
-    "hr/utils/resources",
-    "hr/utils/i18n"
+    "hr/class",
+    "hr/logger",
+    "hr/urls",
+    "hr/resources",
+    "hr/i18n"
 ], function(_, configs, Class, Logger, Urls, Resources, I18n) {
+    var logging = Logger.addNamespace("templates");
+
     var Template = Class.extend({
         defaults: {
             /* Template id */
@@ -38,21 +40,18 @@ define([
                 "hr": {
                     "configs": configs,
                     "urls": Urls,
-                    "i18n": I18n,
-                    "utils": Template.utils
+                    "i18n": I18n
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
                         name = name || cid;
 
                         if (!self.view) {
-                            Logger.logging.error("Error in template " + self.template + " : try to import component in a non view-related template ");
-                            return "";
+                            throw new Error("Error in template " + self.template + " : try to import component in a non view-related template ");
                         }
 
                         if (Template.components[cid] == null) {
-                            Logger.logging.error("Error in template " + self.template + " : try to import component "+cid);
-                            return "";
+                            throw new Error("Error in template " + self.template + " : try to import component "+cid);
                         }
 
                         var view = new Template.components[cid].Class(args || {}, self.view);
@@ -87,7 +86,7 @@ define([
          */
         setContent: function(content) {
             this.content = content;
-            if (this.content != null) this.generate = _.template(this.content);
+            if (this.content != null) this.generate = Q.fbind(_.template(this.content));
             return this;
         },
 
@@ -111,51 +110,26 @@ define([
          * Render template
          */
         render: function(el) {
+            var that = this;
+
             if (this.view != null) el = el || this.view.$el;
             this.on("loaded", function() {
                 if (this.content == null) return;
                 if (this.view != null) this.view.clearComponents();
-                el.html(this.generate(this.args));
-                if (this.view != null) this.view.renderComponents();
-                this.trigger("updated");
+                this.generate(this.args).then(function(content) {
+                    el.html(content);
+                    if (that.view != null) that.view.renderComponents();
+                    that.trigger("updated");
+                }, function(err) {
+                    logging.exception(err, "Error with template:");
+                });
+                
             }, this);
             return this.load();
         },
     }, {
         /* Defaults options for template */
         options: {},
-
-        /* Defaults utils for templates */
-        utils: {
-            timeago: function(timestamp) {
-                var current_timestamp = (new Date()).getTime() / 1000;
-                var distance_in_minutes = Math.round((current_timestamp - timestamp)/60);
-
-                var msgid = "error";
-                
-                if (distance_in_minutes < 0) {
-                    distance_in_minutes = 0;
-                }
-                
-                if (distance_in_minutes < 1051199) { msgid = 'yearago'; }
-                if (distance_in_minutes < 525960) { msgid =  'months'; }
-                if (distance_in_minutes < 86400) { msgid = 'month'; }
-                if (distance_in_minutes < 43200) { msgid =  'days'; }
-                if (distance_in_minutes < 2880) { msgid = 'day'; }
-                if (distance_in_minutes < 1440) { msgid = 'hours'; }
-                if (distance_in_minutes < 90) { msgid = 'hour'; }
-                if (distance_in_minutes < 45) { msgid =  'minutes'; }
-                if (distance_in_minutes == 1) { msgid = 'minute'; }
-                if (distance_in_minutes == 0) { msgid = 'seconds'; }
-
-                return I18n.t("hr.utils.timeago."+msgid, {
-                    "months": Math.floor(distance_in_minutes / 43200),
-                    "days": Math.floor(distance_in_minutes / 1440),
-                    "hours": Math.round(distance_in_minutes / 60),
-                    "minutes": distance_in_minutes
-                });
-            }
-        },
 
         /* Map of components constructor */
         components: {},

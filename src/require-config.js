@@ -5,17 +5,25 @@
     include: ["hr/hr"],
     optimize: "none",
     paths: {
-        'Underscore':     '../vendors/underscore',
-        'jQuery':         '../vendors/jquery',
+        'underscore':     '../vendors/underscore',
+        'jquery':         '../vendors/jquery',
+        'q':              '../vendors/q',
         'text':           '../vendors/require-text',
         'hr': './',
     },
     shim: {
-        'Underscore': {
+        'underscore': {
             exports: '_'
         },
-        'jQuery': {
+        'q': {
+            exports: 'Q'
+        },
+        'jquery': {
             exports: '$'
         }
+    },
+    wrap: {
+        'start': "(function() {",
+        'end': "}());"
     }
 })

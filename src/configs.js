@@ -1,4 +1,4 @@
-define(function(args) {
+define(function() {
     var Config = {
         // Revision
         "revision": 0,
@@ -7,7 +7,7 @@ define(function(args) {
         "args": {},
 
         // Hr version
-        "version": "0.1.8",
+        "version": "0.2.0",
 
         // Log level
         // "log", "debug", "warn", "error", "none"

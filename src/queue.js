@@ -1,8 +1,8 @@
 define([
-    "Underscore",
-    "hr/core/class",
-    "hr/utils/deferred"
-], function(_, Class, Deferred) {
+    "underscore",
+    "q",
+    "hr/class"
+], function(_, q, Class) {
     var Queue = Class.extend({
         /*
          *  Initialize
@@ -20,7 +20,7 @@ define([
          *  @context : context to the task
          */
         defer: function(task, context, args) {
-            var d = new Deferred();
+            var d = Q.defer();
             this.tasks.push({
                 "task": task,
                 "args": args || [],
@@ -30,7 +30,7 @@ define([
             if (this.empty == true) {
                 this.startNext();
             }
-            return d;
+            return d.promise;
         },
 
         /*
@@ -38,18 +38,11 @@ define([
          *  @task task object to start
          */
         startTask: function(task) {
-            var d = task.task.apply(task.context, task.args);
-            if (!(d instanceof Deferred)) {
-                task.result.resolve(d)
-                this.startNext();
-            } else {
-                d.then(function() {
-                    task.result.resolve.apply(task.result, arguments);
-                }, function() {
-                    task.result.reject.apply(task.result, arguments);
-                });
-                d.always(_.bind(this.startNext, this));
-            }
+            Q(task.task.apply(task.context, task.args)).then(function() {
+                task.result.resolve.apply(task.result, arguments);
+            }, function() {
+                task.result.reject.apply(task.result, arguments);
+            }).fin(_.bind(this.startNext, this));
         },
 
         /*

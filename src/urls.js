@@ -1,5 +1,5 @@
 define([
-    "Underscore",
+    "underscore",
     "hr/configs"
 ], function(_, configs) {
     var Urls = {

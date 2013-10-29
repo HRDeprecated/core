@@ -1,10 +1,10 @@
 define([
-    "jQuery",
-    "Underscore",
-    "hr/core/view",
-    "hr/core/head",
-    "hr/core/router",
-    "hr/utils/logger"
+    "jquery",
+    "underscore",
+    "hr/view",
+    "hr/head",
+    "hr/router",
+    "hr/logger"
 ], function($, _, View, Head, Router, Logger) {
 
     var logging = Logger.addNamespace("application");
@@ -61,6 +61,7 @@ define([
             var hr = require("hr/hr");
             hr.Cache.init();
             hr.app = this;
+            
             this.render();
             return this;
         },

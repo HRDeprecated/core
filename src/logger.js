@@ -1,6 +1,6 @@
 define([
     "hr/configs",
-    "hr/core/class"
+    "hr/class"
 ], function(configs, Class) {
     var Logger = Class.extend({
         /*
@@ -61,6 +61,14 @@ define([
          */
         logLevel: function(type) {
             return Logger.levels[type] || 0;
+        },
+
+        /*
+         *  Load and exception
+         */
+        exception: function(err, message) {
+            this.error(message, err.stack);
+            this.error(err);
         }
     }, {
         namespaces: {},
