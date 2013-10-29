@@ -83,7 +83,7 @@ define([
             base: "./",
             extension: ""
         });
-        ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
+        var ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
         
         // Check application cache
         var content = cache.get(ressourceurl);
