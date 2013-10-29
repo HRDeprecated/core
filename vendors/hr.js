@@ -11620,7 +11620,6 @@ define('hr/view',[
                 })
             }), this);
             
-            logging.log("render ", _.size(this.components), this.components);
             _.each(this.components, function(value, cid) {
                 if (_.isArray(value)) {
                     _.each(value, addComponent);
