@@ -10225,7 +10225,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.2.1",
+        "version": "0.2.2",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -11085,16 +11085,16 @@ define('hr/resources',[
             base: "./",
             extension: ""
         });
-        ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
+        var ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
         
         // Check application cache
-        var content = cache.get(ressourcename);
+        var content = cache.get(ressourceurl);
         if (content != null) { callback.resolve(content); return; }
 
         // Get ressource using requests
         logging.debug("Load ressource using http ", ressourcename);
         Requests.get(ressourceurl).then(function(content) {
-            cache.set(ressourcename, content);
+            cache.set(ressourceurl, content);
             callback.resolve(content);
         }, function() {
             logging.error("Error loading using http : ", ressourcename);
@@ -12607,7 +12607,7 @@ define('hr/collection',[
                 this._totalCount = models.n;
                 return this.reset(models.list, options);
             }
-            this.startIndex = 0;
+            this.options.startIndex = 0;
             this.models = [];
             this.add(models, _.extend({silent: true}, options || {}));
             options = _.defaults(options || {}, {

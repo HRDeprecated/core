@@ -83,16 +83,16 @@ define([
             base: "./",
             extension: ""
         });
-        ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
+        var ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
         
         // Check application cache
-        var content = cache.get(ressourcename);
+        var content = cache.get(ressourceurl);
         if (content != null) { callback.resolve(content); return; }
 
         // Get ressource using requests
         logging.debug("Load ressource using http ", ressourcename);
         Requests.get(ressourceurl).then(function(content) {
-            cache.set(ressourcename, content);
+            cache.set(ressourceurl, content);
             callback.resolve(content);
         }, function() {
             logging.error("Error loading using http : ", ressourcename);

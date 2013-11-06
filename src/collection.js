@@ -96,7 +96,7 @@ define([
                 this._totalCount = models.n;
                 return this.reset(models.list, options);
             }
-            this.startIndex = 0;
+            this.options.startIndex = 0;
             this.models = [];
             this.add(models, _.extend({silent: true}, options || {}));
             options = _.defaults(options || {}, {
