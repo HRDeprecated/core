@@ -6,7 +6,7 @@
     optimize: "none",
     paths: {
         'underscore':     '../vendors/underscore',
-        'jquery':         '../vendors/jquery',
+        'jQuery':         '../vendors/jquery',
         'q':              '../vendors/q',
         'text':           '../vendors/require-text',
         'hr': './',
@@ -18,7 +18,7 @@
         'q': {
             exports: 'Q'
         },
-        'jquery': {
+        'jQuery': {
             exports: '$'
         }
     },

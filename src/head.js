@@ -1,5 +1,5 @@
 define([
-    "jquery",
+    "jQuery",
     "underscore",
     "hr/view"
 ], function($, _, View) {

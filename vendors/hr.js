@@ -10079,9 +10079,16 @@ if ( typeof window === "object" && typeof window.document === "object" ) {
 
 })( window );
 
+define("jQuery", (function (global) {
+    return function () {
+        var ret, fn;
+        return ret || global.$;
+    };
+}(this)));
+
 define('hr/shims',[
     "underscore",
-    "jquery",
+    "jQuery",
 ], function(_, $) {
 	if(!Function.prototype.bind) {
 		Function.prototype.bind = function(newThis) {
@@ -10218,7 +10225,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.2.0",
+        "version": "0.2.1",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -10421,7 +10428,7 @@ define('hr/class',[
 
         /*
          *  Implement fancy features of the Events API such as multiple event
-         *  names `"change blur"` and jquery-style event maps `{change: action}`
+         *  names `"change blur"` and jQuery-style event maps `{change: action}`
          *  in terms of the existing API.
         */
         multipleEvents: function(action, name, rest) {
@@ -11098,7 +11105,7 @@ define('hr/resources',[
     return Resources;
 });
 define('hr/i18n',[
-    "jquery",
+    "jQuery",
     "underscore",
     "q",
     "hr/configs",
@@ -11386,7 +11393,7 @@ define('hr/template',[
     return Template;
 });
 define('hr/view',[
-    "jquery",
+    "jQuery",
     "underscore",
     "q",
     "hr/class",
@@ -11436,7 +11443,7 @@ define('hr/view',[
         },
 
         /*
-         *  jquery delegate for the element of this view
+         *  jQuery delegate for the element of this view
          */
         $: function(selector) {
             return this.$el.find(selector);
@@ -11689,7 +11696,7 @@ define('hr/view',[
     return View;
 });
 define('hr/head',[
-    "jquery",
+    "jQuery",
     "underscore",
     "hr/view"
 ], function($, _, View) {
@@ -11829,7 +11836,7 @@ define('hr/head',[
     return Head;
 });
 define('hr/history',[
-    "jquery",
+    "jQuery",
     "underscore",
     "hr/configs",
     "hr/class",
@@ -11927,7 +11934,7 @@ define('hr/history',[
     return History;
 });
 define('hr/router',[
-    "jquery",
+    "jQuery",
     "underscore",
     "hr/class",
     "hr/history",
@@ -12023,7 +12030,7 @@ define('hr/router',[
     return Router;
 });
 define('hr/application',[
-    "jquery",
+    "jQuery",
     "underscore",
     "hr/view",
     "hr/head",

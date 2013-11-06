@@ -1,6 +1,6 @@
 define([
     "underscore",
-    "jquery",
+    "jQuery",
 ], function(_, $) {
 	if(!Function.prototype.bind) {
 		Function.prototype.bind = function(newThis) {

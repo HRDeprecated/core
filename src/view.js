@@ -1,5 +1,5 @@
 define([
-    "jquery",
+    "jQuery",
     "underscore",
     "q",
     "hr/class",
@@ -49,7 +49,7 @@ define([
         },
 
         /*
-         *  jquery delegate for the element of this view
+         *  jQuery delegate for the element of this view
          */
         $: function(selector) {
             return this.$el.find(selector);
