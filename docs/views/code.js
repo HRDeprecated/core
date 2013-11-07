@@ -21,7 +21,7 @@ define([
             return this;
         },
         render: function() {
-            hr.Resources.load("codes", this.options.code).always(_.bind(function(content) {
+            hr.Resources.load("codes", this.options.code).done(_.bind(function(content) {
                 this.code = content;
                 this.$el.html(hljs.highlightAuto(this.code).value);
                 if (this.options.run) {

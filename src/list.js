@@ -1,8 +1,8 @@
 define([
-    "Underscore",
-    "hr/core/view",
-    "hr/utils/logger",
-    "hr/core/collection"
+    "underscore",
+    "hr/view",
+    "hr/logger",
+    "hr/collection"
 ], function(_, View, Logger, Collection) {
 
     var logging = Logger.addNamespace("lists");

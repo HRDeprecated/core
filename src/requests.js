@@ -1,9 +1,9 @@
 define([
+    "q",
     "hr/configs",
-    "hr/core/class",
-    "hr/utils/logger",
-    "hr/utils/deferred"
-], function(configs, Class, Logger, Deferred) {
+    "hr/class",
+    "hr/logger"
+], function(Q, configs, Class, Logger) {
     
     var logging = Logger.addNamespace("requests");
 
@@ -42,7 +42,7 @@ define([
          *  Execute a request
          */
         _execute: function(url, options, defaults) {
-            var d = new Deferred();
+            var d = Q.defer();
             options = options || {};
             options = _.extend(options, defaults, {
                 "url": url
@@ -56,7 +56,7 @@ define([
             });
 
             r.execute();
-            return d;
+            return d.promise;
         },
 
         /*

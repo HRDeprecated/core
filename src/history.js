@@ -1,11 +1,11 @@
 define([
     "jQuery",
-    "Underscore",
+    "underscore",
     "hr/configs",
-    "hr/core/class",
-    "hr/utils/logger",
-    "hr/utils/urls",
-], function($, _, configs, Class, Logger, Urls) {
+    "hr/class",
+    "hr/logger",
+    "hr/urls",
+], function($, _, configs, Class, Logger, urls) {
 
     var logging = Logger.addNamespace("history");
 
@@ -60,7 +60,7 @@ define([
          *  Navigate
          */
         navigate: function(route, args) {
-            url = Urls.route(route, args);
+            url = urls.route(route, args);
             logging.log("navigate to ", url);
             window.location.hash = url;
         },

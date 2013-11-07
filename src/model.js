@@ -1,7 +1,7 @@
 define([
-    "Underscore",
-    "hr/core/class",
-    "hr/utils/logger"
+    "underscore",
+    "hr/class",
+    "hr/logger"
 ], function(_, Class, Logger) {
     var logging = Logger.addNamespace("models");
 

@@ -1,11 +1,12 @@
 define([
     "jQuery",
-    "Underscore",
-    "hr/core/class",
-    "hr/utils/template",
-    "hr/utils/deferred"
-], function($, _, Class, Template, Deferred) {
-
+    "underscore",
+    "q",
+    "hr/class",
+    "hr/logger",
+    "hr/template"
+], function($, _, q, Class, Logger, Template) {
+    var logging = Logger.addNamespace("templates");
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
     
     var View = Class.extend({
@@ -152,15 +153,15 @@ define([
          *  The callback will be call only when the view is ready
          */
         defer: function(callback) {
-            var d = new Deferred();
-            if (_.isFunction(callback)) d.done(callback);
+            var d = Q.defer();
+            if (_.isFunction(callback)) d.promise.done(callback);
 
             this.on("ready", function() {
                 d.resolve(this);
             }, this);
             if (this.is_ready) d.resolve(this);
 
-            return d;
+            return d.promise;
         },
 
         /*
@@ -188,7 +189,7 @@ define([
             view.parent = this;
 
             if (this.components[name] != null) {
-                if (!_.isArray(this.components[name])) this.components[name] = [this.components[name]]
+                if (!_.isArray(this.components[name])) this.components[name] = [this.components[name]];
                 this.components[name].push(view);
             } else {
                 this.components[name] = view;
@@ -221,11 +222,16 @@ define([
 
             if (_.size(this.components) == 0) { this.ready(); return this; }
 
-            var addComponent = _.bind(function(component) {
+            var addComponent = _.bind(Q.fbind(function(component) {
                 this.$("component[data-component='"+component.cid+"']").replaceWith(component.$el);
                 component.defer(_.once(componentRendered));
-                component.render();
-            }, this);
+
+                return Q.try(function() {
+                    component.render();
+                }).fail(function(err) {
+                    logging.exception(err, "Error rendering component:");
+                })
+            }), this);
             
             _.each(this.components, function(value, cid) {
                 if (_.isArray(value)) {
