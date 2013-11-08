@@ -7,7 +7,7 @@ define(function() {
         "args": {},
 
         // Hr version
-        "version": "0.2.2",
+        "version": "0.2.3",
 
         // Log level
         // "log", "debug", "warn", "error", "none"

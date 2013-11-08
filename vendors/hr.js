@@ -10225,7 +10225,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.2.2",
+        "version": "0.2.3",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -10890,9 +10890,14 @@ define('hr/requests',[
                     logging.debug("Result for request ", this.options);
                     this.trigger("done", data);
                 },
-                "error": function() {
+                "error": function(xhr, textStatus, errorThrown) {
                     logging.error("Error for request ", this.options);
-                    this.trigger("error");
+                    this.trigger("error", {
+                        'status': textStatus,
+                        'error': errorThrown,
+                        'content': xhr.responseText,
+                        'xhr': xhr
+                    });
                 }
             }, this.options.options));
             return this;
@@ -10911,8 +10916,8 @@ define('hr/requests',[
             r.on("done", function(content) {
                 d.resolve(content);
             });
-            r.on("error", function() {
-                d.reject();
+            r.on("error", function(err) {
+                d.reject(new Error(err.textStatus+": "+err.error+" - "+err.content));
             });
 
             r.execute();
