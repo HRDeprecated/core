@@ -107,7 +107,7 @@ define([
             var retain, ev, events, names, i, l, j, k;
             if (!this._events || !this.multipleEvents('off', name, [callback, context])) return this;
             if (!name && !callback && !context) {
-                this._events = {};
+                this._events = void 0;
                 return this;
             }
 
