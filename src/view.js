@@ -174,7 +174,6 @@ define([
         render: function() {
             var tpl = _.result(this, 'template')
             if (tpl) return this.renderTemplate(tpl);
-            return this;
         },
 
         /*
@@ -287,9 +286,7 @@ define([
                 loader: tplloader,
                 view: this
             });
-            tpl.render();
-
-            return this;
+            return tpl.render();
         }
     }, {
         Template: Template

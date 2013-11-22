@@ -10225,7 +10225,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.2.4",
+        "version": "0.2.5",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -11320,13 +11320,14 @@ define('hr/i18n',[
 });
 define('hr/template',[
     "underscore",
+    "q",
     "hr/configs",
     "hr/class",
     "hr/logger",
     "hr/urls",
     "hr/resources",
     "hr/i18n"
-], function(_, configs, Class, Logger, Urls, Resources, I18n) {
+], function(_, Q, configs, Class, Logger, Urls, Resources, I18n) {
     var logging = Logger.addNamespace("templates");
 
     var Template = Class.extend({
@@ -11431,6 +11432,7 @@ define('hr/template',[
          */
         render: function(el) {
             var that = this;
+            var d = Q.defer();
 
             if (this.view != null) el = el || this.view.$el;
             this.on("loaded", function() {
@@ -11440,12 +11442,16 @@ define('hr/template',[
                     el.html(content);
                     if (that.view != null) that.view.renderComponents();
                     that.trigger("updated");
+                    d.resolve(el);
                 }, function(err) {
                     logging.exception(err, "Error with template:");
+                    d.reject(err);
                 });
                 
             }, this);
-            return this.load();
+            this.load();
+
+            return d.promise;
         },
     }, {
         /* Defaults options for template */
@@ -11652,7 +11658,6 @@ define('hr/view',[
         render: function() {
             var tpl = _.result(this, 'template')
             if (tpl) return this.renderTemplate(tpl);
-            return this;
         },
 
         /*
@@ -11765,9 +11770,7 @@ define('hr/view',[
                 loader: tplloader,
                 view: this
             });
-            tpl.render();
-
-            return this;
+            return tpl.render();
         }
     }, {
         Template: Template
