@@ -10365,7 +10365,7 @@ define('hr/class',[
             var retain, ev, events, names, i, l, j, k;
             if (!this._events || !this.multipleEvents('off', name, [callback, context])) return this;
             if (!name && !callback && !context) {
-                this._events = {};
+                this._events = void 0;
                 return this;
             }
 
@@ -10558,6 +10558,85 @@ define('hr/logger',[
     Logger.logging = Logger.addNamespace("base");
 
     return Logger;
+});
+define('hr/queue',[
+    "underscore",
+    "q",
+    "hr/class"
+], function(_, q, Class) {
+    var Queue = Class.extend({
+        /*
+         *  Initialize
+         */
+        initialize: function() {
+            this.tasks = [];
+            this.empty = true;
+            return this;
+        },
+
+        /*
+         *  Add tasks
+         *  @task : function task
+         *  @args : args to the task
+         *  @context : context to the task
+         */
+        defer: function(task, context, args) {
+            var d = Q.defer();
+            this.tasks.push({
+                "task": task,
+                "args": args || [],
+                "context": context,
+                "result": d
+            });
+            if (this.empty == true) {
+                this.startNext();
+            }
+            return d.promise;
+        },
+
+        /*
+         *  Start a task
+         *  @task task object to start
+         */
+        startTask: function(task) {
+            Q(task.task.apply(task.context, task.args)).then(function() {
+                task.result.resolve.apply(task.result, arguments);
+            }, function() {
+                task.result.reject.apply(task.result, arguments);
+            }).fin(_.bind(this.startNext, this));
+        },
+
+        /*
+         *  Start next task
+         */
+        startNext: function() {
+            if (_.size(this.tasks) > 0) {
+                this.empty = false;
+                var task = this.tasks.shift();
+                this.startTask(task);
+                this.trigger("tasks:next");
+            } else {
+                this.empty = true;
+                this.trigger("tasks:finish");
+            }      
+        },
+
+        /*
+         *  Return queue size
+         */
+        size: function() {
+            return _.size(this.tasks);
+        },
+
+        /*
+         *  Return true if tasks queue is finish
+         */
+        isComplete: function() {
+            return this.empty == true;
+        }
+    });
+
+    return Queue;
 });
 define('hr/urls',[
     "underscore",
@@ -11403,8 +11482,9 @@ define('hr/view',[
     "q",
     "hr/class",
     "hr/logger",
+    "hr/queue",
     "hr/template"
-], function($, _, q, Class, Logger, Template) {
+], function($, _, q, Class, Logger, Queue, Template) {
     var logging = Logger.addNamespace("templates");
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
     
@@ -11420,6 +11500,9 @@ define('hr/view',[
             View.__super__.initialize.call(this, options);
             this._ensureElement();
             this.delegateEvents();
+
+            // Rendering queue
+            this.renderQueue = new Queue();
 
             // Components map
             this.components = {};
@@ -11573,6 +11656,13 @@ define('hr/view',[
         },
 
         /*
+         *  Update rendering
+         */
+        update: function() {
+            return this.renderQueue.defer(this.render, this);
+        },
+
+        /*
          *  Return context for template
          */
         templateContext: function() {
@@ -11626,7 +11716,7 @@ define('hr/view',[
                 component.defer(_.once(componentRendered));
 
                 return Q.try(function() {
-                    component.render();
+                    component.update();
                 }).fail(function(err) {
                     logging.exception(err, "Error rendering component:");
                 })
@@ -12098,7 +12188,7 @@ define('hr/application',[
             hr.Cache.init();
             hr.app = this;
             
-            this.render();
+            this.update();
             return this;
         },
 
@@ -12434,85 +12524,6 @@ define('hr/model',[
     });
 
     return Model;
-});
-define('hr/queue',[
-    "underscore",
-    "q",
-    "hr/class"
-], function(_, q, Class) {
-    var Queue = Class.extend({
-        /*
-         *  Initialize
-         */
-        initialize: function() {
-            this.tasks = [];
-            this.empty = true;
-            return this;
-        },
-
-        /*
-         *  Add tasks
-         *  @task : function task
-         *  @args : args to the task
-         *  @context : context to the task
-         */
-        defer: function(task, context, args) {
-            var d = Q.defer();
-            this.tasks.push({
-                "task": task,
-                "args": args || [],
-                "context": context,
-                "result": d
-            });
-            if (this.empty == true) {
-                this.startNext();
-            }
-            return d.promise;
-        },
-
-        /*
-         *  Start a task
-         *  @task task object to start
-         */
-        startTask: function(task) {
-            Q(task.task.apply(task.context, task.args)).then(function() {
-                task.result.resolve.apply(task.result, arguments);
-            }, function() {
-                task.result.reject.apply(task.result, arguments);
-            }).fin(_.bind(this.startNext, this));
-        },
-
-        /*
-         *  Start next task
-         */
-        startNext: function() {
-            if (_.size(this.tasks) > 0) {
-                this.empty = false;
-                var task = this.tasks.shift();
-                this.startTask(task);
-                this.trigger("tasks:next");
-            } else {
-                this.empty = true;
-                this.trigger("tasks:finish");
-            }      
-        },
-
-        /*
-         *  Return queue size
-         */
-        size: function() {
-            return _.size(this.tasks);
-        },
-
-        /*
-         *  Return true if tasks queue is finish
-         */
-        isComplete: function() {
-            return this.empty == true;
-        }
-    });
-
-    return Queue;
 });
 define('hr/collection',[
     "underscore",
@@ -12904,7 +12915,7 @@ define('hr/list',[
                 this.removeModel(elementmodel)
             }, this);
             this.collection.queue.on("tasks", function() {
-                this.render();
+                this.update();
             }, this);
 
             this.resetModels({
@@ -12913,7 +12924,7 @@ define('hr/list',[
 
             if (this.options.loadAtInit) this.getItems();
 
-            return this.render();
+            return this.update();
         },
 
         /*
@@ -12936,9 +12947,9 @@ define('hr/list',[
                 "collection": this.collection
             });
             model.on("change", function() {
-                item.render();
+                item.update();
             });
-            item.render();
+            item.update();
             tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
             if (options.at > 0) {
@@ -12949,7 +12960,7 @@ define('hr/list',[
             this.items[model.cid] = item;
 
             if (!options.silent) this.trigger("change:add", model);
-            if (options.render) this.render();
+            if (options.render) this.update();
 
             return this;
         },
@@ -12972,7 +12983,7 @@ define('hr/list',[
             delete this.items[model.cid];
 
             if (!options.silent) this.trigger("change:remove", model);
-            if (options.render) this.render();
+            if (options.render) this.update();
 
             return this;
         },
@@ -13004,7 +13015,7 @@ define('hr/list',[
             }, this);
 
             if (!options.silent) this.trigger("change:reset");
-            if (options.render) this.render();
+            if (options.render) this.update();
             return this;
         },
 

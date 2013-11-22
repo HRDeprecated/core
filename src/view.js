@@ -4,8 +4,9 @@ define([
     "q",
     "hr/class",
     "hr/logger",
+    "hr/queue",
     "hr/template"
-], function($, _, q, Class, Logger, Template) {
+], function($, _, q, Class, Logger, Queue, Template) {
     var logging = Logger.addNamespace("templates");
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
     
@@ -21,6 +22,9 @@ define([
             View.__super__.initialize.call(this, options);
             this._ensureElement();
             this.delegateEvents();
+
+            // Rendering queue
+            this.renderQueue = new Queue();
 
             // Components map
             this.components = {};
@@ -174,6 +178,13 @@ define([
         },
 
         /*
+         *  Update rendering
+         */
+        update: function() {
+            return this.renderQueue.defer(this.render, this);
+        },
+
+        /*
          *  Return context for template
          */
         templateContext: function() {
@@ -227,7 +238,7 @@ define([
                 component.defer(_.once(componentRendered));
 
                 return Q.try(function() {
-                    component.render();
+                    component.update();
                 }).fail(function(err) {
                     logging.exception(err, "Error rendering component:");
                 })

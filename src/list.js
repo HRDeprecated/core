@@ -61,7 +61,7 @@ define([
                 this.removeModel(elementmodel)
             }, this);
             this.collection.queue.on("tasks", function() {
-                this.render();
+                this.update();
             }, this);
 
             this.resetModels({
@@ -70,7 +70,7 @@ define([
 
             if (this.options.loadAtInit) this.getItems();
 
-            return this.render();
+            return this.update();
         },
 
         /*
@@ -93,9 +93,9 @@ define([
                 "collection": this.collection
             });
             model.on("change", function() {
-                item.render();
+                item.update();
             });
-            item.render();
+            item.update();
             tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
             if (options.at > 0) {
@@ -106,7 +106,7 @@ define([
             this.items[model.cid] = item;
 
             if (!options.silent) this.trigger("change:add", model);
-            if (options.render) this.render();
+            if (options.render) this.update();
 
             return this;
         },
@@ -129,7 +129,7 @@ define([
             delete this.items[model.cid];
 
             if (!options.silent) this.trigger("change:remove", model);
-            if (options.render) this.render();
+            if (options.render) this.update();
 
             return this;
         },
@@ -161,7 +161,7 @@ define([
             }, this);
 
             if (!options.silent) this.trigger("change:reset");
-            if (options.render) this.render();
+            if (options.render) this.update();
             return this;
         },
 

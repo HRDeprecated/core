@@ -62,7 +62,7 @@ define([
             hr.Cache.init();
             hr.app = this;
             
-            this.render();
+            this.update();
             return this;
         },
 
