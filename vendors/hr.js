@@ -12262,6 +12262,9 @@ define('hr/model',[
         // Joints with others models
         joints: {},
 
+        // Model unique identifier
+        idAttribute: 'id',
+
         /*
          *  Initialize the model
          */
@@ -12360,6 +12363,15 @@ define('hr/model',[
             // Calcul new attributes
             this.attributes = this.attributes || {};
             newattributes = _.clone(_.deepExtend(this.toJSON(), attrs));
+
+            // New unique id
+            var oldId = this.id;
+            if (this.idAttribute in newattributes) {
+                this.id = newattributes[this.idAttribute];
+            } else {
+                this.id = this.cid;
+            }
+            if (oldId != this.id) this.trigger("id", this.id, oldId);
 
             // Calcul diffs
             diffs = this.diff(newattributes);
@@ -12612,7 +12624,7 @@ define('hr/collection',[
             } else {
                 this.models.sort(boundComparator);
             }
-            if (!options.silent) this.trigger('reset', this, options);
+            if (!options.silent) this.trigger('sort', this, options);
             return this;
         },
 
@@ -12669,7 +12681,7 @@ define('hr/collection',[
             index = options.at;
             this.models.splice(index, 0, model);
 
-            if (this.comparator) this.sort({silent: true});
+            if (this.comparator) this.sort({silent: options.silent});
             if (options.silent) return this;
             options.index = index;
             this.trigger('add', model, this, options);
@@ -12908,7 +12920,7 @@ define('hr/list',[
             } else {
                 this.collection = new this.Collection(this.options.collection);
             }
-            this.collection.on("reset", function() {
+            this.collection.on("reset sort", function() {
                 this.resetModels();
             }, this);
             this.collection.on("add", function(elementmodel, collection, options) {
@@ -12944,14 +12956,24 @@ define('hr/list',[
                 render: true,
                 at: _.size(this.items),
             });
+
+            if (this.items[model.id] != null) {
+                this.removeModel(model);
+            }
+
             item = new this.Item({
                 "model": model,
                 "list": this,
                 "collection": this.collection
             });
+            item.$el.attr("model", model.id);
             model.on("change", function() {
                 item.update();
             });
+            model.on("id", function(newId, oldId) {
+                this.items[newId] = this.items[oldId];
+                delete this.items[oldId];
+            })
             item.update();
             tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
@@ -12960,7 +12982,7 @@ define('hr/list',[
             } else {
                 this.$el.prepend(item.$el);
             }
-            this.items[model.cid] = item;
+            this.items[model.id] = item;
 
             if (!options.silent) this.trigger("change:add", model);
             if (options.render) this.update();
@@ -12979,11 +13001,11 @@ define('hr/list',[
                 silent: false,
                 render: true
             });
-            if (this.items[model.cid] == null) return this;
+            if (this.items[model.id] == null) return this;
 
-            this.items[model.cid].remove();
-            this.items[model.cid] = null;
-            delete this.items[model.cid];
+            this.items[model.id].remove();
+            this.items[model.id] = null;
+            delete this.items[model.id];
 
             if (!options.silent) this.trigger("change:remove", model);
             if (options.render) this.update();
@@ -13008,6 +13030,7 @@ define('hr/list',[
                 });
             }, this);
             this.items = {};
+            this.$el.empty();
 
             // add new models
             this.collection.forEach(function(model) {

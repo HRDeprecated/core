@@ -51,7 +51,7 @@ define([
             } else {
                 this.collection = new this.Collection(this.options.collection);
             }
-            this.collection.on("reset", function() {
+            this.collection.on("reset sort", function() {
                 this.resetModels();
             }, this);
             this.collection.on("add", function(elementmodel, collection, options) {
@@ -87,14 +87,24 @@ define([
                 render: true,
                 at: _.size(this.items),
             });
+
+            if (this.items[model.id] != null) {
+                this.removeModel(model);
+            }
+
             item = new this.Item({
                 "model": model,
                 "list": this,
                 "collection": this.collection
             });
+            item.$el.attr("model", model.id);
             model.on("change", function() {
                 item.update();
             });
+            model.on("id", function(newId, oldId) {
+                this.items[newId] = this.items[oldId];
+                delete this.items[oldId];
+            })
             item.update();
             tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
@@ -103,7 +113,7 @@ define([
             } else {
                 this.$el.prepend(item.$el);
             }
-            this.items[model.cid] = item;
+            this.items[model.id] = item;
 
             if (!options.silent) this.trigger("change:add", model);
             if (options.render) this.update();
@@ -122,11 +132,11 @@ define([
                 silent: false,
                 render: true
             });
-            if (this.items[model.cid] == null) return this;
+            if (this.items[model.id] == null) return this;
 
-            this.items[model.cid].remove();
-            this.items[model.cid] = null;
-            delete this.items[model.cid];
+            this.items[model.id].remove();
+            this.items[model.id] = null;
+            delete this.items[model.id];
 
             if (!options.silent) this.trigger("change:remove", model);
             if (options.render) this.update();
@@ -151,6 +161,7 @@ define([
                 });
             }, this);
             this.items = {};
+            this.$el.empty();
 
             // add new models
             this.collection.forEach(function(model) {

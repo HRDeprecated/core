@@ -27,6 +27,9 @@ define([
         // Joints with others models
         joints: {},
 
+        // Model unique identifier
+        idAttribute: 'id',
+
         /*
          *  Initialize the model
          */
@@ -125,6 +128,15 @@ define([
             // Calcul new attributes
             this.attributes = this.attributes || {};
             newattributes = _.clone(_.deepExtend(this.toJSON(), attrs));
+
+            // New unique id
+            var oldId = this.id;
+            if (this.idAttribute in newattributes) {
+                this.id = newattributes[this.idAttribute];
+            } else {
+                this.id = this.cid;
+            }
+            if (oldId != this.id) this.trigger("id", this.id, oldId);
 
             // Calcul diffs
             diffs = this.diff(newattributes);

@@ -82,7 +82,7 @@ define([
             } else {
                 this.models.sort(boundComparator);
             }
-            if (!options.silent) this.trigger('reset', this, options);
+            if (!options.silent) this.trigger('sort', this, options);
             return this;
         },
 
@@ -139,7 +139,7 @@ define([
             index = options.at;
             this.models.splice(index, 0, model);
 
-            if (this.comparator) this.sort({silent: true});
+            if (this.comparator) this.sort({silent: options.silent});
             if (options.silent) return this;
             options.index = index;
             this.trigger('add', model, this, options);
