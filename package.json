@@ -3,7 +3,7 @@
     "name": "hr.js",
     "description": "Client-side framework for structured applications.",
     "version": "0.1.13",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "keywords": [
         "clientside"
     ],
