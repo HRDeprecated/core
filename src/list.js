@@ -97,7 +97,6 @@ define([
                 "list": this,
                 "collection": this.collection
             });
-            item.$el.attr("model", model.id);
             model.on("change", function() {
                 item.update();
             });
