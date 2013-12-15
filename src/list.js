@@ -127,7 +127,10 @@ define([
          *  Order items in the list
          */
         orderItems: function() {
-            this.$el.empty();
+            _.each(this.items, function(item) {
+                item.$el.detach();
+            }, this);
+
             this.collection.each(function(model) {
                 var item = this.items[model.id];
                 if (!item) {
