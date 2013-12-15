@@ -72,9 +72,9 @@ define([
          */
         on: function(name, callback, context) {
             if (!this.multipleEvents('on', name, [callback, context]) || !callback) return this;
-            this._events || (this._events = {});
-            var events = this._events[name] || (this._events[name] = []);
-            events.push({
+            this._events = this._events || {};
+            this._events[name] = this._events[name] || [];
+            this._events[name].push({
                 callback: callback,
                 context: context,
                 ctx: context || this

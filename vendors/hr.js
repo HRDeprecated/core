@@ -10330,9 +10330,9 @@ define('hr/class',[
          */
         on: function(name, callback, context) {
             if (!this.multipleEvents('on', name, [callback, context]) || !callback) return this;
-            this._events || (this._events = {});
-            var events = this._events[name] || (this._events[name] = []);
-            events.push({
+            this._events = this._events || {};
+            this._events[name] = this._events[name] || [];
+            this._events[name].push({
                 callback: callback,
                 context: context,
                 ctx: context || this
@@ -12616,14 +12616,14 @@ define('hr/collection',[
          *  is added.
          */
         sort: function(options) {
-            options || (options = {});
             if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-            var boundComparator = _.bind(this.comparator, this);
-            if (this.comparator.length == 1) {
-                this.models = this.sortBy(boundComparator);
+            options = options || {};
+            if (_.isString(this.comparator) || this.comparator.length === 1) {
+                this.models = this.sortBy(this.comparator, this);
             } else {
-                this.models.sort(boundComparator);
+                this.models.sort(_.bind(this.comparator, this));
             }
+            
             if (!options.silent) this.trigger('sort', this, options);
             return this;
         },
@@ -12669,7 +12669,7 @@ define('hr/collection',[
                 return this.add(model.list, options);
             }
 
-            options = _.defaults(options || {}, {
+            options = _.defaults({}, options || {}, {
                 at: this.models.length,
                 merge: false,
                 silent: false
@@ -12921,8 +12921,11 @@ define('hr/list',[
             } else {
                 this.collection = new this.Collection(this.options.collection);
             }
-            this.collection.on("reset sort", function() {
+            this.collection.on("reset", function() {
                 this.resetModels();
+            }, this);
+            this.collection.on("sort", function() {
+                this.orderItems();
             }, this);
             this.collection.on("add", function(elementmodel, collection, options) {
                 this.addModel(elementmodel, options);
@@ -12967,13 +12970,13 @@ define('hr/list',[
                 "list": this,
                 "collection": this.collection
             });
-            model.on("change", function() {
+            model.on("set", function() {
                 item.update();
             });
             model.on("id", function(newId, oldId) {
                 this.items[newId] = this.items[oldId];
                 delete this.items[oldId];
-            }, this)
+            }, this);
             item.update();
             tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
@@ -12987,6 +12990,21 @@ define('hr/list',[
             if (!options.silent) this.trigger("change:add", model);
             if (options.render) this.update();
 
+            return this;
+        },
+
+        /*
+         *  Order items in the list
+         */
+        orderItems: function() {
+            this.$el.empty();
+            this.collection.each(function(model) {
+                var item = this.items[model.id];
+                if (!item) {
+                    logging.warn("sort list with non existant item");
+                }
+                item.$el.appendTo(this.$el);
+            }, this);
             return this;
         },
 

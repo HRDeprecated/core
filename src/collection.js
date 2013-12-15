@@ -74,14 +74,14 @@ define([
          *  is added.
          */
         sort: function(options) {
-            options || (options = {});
             if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
-            var boundComparator = _.bind(this.comparator, this);
-            if (this.comparator.length == 1) {
-                this.models = this.sortBy(boundComparator);
+            options = options || {};
+            if (_.isString(this.comparator) || this.comparator.length === 1) {
+                this.models = this.sortBy(this.comparator, this);
             } else {
-                this.models.sort(boundComparator);
+                this.models.sort(_.bind(this.comparator, this));
             }
+            
             if (!options.silent) this.trigger('sort', this, options);
             return this;
         },
@@ -127,7 +127,7 @@ define([
                 return this.add(model.list, options);
             }
 
-            options = _.defaults(options || {}, {
+            options = _.defaults({}, options || {}, {
                 at: this.models.length,
                 merge: false,
                 silent: false

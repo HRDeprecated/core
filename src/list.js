@@ -51,8 +51,11 @@ define([
             } else {
                 this.collection = new this.Collection(this.options.collection);
             }
-            this.collection.on("reset sort", function() {
+            this.collection.on("reset", function() {
                 this.resetModels();
+            }, this);
+            this.collection.on("sort", function() {
+                this.orderItems();
             }, this);
             this.collection.on("add", function(elementmodel, collection, options) {
                 this.addModel(elementmodel, options);
@@ -97,13 +100,13 @@ define([
                 "list": this,
                 "collection": this.collection
             });
-            model.on("change", function() {
+            model.on("set", function() {
                 item.update();
             });
             model.on("id", function(newId, oldId) {
                 this.items[newId] = this.items[oldId];
                 delete this.items[oldId];
-            }, this)
+            }, this);
             item.update();
             tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
@@ -117,6 +120,21 @@ define([
             if (!options.silent) this.trigger("change:add", model);
             if (options.render) this.update();
 
+            return this;
+        },
+
+        /*
+         *  Order items in the list
+         */
+        orderItems: function() {
+            this.$el.empty();
+            this.collection.each(function(model) {
+                var item = this.items[model.id];
+                if (!item) {
+                    logging.warn("sort list with non existant item");
+                }
+                item.$el.appendTo(this.$el);
+            }, this);
             return this;
         },
 
