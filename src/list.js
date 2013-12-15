@@ -103,12 +103,12 @@ define([
             model.on("id", function(newId, oldId) {
                 this.items[newId] = this.items[oldId];
                 delete this.items[oldId];
-            })
+            }, this)
             item.update();
             tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
             if (options.at > 0) {
-                this.$(tag).eq(options.at-1).after(item.$el);
+                this.$("> "+tag).eq(options.at-1).after(item.$el);
             } else {
                 this.$el.prepend(item.$el);
             }

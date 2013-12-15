@@ -10225,7 +10225,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.2.5",
+        "version": "0.2.7",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -12681,10 +12681,11 @@ define('hr/collection',[
             index = options.at;
             this.models.splice(index, 0, model);
 
-            if (this.comparator) this.sort({silent: options.silent});
             if (options.silent) return this;
             options.index = index;
             this.trigger('add', model, this, options);
+
+            if (this.comparator) this.sort({silent: options.silent});
             return this;
         },
 
@@ -12966,19 +12967,18 @@ define('hr/list',[
                 "list": this,
                 "collection": this.collection
             });
-            item.$el.attr("model", model.id);
             model.on("change", function() {
                 item.update();
             });
             model.on("id", function(newId, oldId) {
                 this.items[newId] = this.items[oldId];
                 delete this.items[oldId];
-            })
+            }, this)
             item.update();
             tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
 
             if (options.at > 0) {
-                this.$(tag).eq(options.at-1).after(item.$el);
+                this.$("> "+tag).eq(options.at-1).after(item.$el);
             } else {
                 this.$el.prepend(item.$el);
             }
