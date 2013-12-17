@@ -57,7 +57,10 @@ define([
                 d.resolve(content);
             });
             r.on("error", function(err) {
-                d.reject(new Error(err.textStatus+": "+err.error+" - "+err.content));
+                var e = new Error(err.textStatus+": "+err.content);
+                e.textStatus = err.textStatus,
+                e.httpRes = err.content;
+                d.reject(e);
             });
 
             r.execute();
