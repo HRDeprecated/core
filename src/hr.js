@@ -16,6 +16,7 @@ define([
     "hr/urls",
     "hr/storage",
     "hr/cache",
+    "hr/cookies",
     "hr/template",
     "hr/resources",
     "hr/queue",
@@ -23,7 +24,7 @@ define([
     "hr/views"
 ], function(Q, shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Template, Resources, Queue, I18n, views) {
+Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Queue, I18n, views) {
 
 
     Q.onerror = function(err) {
@@ -46,6 +47,7 @@ Logger, Requests, Urls, Storage, Cache, Template, Resources, Queue, I18n, views)
         Logger: Logger,
         Storage: Storage,
         Cache: Cache,
+        Cookies: Cookies,
         Requests: Requests,
         Urls: Urls,
         Template: Template,
