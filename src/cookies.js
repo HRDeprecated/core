@@ -42,7 +42,7 @@ define([
          *  @key : key of the data to remove
          */
         remove: function(name) {
-            return Storage.set(name, "", -1);
+            return Cookies.set(name, "", -1);
         },
 
         /*
