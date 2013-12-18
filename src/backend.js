@@ -1,8 +1,9 @@
 define([
     'q',
     'hr/class',
-    'hr/offline'
-], function(Q, Class, Offline) {
+    'hr/offline',
+    'hr/storage'
+], function(Q, Class, Offline, Storage) {
     /*
      *  A backend define the way the application will manage:
      *      - access to a resources
@@ -43,10 +44,10 @@ define([
             sId = this.options.prefix+"."+sId;
             return this.addMethod(method, {
                 fallback: function() {
-                    return hr.Storage.get(sId);
+                    return Storage.get(sId);
                 },
                 after: function(args, results) {
-                    hr.Storage.set(sId, results);
+                    Storage.set(sId, results);
                 }
             });
         },
@@ -64,6 +65,7 @@ define([
             if (!this.methods[method]) throw "Method not found: "+method;
 
             previousMethod = previousMethod || method;
+            options = options || {};
             var methodHandler = null;
 
             // Is offline
