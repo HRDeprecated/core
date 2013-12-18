@@ -21,7 +21,7 @@ define([
         load: function(namespace, ressource, args, options) {
             var d = Q.defer();
             var namespace_configs = _.extend({}, Resources.namespaces[namespace] || {}, options || {});
-            var loader = namespace_configs.loader || configs.resources.loader;
+            var loader = namespace_configs.loader || namespace;
             
             if (Resources.loaders[loader] == null) {
                 logging.error("Loader doesn't exists ", loader, "namespace=",namespace);
@@ -57,6 +57,11 @@ define([
             Resources.namespaces[name] = config;
         }
     };
+
+    // Text loader
+    Resources.addLoader("text", function(ressourcename, callback, args, config) {  
+        callback.resolve(ressourcename);
+    });
 
     // Require loader
     Resources.addLoader("require", function(ressourcename, callback, args, config) {  
