@@ -19,12 +19,14 @@ define([
     "hr/cookies",
     "hr/template",
     "hr/resources",
+    "hr/offline",
+    "hr/backend",
     "hr/queue",
     "hr/i18n",
     "hr/views"
 ], function(Q, shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Queue, I18n, views) {
+Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, Backend, Queue, I18n, views) {
 
 
     Q.onerror = function(err) {
@@ -55,6 +57,8 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Queue, I18
         Queue: Queue,
         I18n: I18n,
         views: views,
+        Offline: Offline,
+        Backend: Backend,
 
         app: null,
 

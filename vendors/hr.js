@@ -13293,6 +13293,132 @@ define('hr/cookies',[
 
     return Cookies;
 });
+define('hr/offline',[
+    'jQuery',
+    'hr/logger',
+    'hr/class'
+], function($, Logger, Class) {
+    var logging = Logger.addNamespace("offline");
+
+    var OfflineManager = Class.extend({
+        initialize: function() {
+            var that = this;
+            OfflineManager.__super__.initialize.apply(this, arguments);
+            this.state = true;
+
+            $(window).bind("online offline", function() {
+                that.check();
+            });
+            
+            window.applicationCache.addEventListener('updateready', function() {
+                that.trigger("update");
+            });
+        },
+
+        // Check for cache update
+        checkUpdate: function() {
+            if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
+                that.trigger("update");
+            }
+            return window.applicationCache.status === window.applicationCache.UPDATEREADY;
+        },
+
+        // Set connexion status
+        setState: function(state) {
+            if (state == this.state) return;
+
+            this.state = state;
+            logging.log("state ", this.state);
+            this.trigger("state", this.state);
+        },
+
+        // Check connexion status
+        check: function() {
+            var state = navigator.onLine;
+            this.setState(state);
+            return Q(state);
+        },
+
+        // Return true if connexion is on
+        isConnected: function() {
+            return this.state;
+        }
+    });
+
+
+    return new OfflineManager();
+});
+define('hr/backend',[
+    'q',
+    'hr/class',
+    'hr/offline'
+], function(Q, Class, Offline) {
+    /*
+     *  A backend define the way the application will manage:
+     *      - access to a resources
+     *      - caching of results
+     *      - fallback when offline
+     *      - resync when online
+     */
+
+    var Backend = Class.extend({
+        defaults: {
+            // use defaults '*' when method not found
+            useDefaults: true,
+
+            // prefix to use (for cache)
+            prefix: "backend",
+        },
+
+        initialize: function() {
+            Backend.__super__.initialize.apply(this, arguments);
+
+            // Map of the methods
+            this.methods = {};
+        },
+
+        /*
+         *  Add a method
+         */
+        addMethod: function(method, properties) {
+            if (this.methods[method]) throw "Method already define for this backend: "+method;
+            this.methods[method] = properties;
+        },
+
+        /*
+         *  Execute a method
+         */
+        execute: function(method, args, options, previousMethod) {
+            if (!this.methods[method] && this.options.useDefaults) {
+                previousMethod = method;
+                method = "*";
+            }
+
+            if (!this.methods[method]) throw "Method not found: "+method;
+
+            previousMethod = previousMethod || method;
+            var methodHandler = null;
+
+            // Is offline
+            if (!Offline.isConnected()) {
+                methodHandler = this.methods[method].fallback;
+            }
+            methodHandler = methodHandler || this.methods[method].execute;
+
+            // If no handler, try default
+            if (!methodHandler && this.methods["*"]) return this.execute("*", args, options, method);
+
+            // No default
+            if (!methodHandler) {
+                return Q.reject(new Error("No handler found for this method in this backend"));
+            }
+
+            return Q(methodHandler(args, options, previousMethod));
+        }
+    });
+
+    return Backend;
+});
 define('hr/views',[
     "underscore",
     "hr/view",
@@ -13350,12 +13476,14 @@ define('hr/hr',[
     "hr/cookies",
     "hr/template",
     "hr/resources",
+    "hr/offline",
+    "hr/backend",
     "hr/queue",
     "hr/i18n",
     "hr/views"
 ], function(Q, shims, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Queue, I18n, views) {
+Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, Backend, Queue, I18n, views) {
 
 
     Q.onerror = function(err) {
@@ -13386,6 +13514,8 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Queue, I18
         Queue: Queue,
         I18n: I18n,
         views: views,
+        Offline: Offline,
+        Backend: Backend,
 
         app: null,
 
