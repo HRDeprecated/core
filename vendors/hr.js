@@ -13386,9 +13386,26 @@ define('hr/backend',[
         },
 
         /*
+         *  Add a cached method for offline use
+         */
+        addCachedMethod: function(method, sId) {
+            sId = sId || method;
+            sId = this.options.prefix+"."+sId;
+            return this.addMethod(method, {
+                fallback: function() {
+                    return hr.Storage.get(sId);
+                },
+                after: function(args, results) {
+                    hr.Storage.set(sId, results);
+                }
+            });
+        },
+
+        /*
          *  Execute a method
          */
         execute: function(method, args, options, previousMethod) {
+            var that = this;
             if (!this.methods[method] && this.options.useDefaults) {
                 previousMethod = method;
                 method = "*";
@@ -13413,7 +13430,12 @@ define('hr/backend',[
                 return Q.reject(new Error("No handler found for this method in this backend"));
             }
 
-            return Q(methodHandler(args, options, previousMethod));
+            return Q(methodHandler(args, options, previousMethod)).then(function(results) {
+                if (that.methods[previousMethod] && that.methods[previousMethod].after) {
+                    that.methods[previousMethod].after(args, results, options, method)
+                }
+                return results;
+            })
         }
     });
 
