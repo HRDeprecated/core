@@ -28,6 +28,17 @@ define([
         },
 
         /*
+         *  Check that a key exists
+         */
+        has: function(key) {
+            var s = Storage.storage();
+            if (s == null) {
+                return false;
+            }
+            return _.isUndefined(s[key]) == false;
+        },
+
+        /*
          *  Get a data from the storage
          *  @key : key of the data to get
          */
