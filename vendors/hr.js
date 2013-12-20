@@ -11337,6 +11337,61 @@ define('hr/i18n',[
 
     return i18n;
 });
+define('hr/offline',[
+    'jQuery',
+    'hr/logger',
+    'hr/class'
+], function($, Logger, Class) {
+    var logging = Logger.addNamespace("offline");
+
+    var OfflineManager = Class.extend({
+        initialize: function() {
+            var that = this;
+            OfflineManager.__super__.initialize.apply(this, arguments);
+            this.state = true;
+
+            $(window).bind("online offline", function() {
+                that.check();
+            });
+            
+            window.applicationCache.addEventListener('updateready', function() {
+                that.trigger("update");
+            });
+        },
+
+        // Check for cache update
+        checkUpdate: function() {
+            if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
+                this.trigger("update");
+            }
+            return window.applicationCache.status === window.applicationCache.UPDATEREADY;
+        },
+
+        // Set connexion status
+        setState: function(state) {
+            if (state == this.state) return;
+
+            this.state = state;
+            logging.log("state ", this.state);
+            this.trigger("state", this.state);
+        },
+
+        // Check connexion status
+        check: function() {
+            var state = navigator.onLine;
+            this.setState(state);
+            return Q(state);
+        },
+
+        // Return true if connexion is on
+        isConnected: function() {
+            return this.state;
+        }
+    });
+
+
+    return new OfflineManager();
+});
 define('hr/template',[
     "underscore",
     "q",
@@ -11345,8 +11400,9 @@ define('hr/template',[
     "hr/logger",
     "hr/urls",
     "hr/resources",
-    "hr/i18n"
-], function(_, Q, configs, Class, Logger, Urls, Resources, I18n) {
+    "hr/i18n",
+    "hr/offline"
+], function(_, Q, configs, Class, Logger, Urls, Resources, I18n, Offline) {
     var logging = Logger.addNamespace("templates");
 
     var Template = Class.extend({
@@ -11380,7 +11436,8 @@ define('hr/template',[
                 "hr": {
                     "configs": configs,
                     "urls": Urls,
-                    "i18n": I18n
+                    "i18n": I18n,
+                    "offline": Offline
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
@@ -13304,61 +13361,6 @@ define('hr/cookies',[
 
     return Cookies;
 });
-define('hr/offline',[
-    'jQuery',
-    'hr/logger',
-    'hr/class'
-], function($, Logger, Class) {
-    var logging = Logger.addNamespace("offline");
-
-    var OfflineManager = Class.extend({
-        initialize: function() {
-            var that = this;
-            OfflineManager.__super__.initialize.apply(this, arguments);
-            this.state = true;
-
-            $(window).bind("online offline", function() {
-                that.check();
-            });
-            
-            window.applicationCache.addEventListener('updateready', function() {
-                that.trigger("update");
-            });
-        },
-
-        // Check for cache update
-        checkUpdate: function() {
-            if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-                this.trigger("update");
-            }
-            return window.applicationCache.status === window.applicationCache.UPDATEREADY;
-        },
-
-        // Set connexion status
-        setState: function(state) {
-            if (state == this.state) return;
-
-            this.state = state;
-            logging.log("state ", this.state);
-            this.trigger("state", this.state);
-        },
-
-        // Check connexion status
-        check: function() {
-            var state = navigator.onLine;
-            this.setState(state);
-            return Q(state);
-        },
-
-        // Return true if connexion is on
-        isConnected: function() {
-            return this.state;
-        }
-    });
-
-
-    return new OfflineManager();
-});
 define('hr/backend',[
     'q',
     'hr/class',
@@ -13372,6 +13374,12 @@ define('hr/backend',[
      *      - fallback when offline
      *      - resync when online
      */
+
+    // Cached regular expressions for matching named param parts and splatted
+    // parts of route strings.
+    var namedParam    = /:\w+/g;
+    var splatParam    = /\*\w+/g;
+    var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
 
     var Backend = Class.extend({
         defaults: {
@@ -13387,6 +13395,9 @@ define('hr/backend',[
 
             // Map of the methods
             this.methods = {};
+
+            // Default method
+            this.defaultHandler = null;
         },
 
         /*
@@ -13394,7 +13405,12 @@ define('hr/backend',[
          */
         addMethod: function(method, properties) {
             if (this.methods[method]) throw "Method already define for this backend: "+method;
+
+            properties.id = method;
+            properties.regexp = this.routeToRegExp(method);
             this.methods[method] = properties;
+
+            return this;
         },
 
         /*
@@ -13404,51 +13420,83 @@ define('hr/backend',[
             sId = sId || method;
             sId = this.options.prefix+"."+sId;
             return this.addMethod(method, {
-                fallback: function() {
-                    return Storage.get(sId);
+                fallback: function(args, options, method) {
+                    return Storage.get(sId+"."+method);
                 },
-                after: function(args, results) {
-                    Storage.set(sId, results);
+                after: function(args, results, options, method) {
+                    Storage.set(sId+"."+method, results);
                 }
             });
         },
 
         /*
+         *  Get the method handler to use
+         */
+        getHandler: function(method) {
+            return _.find(this.methods, function(handler) {
+                return handler.regexp.test(method);
+            }) || this.defaultHandler;
+        },
+
+        /*
+         *  Get default handler
+         */
+        defaultMethod: function(handler) {
+            this.defaultHandler = handler;
+            return this;
+        },
+
+        /*
          *  Execute a method
          */
-        execute: function(method, args, options, previousMethod) {
-            var that = this;
-            if (!this.methods[method] && this.options.useDefaults) {
-                previousMethod = method;
-                method = "*";
-            }
+        execute: function(method, args, options) {
+            var that = this, methodHandler;
 
-            if (!this.methods[method]) throw "Method not found: "+method;
-
-            previousMethod = previousMethod || method;
             options = options || {};
-            var methodHandler = null;
+
+            var handler = this.getHandler(method);
+            if (!handler) return Q.reject(new Error("No handler found for method: "+method));
 
             // Is offline
             if (!Offline.isConnected()) {
-                methodHandler = this.methods[method].fallback;
+                methodHandler = handler.fallback;
             }
-            methodHandler = methodHandler || this.methods[method].execute;
-
-            // If no handler, try default
-            if (!methodHandler && this.methods["*"]) return this.execute("*", args, options, method);
+            methodHandler = methodHandler || handler.execute || this.defaultHandler.execute;
 
             // No default
             if (!methodHandler) {
                 return Q.reject(new Error("No handler found for this method in this backend"));
             }
 
-            return Q(methodHandler(args, options, previousMethod)).then(function(results) {
-                if (that.methods[previousMethod] && that.methods[previousMethod].after) {
-                    that.methods[previousMethod].after(args, results, options, method)
+            return Q(methodHandler(args, options, method)).then(function(results) {
+                if (handler.after) {
+                    return Q(handler.after(args, results, options, method)).then(function() {
+                        return Q(results);
+                    }, function() {
+                        return Q(results);
+                    });
                 }
                 return results;
-            })
+            });
+        },
+
+        /*
+         *  Convert a route string into a regular expression, suitable for matching
+         *  against the current location hash.
+         */
+        routeToRegExp: function(route) {
+            route = route.replace(escapeRegExp, '\\$&')
+                            .replace(namedParam, '([^\/]+)')
+                            .replace(splatParam, '(.*?)');
+            return new RegExp('^' + route + '$');
+        },
+
+        /*
+         *  Given a route, and a URL fragment that it matches, return the array of
+         *  extracted parameters.
+         */
+        extractParameters: function(route, fragment) {
+            return route.exec(fragment).slice(1);
         }
     });
 

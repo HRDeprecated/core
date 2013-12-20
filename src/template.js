@@ -6,8 +6,9 @@ define([
     "hr/logger",
     "hr/urls",
     "hr/resources",
-    "hr/i18n"
-], function(_, Q, configs, Class, Logger, Urls, Resources, I18n) {
+    "hr/i18n",
+    "hr/offline"
+], function(_, Q, configs, Class, Logger, Urls, Resources, I18n, Offline) {
     var logging = Logger.addNamespace("templates");
 
     var Template = Class.extend({
@@ -41,7 +42,8 @@ define([
                 "hr": {
                     "configs": configs,
                     "urls": Urls,
-                    "i18n": I18n
+                    "i18n": I18n,
+                    "offline": Offline
                 },
                 "view": {
                     "component": function(cid, args, name, subid) {
