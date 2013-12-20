@@ -13329,7 +13329,7 @@ define('hr/offline',[
         // Check for cache update
         checkUpdate: function() {
             if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
-                that.trigger("update");
+                this.trigger("update");
             }
             return window.applicationCache.status === window.applicationCache.UPDATEREADY;
         },
