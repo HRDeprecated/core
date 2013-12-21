@@ -15,4 +15,4 @@ resources/
     stylesheets/
         imports.less
 application.js
-build.js
+Gruntfile.js

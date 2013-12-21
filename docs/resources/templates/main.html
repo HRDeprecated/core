@@ -4,14 +4,14 @@
     <div class="content">
         <section id="intro" class="intro">
             <article>
-                <p>HappyRhino gives structure to client-side web applications by bringing a complete build system
+                <p>HappyRhino gives structure to client-side web applications by bringing a complete build system (using Grunt)
                     with a a rich API similar to Backbone.js.</p>
                 <p>hr.js is an open-source component of <a href="https://friendco.de">FriendCode</a>.</p>
                 <p>Current version is <b><%- hr.configs.version %></b>, code is disponible on GitHub : <a href="https://github.com/FriendCode/hr.js">FriendCode/hr.js</a>.</p>
                 <p>
                     Checkout a list of web-applications which are using hr.js :
                     <ul>
-                        <li><a href="https://friendco.de"><b>FriendCode</b></a>, Realtime collaborative code editor built for the cloud era.</li>
+                        <li><a href="https://www.codebox.io"><b>Codebox</b></a>, Open Cloud IDE.</li>
                         <li><a href="http://doks.io"><b>Doks.io</b></a>, Searching documentation made easy.</li>
                         <li><a href="https://github.com/SamyPesse/tv.js"><b>TV.js</b></a>, Apple TV for Torrent Streaming in JS (Node/Chrome).</li>
                         <li><a href="http://www.reportr.io"><b>Reportr</b></a>, Your life's personal dashboard.</li>
@@ -36,20 +36,14 @@
             <h2><a href="<%- hr.urls.route("install") %>">Installation</a></h2>
             <article>
                 <p>Simply install hr.js using <b>NPM</b> :</p>
-                <p><code>npm install -g hr.js</code></p>
-                <p>or</p>
-                <p><code>npm install -g git+https://github.com/FriendCode/hr.js.git#master</code></p>
+                <p><code>npm install hr.js</code></p>
             </article>   
         </section>
 
         <section id="getstarted">
             <h2><a href="<%- hr.urls.route("getstarted") %>">Get started</a></h2>
             <article>
-                <p>HappyRhino lets you create a simple base application using :</p>
-                <p><code>hr.js new -d my_app</code></p>
-                <p>Build and run your application using:</p>
-                <p><code>hr.js all -d my_app</code></p>
-                <p>And here is your first client-side application with HappyRhino!</p>
+                
             </article>   
         </section>
 
@@ -62,16 +56,14 @@
             </article>
             <article id="build/application">
                 <h3><a href="<%- hr.urls.route("build/application") %>">Defining an application</a></h3>
-                <p>An application in hr.js need a base build configuration, this configuration is stored in a "build.js" file:</p>
-                <%= view.component("code", {code: "build/build.js"}) %>
+                <p>HappyRhino is using Grunt, An application in hr.js need a base build configuration, this configuration is stored in a "Gruntile.js" file:</p>
+                <%= view.component("code", {code: "build/Gruntfile.js"}) %>
                 <p>Here is a list of all the differents options for build process :</p>
                 <%= view.component("code", {code: "build/options.js"}) %>
             </article>
             <article id="build/run">
                 <h3><a href="<%- hr.urls.route("build/run") %>">Build &amp; Run your application</a></h3>
-                <p>For building, simply run in a command line tool : <code>hr.js all</code>.</p>
-                <p>You can also <b>only build</b> with : <code>hr.js build</code>.</p>
-                <p>Or <b>only run</b> the simple static server with : <code>hr.js run</code>.</p>
+                <p>Coming soon.</p>
             </article>
             <article id="build/module">
                 <h3><a href="<%- hr.urls.route("build/module") %>">Modularity</a></h3>

@@ -35,7 +35,7 @@
 
     // Index html
     // if null : file is generated
-    // if non null : file is copying
+    // if non null : file ocntent will be written
     "index": null,
 
     // Stylesheets entry file

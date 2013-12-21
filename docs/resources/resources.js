@@ -2,7 +2,7 @@ define([
     "hr/hr",
 
     "text!resources/code/build/structure.txt",
-    "text!resources/code/build/build.js",
+    "text!resources/code/build/Gruntfile.js",
     "text!resources/code/build/options.js",
     "text!resources/code/build/module.js",
     "text!resources/code/build/revision.js",
