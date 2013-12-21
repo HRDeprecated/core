@@ -10225,7 +10225,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.3.3",
+        "version": "0.4.0",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
