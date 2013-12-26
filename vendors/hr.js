@@ -10225,7 +10225,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.4.0",
+        "version": "0.4.1",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -11914,7 +11914,7 @@ define('hr/head',[
             }
 
             if (metaName == null) metaName = "name";
-            var mt = this.$('meta['+metaName+'='+name+']');
+            var mt = this.$('meta['+metaName+'="'+name+'"]');
             if (mt.length === 0) {
                 mt =  $("<meta>", {}).attr(metaName, name).appendTo('head');
             }
@@ -11940,7 +11940,7 @@ define('hr/head',[
                 return;
             }
 
-            var mt =  this.$('link[rel='+rel+']');
+            var mt =  this.$('link[rel="'+rel+'"]');
             if (mt.length === 0) {
                 mt =  $("<link>", {}).attr("rel", rel).appendTo(this.$el);
             }
