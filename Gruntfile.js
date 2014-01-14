@@ -44,10 +44,17 @@ module.exports = function (grunt) {
                 port: 5000,
                 host: "localhost"
             }
+        },
+        'gh-pages': {
+            options: {
+                base: 'docs/build'
+            },
+            src: ['**']
         }
     });
 
     grunt.loadNpmTasks('grunt-requirejs');
+    grunt.loadNpmTasks('grunt-gh-pages');
 
 
     grunt.registerTask('buildapp', function(dir) {
@@ -98,6 +105,10 @@ module.exports = function (grunt) {
 
     grunt.registerTask('docs', [
         'buildapp:docs/'
+    ]);
+
+    grunt.registerTask('publish', [
+        'gh-pages'
     ]);
 
     grunt.registerTask('default', [

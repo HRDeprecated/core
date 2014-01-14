@@ -35,6 +35,7 @@
     ],
     "devDependencies": {
         "grunt": "~0.4.2",
-        "grunt-requirejs": "0.4.0"
+        "grunt-requirejs": "0.4.0",
+        "grunt-gh-pages": "0.9.0"
     }
 }

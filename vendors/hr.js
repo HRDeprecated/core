@@ -11348,7 +11348,12 @@ define('hr/offline',[
         initialize: function() {
             var that = this;
             OfflineManager.__super__.initialize.apply(this, arguments);
+
+            // Connexion state
             this.state = true;
+
+            // Manifest loading state
+            this.loadingP = null;
 
             $(window).bind("online offline", function() {
                 that.check();
