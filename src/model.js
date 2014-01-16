@@ -81,7 +81,7 @@ define([
             if (value != null) return value;
 
             scope = basescope.split(".");
-            attributes = this.toJSON();
+            attributes = this.attributes;
             while (attributes && scope.length > 0) {
                 currentScope = scope.shift();
                 attributes = attributes[currentScope];
@@ -127,7 +127,7 @@ define([
 
             // Calcul new attributes
             this.attributes = this.attributes || {};
-            newattributes = _.clone(_.deepExtend(this.toJSON(), attrs));
+            newattributes = _.deepExtend(this.attributes, attrs);
 
             // New unique id
             var oldId = this.id;

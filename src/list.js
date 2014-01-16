@@ -135,6 +135,7 @@ define([
                 var item = this.items[model.id];
                 if (!item) {
                     logging.warn("sort list with non existant item");
+                    return;
                 }
                 item.$el.appendTo(this.$el);
             }, this);
