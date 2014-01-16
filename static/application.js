@@ -22361,7 +22361,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.4.1",
+        "version": "0.4.2",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -23484,12 +23484,7 @@ define('hr/offline',[
         initialize: function() {
             var that = this;
             OfflineManager.__super__.initialize.apply(this, arguments);
-
-            // Connexion state
             this.state = true;
-
-            // Manifest loading state
-            this.loadingP = null;
 
             $(window).bind("online offline", function() {
                 that.check();
@@ -24533,7 +24528,7 @@ define('hr/model',[
             if (value != null) return value;
 
             scope = basescope.split(".");
-            attributes = this.toJSON();
+            attributes = this.attributes;
             while (attributes && scope.length > 0) {
                 currentScope = scope.shift();
                 attributes = attributes[currentScope];
@@ -24579,7 +24574,7 @@ define('hr/model',[
 
             // Calcul new attributes
             this.attributes = this.attributes || {};
-            newattributes = _.clone(_.deepExtend(this.toJSON(), attrs));
+            newattributes = _.deepExtend(this.attributes, attrs);
 
             // New unique id
             var oldId = this.id;
@@ -25222,6 +25217,7 @@ define('hr/list',[
                 var item = this.items[model.id];
                 if (!item) {
                     logging.warn("sort list with non existant item");
+                    return;
                 }
                 item.$el.appendTo(this.$el);
             }, this);
@@ -25761,7 +25757,7 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
     
     return hr;
 });}());
-define('hr/args',[],function() { return {"revision":1389730889662,"baseUrl":"/hr.js/"}; });
+define('hr/args',[],function() { return {"revision":1389890985680,"baseUrl":"/hr.js/"}; });
 define('views/counter',[
     "hr/hr"
 ], function(hr) {
