@@ -11349,18 +11349,23 @@ define('hr/offline',[
             var that = this;
             OfflineManager.__super__.initialize.apply(this, arguments);
             this.state = true;
+            this.available = typeof window.applicationCache !== 'undefined';
 
             $(window).bind("online offline", function() {
                 that.check();
             });
             
-            window.applicationCache.addEventListener('updateready', function() {
-                that.trigger("update");
-            });
+            if (this.available) {
+                window.applicationCache.addEventListener('updateready', function() {
+                    that.trigger("update");
+                });
+            }
         },
 
         // Check for cache update
         checkUpdate: function() {
+            if (!this.available) return;
+
             if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
                 this.trigger("update");
             }
@@ -12438,7 +12443,7 @@ define('hr/model',[
 
             // Calcul new attributes
             this.attributes = this.attributes || {};
-            newattributes = _.deepExtend(this.attributes, attrs);
+            newattributes = _.deepExtend(Object.create(this.attributes), attrs);
 
             // New unique id
             var oldId = this.id;

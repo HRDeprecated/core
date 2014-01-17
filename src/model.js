@@ -127,7 +127,7 @@ define([
 
             // Calcul new attributes
             this.attributes = this.attributes || {};
-            newattributes = _.deepExtend(this.attributes, attrs);
+            newattributes = _.deepExtend(Object.create(this.attributes), attrs);
 
             // New unique id
             var oldId = this.id;

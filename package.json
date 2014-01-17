@@ -33,9 +33,13 @@
             "url": "https://friendco.de"
         }
     ],
+    "scripts": {
+        "test": "grunt test; ./node_modules/.bin/phantomjs test/run.js"
+    },
     "devDependencies": {
         "grunt": "~0.4.2",
         "grunt-requirejs": "0.4.0",
-        "grunt-gh-pages": "0.9.0"
+        "grunt-gh-pages": "0.9.0",
+        "phantomjs": "1.9.2-6"
     }
 }

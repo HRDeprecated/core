@@ -107,6 +107,10 @@ module.exports = function (grunt) {
         'buildapp:docs/'
     ]);
 
+    grunt.registerTask('test', [
+        'buildapp:test/'
+    ]);
+
     grunt.registerTask('publish', [
         'gh-pages'
     ]);
