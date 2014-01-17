@@ -57,10 +57,10 @@ define([
             });
         }, Q()).then(function() {
             logger.log("");
-            logger.log("Tests succeed!");
+            logger.log("Tests succeed: "+n+"/"+total);
         }, function() {
             logger.error("");
-            logger.error("Tests failed "+n+"/"+total);
+            logger.error("Tests failed: "+n+"/"+total);
         });
     }
 

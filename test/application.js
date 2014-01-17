@@ -4,7 +4,8 @@ require([
     "hr/args",
     "tests",
     
-    "test-storage"
+    "test-storage",
+    "test-model"
 ], function(_, hr, args, tests) {
     // Configure hr
     hr.configure(args);
