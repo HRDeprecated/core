@@ -48,5 +48,4 @@ define([
 
         m.set("deep.deep2", 3);
     });
-
 })

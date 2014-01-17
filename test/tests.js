@@ -7,10 +7,14 @@ define([
     var logger = hr.Logger.addNamespace("test");
 
     var addTest = function(name, func) {
+        var startTime, endTime;
         var d = Q.defer();
+
         var test =  {
             done: function() {
-                logger.log(name+": succeed");
+                endTime = Date.now();
+
+                logger.log(name+": succeed in "+((endTime-startTime)/1000)+" seconds");
                 d.resolve()
             },
             fail: function(err) {
@@ -31,7 +35,12 @@ define([
             'run': function() {
                 logger.log("");
                 logger.log(name+": start test");
+
+                // Call the test
+                startTime = Date.now();
                 var ret = func(test);
+
+                // Promise returned
                 if (Q.isPromise(ret)) {
                     ret.then(function() {
                         test.done();
@@ -53,7 +62,7 @@ define([
         return _.reduce(tests, function(prev, test) {
             return prev.then(function() {
                 n = n +1;
-                return test.run();
+                return test.run().timeout(5*1000);
             });
         }, Q()).then(function() {
             logger.log("");
