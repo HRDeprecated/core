@@ -34,7 +34,7 @@ define([
             'name': name,
             'run': function() {
                 logger.log("");
-                logger.log(name+": start test");
+                logger.log(name+": start");
 
                 // Call the test
                 startTime = Date.now();
@@ -58,6 +58,7 @@ define([
         var total = _.size(tests);
         var n = 0;
 
+        logger.log("");
         logger.log("Start", total, "tests")
         return _.reduce(tests, function(prev, test) {
             return prev.then(function() {
@@ -71,7 +72,7 @@ define([
             logger.error("");
             logger.error("Tests failed: "+n+"/"+total);
         });
-    }
+    };
 
     return {
         'add': addTest,

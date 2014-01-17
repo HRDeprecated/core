@@ -3,10 +3,13 @@ require([
     "hr/hr",
     "hr/args",
     "tests",
+    "benchmarks",
+
+    "benchmark-underscore",
     
     "test-storage",
     "test-model"
-], function(_, hr, args, tests) {
+], function(_, hr, args, tests, benchmarks) {
     // Configure hr
     hr.configure(args);
 
@@ -18,5 +21,7 @@ require([
     var app = new Application();
     app.run();
 
-    tests.run();
+    tests.run().then(function() {
+        return benchmarks.run();
+    });
 });

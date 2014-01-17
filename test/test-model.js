@@ -1,7 +1,8 @@
 define([
     'tests',
-    'hr/hr'
-], function(tests, hr) {
+    'hr/hr',
+    'underscore'
+], function(tests, hr, _) {
 
     var Model = hr.Model.extend({
         defaults: {
