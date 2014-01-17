@@ -10099,7 +10099,7 @@ define('hr/shims',[
             }
     }
 
-    var arrays, basicObjects, deepClone, deepExtend, isBasicObject, sum, removeHtml;
+    var arrays, basicObjects, deepClone, deepExtend, isBasicObject, sum, removeHtml, deepKeys;
 
     deepClone = function(obj) {
         return $.extend(true, {}, obj);
@@ -10132,7 +10132,32 @@ define('hr/shims',[
 
     removeHtml = function(t) {
         return $("<div>").html(t).text();
-    },
+    };
+
+    deepkeys = function(obj, all) {
+        var keys= [];
+        var getBase = function(base, key) {
+            if (_.size(base) == 0) return key;
+            return base+"."+key;
+        };
+
+        var addKeys = function(_obj, base) {
+            var _base, _isObject;
+            base = base || "";
+
+            _.each(_obj, function(value, key) {
+                _base = getBase(base, key);
+                _isObject = _.isObject(value);
+
+                if (_isObject) addKeys(value, _base);
+                if (all == true || !_isObject) keys.push(_base);
+            });
+        };
+
+        addKeys(obj);
+
+        return keys;
+    };
 
     _.mixin({
         deepClone: deepClone,
@@ -10141,7 +10166,8 @@ define('hr/shims',[
         arrays: arrays,
         deepExtend: deepExtend,
         sum: sum,
-        removeHtml: removeHtml
+        removeHtml: removeHtml,
+        deepkeys: deepkeys
     });
 
     return {};
@@ -12251,27 +12277,9 @@ define('hr/model',[
 ], function(_, Class, Logger) {
     var logging = Logger.addNamespace("models");
 
-    var Joint = Class.extend({
-        /*
-         *  Initialize the joint with a constructor
-         *  @constructor : constructor for the Model to join
-         *  @attrvalue : base value of the attribute replaced by the joint
-         */
-        initialize: function(options, parent, constructor, attrvalue) {
-            this.parent = parent;
-            this.constructor = constructor;
-            this.value = attrvalue;
-            this.model = this.constructor(this.parent, this.value);
-            return this;
-        },
-    });
-
     var Model = Class.extend({
         // Defaults values for attributes
         defaults : {},
-
-        // Joints with others models
-        joints: {},
 
         // Model unique identifier
         idAttribute: 'id',
@@ -12284,7 +12292,6 @@ define('hr/model',[
             attributes = _.deepExtend({}, _.result(this, "defaults"), attributes);
 
             this.collection = this.options.collection;
-            this.joints_values = {};
             this.attributes = {};
             this.set(attributes, {silent: true})
             return this;
@@ -12309,22 +12316,6 @@ define('hr/model',[
             options = _.defaults(options || {}, {
                 ignoreJoints: false
             });
-
-            // Check if in joint
-            value = null;
-            if (!options.ignoreJoints) {
-                _.each(this.joints_values, function(joint, tag) {
-                    subjoint = tag+".";
-                    if (basescope.indexOf(subjoint) == 0) {
-                        value = joint.model.get(basescope.replace(subjoint, ""), null);
-                    }
-                    if (basescope == tag) {
-                        value = joint.model;
-                    }
-                });
-            }
-
-            if (value != null) return value;
 
             scope = basescope.split(".");
             attributes = this.attributes;
@@ -12367,33 +12358,26 @@ define('hr/model',[
 
             // Define options
             options = _.defaults(options || {}, {
-                silent: false,
-                joints: true
+                silent: false
             });
 
             // Calcul new attributes
-            this.attributes = this.attributes || {};
-            newattributes = _.deepExtend(Object.create(this.attributes), attrs);
+            this.attributes = _.deepExtend(this.attributes || {}, attrs);
 
             // New unique id
             var oldId = this.id;
-            if (this.idAttribute in newattributes) {
-                this.id = newattributes[this.idAttribute];
+            if (this.idAttribute in this.attributes) {
+                this.id =this.attributes[this.idAttribute];
             } else {
                 this.id = this.cid;
             }
             if (oldId != this.id) this.trigger("id", this.id, oldId);
 
             // Calcul diffs
-            diffs = this.diff(newattributes);
-
-            // Update attributes
-            this.attributes = newattributes;
-
-            if (options.joints) this.updateJoints();
             if (!options.silent) {
-                _.each(diffs, function(diff, tag) {
-                    this.trigger("change:"+tag, diff);
+                diffs = _.deepkeys(attrs, true);
+                _.each(diffs, function(tag) {
+                    this.trigger("change:"+tag, tag);
                 }, this);
                 this.trigger("set", diffs);
             }
@@ -12467,85 +12451,6 @@ define('hr/model',[
          */
         has: function(attr) {
             return this.get(attr) != null;
-        },
-
-        /*
-         *  Updates joints
-         */
-        updateJoints: function() {
-            _.each(this.joints, function(constructor, tag) {
-                var currentvalue = this.get(tag, null, {
-                    ignoreJoints: true
-                });
-                if (currentvalue == null) {
-                    return;
-                }
-
-                if (this.joints_values[tag] == null
-                || this.joints_values[tag].value != currentvalue) {
-                    this.joints_values[tag] = new Joint({}, this, constructor, currentvalue);
-                }
-            }, this);
-        },
-
-        /*
-         *  Return the difference between the current attributes and an other state
-         */
-        diff: function(state) {
-            var VALUE_CREATED = 'created',
-            VALUE_UPDATED = 'updated',
-            VALUE_DELETED = 'deleted';
-
-            var getBase = function(base, key) {
-                if (_.size(base) == 0) return key;
-                return base+"."+key;
-            };
-
-            var change = function(type, oldvalue, newvalue) {
-                return {
-                    "type": type,
-                    "before": _.clone(oldvalue),
-                    "after": _.clone(newvalue)
-                }
-            }; 
-
-            var mapDiff = function(a, b, base) {
-                var diffs, nbase, nvalue;
-                base = base || "";
-                diffs = {};
-                _.each(a, function(value, key) {
-                    nvalue = _.isObject(b) ? b[key] : undefined;
-                    nbase = getBase(base, key);
-                    if (nvalue == undefined) {
-                        diffs[nbase] = change(VALUE_DELETED, value);
-                    }
-
-                    if (nvalue != value) {
-                        diffs[nbase] = change(VALUE_UPDATED, value, nvalue);
-                    }
-
-                    if (_.isObject(value)) {  
-                        _.extend(diffs, mapDiff(value, nvalue, nbase));
-                    }
-                });
-                _.each(b, function(value, key) {
-                    nvalue = _.isObject(a) ? a[key] : undefined;
-                    nbase = getBase(base, key);
-                    if (nvalue == undefined) {
-                        diffs[nbase] = change(VALUE_CREATED, undefined, value);
-                    }
-                    if (nvalue != value) {
-                        diffs[nbase] = change(VALUE_UPDATED, value, nvalue);
-                    }
-                    if (_.isObject(value)) {
-                        _.extend(diffs, mapDiff(nvalue, value, nbase));
-                    }
-
-                });
-                return diffs;
-            };
-            
-            return mapDiff(this.toJSON(), state);
         }
     });
 

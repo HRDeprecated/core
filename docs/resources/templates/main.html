@@ -266,13 +266,6 @@
                 <p>Return a copy of the model's <a href="<%- hr.urls.route("model/attributes") %>">attributes</a> for JSON stringification. This can be used for persistence, serialization, or for augmentation before being sent to the server. The name of this method is a bit confusing, as it doesn't actually return a JSON string — but I'm afraid that it's the way that <a href="https://developer.mozilla.org/en-US/docs/JSON#toJSON()_method">the JavaScript API for JSON.stringify works</a>.</p>
                 <%= view.component("code", {code: "model/tojson.js", run: true}) %>
             </article>
-
-            <article id="model/joints">
-                <h3><a href="<%- hr.urls.route("model/joints") %>">joints</a> <code>model.joints</code></h3>
-                <p>Joints between models let you define complex models and relationship between models.</p>
-                <p>Property <code>joints</code> is a map of global key and model constructor function.</p>
-                <%= view.component("code", {code: "model/extend.js", run: true}) %>
-            </article>
         </section>
 
         <section id="collection">

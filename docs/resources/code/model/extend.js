@@ -1,17 +1,3 @@
-var Author = hr.Model.extend({
-    defaults: {
-        "name": "",
-        "fullname": ""
-    },
-}, {
-    getByArticle: function(article) {
-        return new Author({}, {
-            "name": article.get("author"),
-            "fullname": "Mr. "+article.get("author").toUpperCase()
-        })
-    }
-});
-
 var Article = hr.Model.extend({
     defaults: {
         "title": "",
@@ -22,19 +8,15 @@ var Article = hr.Model.extend({
             "comments": "",
             "likes": ""
         }
-    },
-
-    joints: {
-        "author": Author.getByArticle
     }
 });
 
 var article = new Article({}, {
     "title": "My first article",
     "description": "It's my first article on this website",
-    "author": "samy"
+    "author": "Samy"
 });
 
-alert(article.get("title") + " by " + article.get("author.fullname"));
+alert(article.get("title") + " by " + article.get("author"));
 
 

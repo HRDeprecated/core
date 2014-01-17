@@ -27,7 +27,7 @@ define([
     });
 
     tests.add("model.event.change", function(test) {
-        var m = new Model();
+        var m = new Model({});
         m.on("change", function() {
             test.done();
         });
@@ -35,15 +35,13 @@ define([
     });
 
     tests.add("model.event.change.deep", function(test) {
-        var m = new Model();
-
-        m.set({
+        var m = new Model({}, {
             deep: {
                 deep2: 2
             }
         });
 
-        m.on("change:deep", function() {
+        m.on("change:deep.deep2", function() {
             test.done();
         });
 
