@@ -10365,8 +10365,7 @@ define('hr/class',[
             var args = Array.prototype.slice.call(arguments, 0);
             if (!this.multipleEvents('trigger', name, args)) return this;
             _.each(name.split(":"), function(part, n, parts) {
-                var newname = parts.slice(0, n+1).join(":");
-                args[0] = newname;
+                args[0] = parts.slice(0, n+1).join(":");
                 this.triggerOnly.apply(this, args);
             }, this);
             return this;

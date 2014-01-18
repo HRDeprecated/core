@@ -5,6 +5,7 @@ require([
     "tests",
     "benchmarks",
 
+    "benchmark-events",
     "benchmark-underscore",
     
     "test-storage",
