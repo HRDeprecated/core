@@ -22223,42 +22223,22 @@ define("jQuery", (function (global) {
 }(this)));
 
 define('hr/shims',[
-    "underscore",
-    "jQuery",
+        "underscore",
+        "jQuery",
 ], function(_, $) {
-	if(!Function.prototype.bind) {
-		Function.prototype.bind = function(newThis) {
-			var that = this;
-			return function(){ 
-				return that.apply(newThis, arguments); 
-			};
-		}
-	}
+    if(!Function.prototype.bind) {
+            Function.prototype.bind = function(newThis) {
+                    var that = this;
+                    return function(){ 
+                            return that.apply(newThis, arguments); 
+                    };
+            }
+    }
 
-    var arrays, basicObjects, deepClone, deepExtend, deepExtendCouple, isBasicObject, sum, removeHtml,
-    __slice = [].slice;
+    var arrays, basicObjects, deepClone, deepExtend, isBasicObject, sum, removeHtml, deepKeys;
 
     deepClone = function(obj) {
-        var func, isArr;
-        if (!_.isObject(obj) || _.isFunction(obj)) {
-            return obj;
-        }
-        if (_.isDate(obj)) {
-            return new Date(obj.getTime());
-        }
-        if (_.isRegExp(obj)) {
-            return new RegExp(obj.source, obj.toString().replace(/.*\//, ""));
-        }
-        isArr = _.isArray(obj || _.isArguments(obj));
-        func = function(memo, value, key) {
-            if (isArr) {
-                memo.push(deepClone(value));
-            } else {
-                memo[key] = deepClone(value);
-            }
-            return memo;
-        };
-        return _.reduce(obj, func, isArr ? [] : {});
+        return $.extend(true, {}, obj);
     };
 
     isBasicObject = function(object) {
@@ -22267,76 +22247,53 @@ define('hr/shims',[
 
     basicObjects = function(object) {
         return _.filter(_.keys(object), function(key) {
-            return isBasicObject(object[key]);
+                return isBasicObject(object[key]);
         });
     };
 
     arrays = function(object) {
         return _.filter(_.keys(object), function(key) {
-            return _.isArray(object[key]);
+                return _.isArray(object[key]);
         });
     };
 
-    deepExtendCouple = function(destination, source, maxDepth) {
-        var combine, recurse, sharedArrayKey, sharedArrayKeys, sharedObjectKey, sharedObjectKeys, _i, _j, _len, _len1;
-        if (maxDepth == null) {
-            maxDepth = 20;
-        }
-        if (maxDepth <= 0) {
-            console.warn('_.deepExtend(): Maximum depth of recursion hit.');
-            return _.extend(destination, source);
-        }
-        sharedObjectKeys = _.intersection(basicObjects(destination), basicObjects(source));
-        recurse = function(key) {
-            return source[key] = deepExtendCouple(destination[key], source[key], maxDepth - 1);
-        };
-        for (_i = 0, _len = sharedObjectKeys.length; _i < _len; _i++) {
-            sharedObjectKey = sharedObjectKeys[_i];
-            recurse(sharedObjectKey);
-        }
-        sharedArrayKeys = _.intersection(arrays(destination), arrays(source));
-        combine = function(key) {
-            return source[key];
-            // Replace array and not replaced
-            //return source[key] = _.union(destination[key], source[key]);
-        };
-        for (_j = 0, _len1 = sharedArrayKeys.length; _j < _len1; _j++) {
-            sharedArrayKey = sharedArrayKeys[_j];
-            combine(sharedArrayKey);
-        }
-        return _.extend(destination, source);
-    };
-
-    deepExtend = function() {
-        var finalObj, maxDepth, objects, _i;
-        objects = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), maxDepth = arguments[_i++];
-        if (!_.isNumber(maxDepth)) {
-            objects.push(maxDepth);
-            maxDepth = 20;
-        }
-        if (objects.length <= 1) {
-            return objects[0];
-        }
-        if (maxDepth <= 0) {
-            return _.extend.apply(this, objects);
-        }
-        finalObj = objects.shift();
-        while (objects.length > 0) {
-            finalObj = deepExtendCouple(finalObj, deepClone(objects.shift()), maxDepth);
-        }
-        return finalObj;
-    };
+    deepExtend = _.partial($.extend, true);
 
     sum = function(obj) {
-      if (!$.isArray(obj) || obj.length == 0) return 0;
-      return _.reduce(obj, function(sum, n) {
-        return sum += n;
-      });
+        if (!$.isArray(obj) || obj.length == 0) return 0;
+        return _.reduce(obj, function(sum, n) {
+            return sum += n;
+        });
     };
 
     removeHtml = function(t) {
         return $("<div>").html(t).text();
-    },
+    };
+
+    deepkeys = function(obj, all) {
+        var keys= [];
+        var getBase = function(base, key) {
+            if (_.size(base) == 0) return key;
+            return base+"."+key;
+        };
+
+        var addKeys = function(_obj, base) {
+            var _base, _isObject;
+            base = base || "";
+
+            _.each(_obj, function(value, key) {
+                _base = getBase(base, key);
+                _isObject = _.isObject(value);
+
+                if (_isObject) addKeys(value, _base);
+                if (all == true || !_isObject) keys.push(_base);
+            });
+        };
+
+        addKeys(obj);
+
+        return keys;
+    };
 
     _.mixin({
         deepClone: deepClone,
@@ -22345,10 +22302,9 @@ define('hr/shims',[
         arrays: arrays,
         deepExtend: deepExtend,
         sum: sum,
-        removeHtml: removeHtml
+        removeHtml: removeHtml,
+        deepkeys: deepkeys
     });
-
-    return _;
 
     return {};
 });
@@ -22361,7 +22317,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.4.2",
+        "version": "0.5.0",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -22544,11 +22500,13 @@ define('hr/class',[
         trigger: function(name) {
             var args = Array.prototype.slice.call(arguments, 0);
             if (!this.multipleEvents('trigger', name, args)) return this;
-            _.each(name.split(":"), function(part, n, parts) {
-                var newname = parts.slice(0, n+1).join(":");
-                args[0] = newname;
+            var index = 0;
+             
+            do {
+                index = name.indexOf(':', index+1);
+                args[0] = name.slice(0, index === -1 ? undefined : index);
                 this.triggerOnly.apply(this, args);
-            }, this);
+            } while(index !== -1)
             return this;
         },
         triggerEvents: function(events, args) {
@@ -22870,7 +22828,7 @@ define('hr/storage',[
          *  Return storage context
          */
         storage: function() {
-            if (_.isUndefined(localStorage)) {
+            if (typeof window.localStorage === 'undefined') {
                 return null;
             } else {
                 return localStorage;
@@ -23485,18 +23443,23 @@ define('hr/offline',[
             var that = this;
             OfflineManager.__super__.initialize.apply(this, arguments);
             this.state = true;
+            this.available = typeof window.applicationCache !== 'undefined';
 
             $(window).bind("online offline", function() {
                 that.check();
             });
             
-            window.applicationCache.addEventListener('updateready', function() {
-                that.trigger("update");
-            });
+            if (this.available) {
+                window.applicationCache.addEventListener('updateready', function() {
+                    that.trigger("update");
+                });
+            }
         },
 
         // Check for cache update
         checkUpdate: function() {
+            if (!this.available) return;
+
             if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
                 this.trigger("update");
             }
@@ -24452,27 +24415,9 @@ define('hr/model',[
 ], function(_, Class, Logger) {
     var logging = Logger.addNamespace("models");
 
-    var Joint = Class.extend({
-        /*
-         *  Initialize the joint with a constructor
-         *  @constructor : constructor for the Model to join
-         *  @attrvalue : base value of the attribute replaced by the joint
-         */
-        initialize: function(options, parent, constructor, attrvalue) {
-            this.parent = parent;
-            this.constructor = constructor;
-            this.value = attrvalue;
-            this.model = this.constructor(this.parent, this.value);
-            return this;
-        },
-    });
-
     var Model = Class.extend({
         // Defaults values for attributes
         defaults : {},
-
-        // Joints with others models
-        joints: {},
 
         // Model unique identifier
         idAttribute: 'id',
@@ -24485,7 +24430,6 @@ define('hr/model',[
             attributes = _.deepExtend({}, _.result(this, "defaults"), attributes);
 
             this.collection = this.options.collection;
-            this.joints_values = {};
             this.attributes = {};
             this.set(attributes, {silent: true})
             return this;
@@ -24504,28 +24448,12 @@ define('hr/model',[
          *  @defaults : Default value for this field
          */
         get: function(basescope, defaults, options) {
-            var scope, attributes, subjoint, value;
+            var scope, attributes, value;
 
             // Define options
             options = _.defaults(options || {}, {
-                ignoreJoints: false
+                
             });
-
-            // Check if in joint
-            value = null;
-            if (!options.ignoreJoints) {
-                _.each(this.joints_values, function(joint, tag) {
-                    subjoint = tag+".";
-                    if (basescope.indexOf(subjoint) == 0) {
-                        value = joint.model.get(basescope.replace(subjoint, ""), null);
-                    }
-                    if (basescope == tag) {
-                        value = joint.model;
-                    }
-                });
-            }
-
-            if (value != null) return value;
 
             scope = basescope.split(".");
             attributes = this.attributes;
@@ -24568,33 +24496,26 @@ define('hr/model',[
 
             // Define options
             options = _.defaults(options || {}, {
-                silent: false,
-                joints: true
+                silent: false
             });
 
             // Calcul new attributes
-            this.attributes = this.attributes || {};
-            newattributes = _.deepExtend(this.attributes, attrs);
+            this.attributes = _.deepExtend(this.attributes || {}, attrs);
 
             // New unique id
             var oldId = this.id;
-            if (this.idAttribute in newattributes) {
-                this.id = newattributes[this.idAttribute];
+            if (this.idAttribute in this.attributes) {
+                this.id =this.attributes[this.idAttribute];
             } else {
                 this.id = this.cid;
             }
             if (oldId != this.id) this.trigger("id", this.id, oldId);
 
             // Calcul diffs
-            diffs = this.diff(newattributes);
-
-            // Update attributes
-            this.attributes = newattributes;
-
-            if (options.joints) this.updateJoints();
             if (!options.silent) {
-                _.each(diffs, function(diff, tag) {
-                    this.trigger("change:"+tag, diff);
+                diffs = _.deepkeys(attrs, true);
+                _.each(diffs, function(tag) {
+                    this.trigger("change:"+tag, tag);
                 }, this);
                 this.trigger("set", diffs);
             }
@@ -24668,85 +24589,6 @@ define('hr/model',[
          */
         has: function(attr) {
             return this.get(attr) != null;
-        },
-
-        /*
-         *  Updates joints
-         */
-        updateJoints: function() {
-            _.each(this.joints, function(constructor, tag) {
-                var currentvalue = this.get(tag, null, {
-                    ignoreJoints: true
-                });
-                if (currentvalue == null) {
-                    return;
-                }
-
-                if (this.joints_values[tag] == null
-                || this.joints_values[tag].value != currentvalue) {
-                    this.joints_values[tag] = new Joint({}, this, constructor, currentvalue);
-                }
-            }, this);
-        },
-
-        /*
-         *  Return the difference between the current attributes and an other state
-         */
-        diff: function(state) {
-            var VALUE_CREATED = 'created',
-            VALUE_UPDATED = 'updated',
-            VALUE_DELETED = 'deleted';
-
-            var getBase = function(base, key) {
-                if (_.size(base) == 0) return key;
-                return base+"."+key;
-            };
-
-            var change = function(type, oldvalue, newvalue) {
-                return {
-                    "type": type,
-                    "before": _.clone(oldvalue),
-                    "after": _.clone(newvalue)
-                }
-            }; 
-
-            var mapDiff = function(a, b, base) {
-                var diffs, nbase, nvalue;
-                base = base || "";
-                diffs = {};
-                _.each(a, function(value, key) {
-                    nvalue = _.isObject(b) ? b[key] : undefined;
-                    nbase = getBase(base, key);
-                    if (nvalue == undefined) {
-                        diffs[nbase] = change(VALUE_DELETED, value);
-                    }
-
-                    if (nvalue != value) {
-                        diffs[nbase] = change(VALUE_UPDATED, value, nvalue);
-                    }
-
-                    if (_.isObject(value)) {  
-                        _.extend(diffs, mapDiff(value, nvalue, nbase));
-                    }
-                });
-                _.each(b, function(value, key) {
-                    nvalue = _.isObject(a) ? a[key] : undefined;
-                    nbase = getBase(base, key);
-                    if (nvalue == undefined) {
-                        diffs[nbase] = change(VALUE_CREATED, undefined, value);
-                    }
-                    if (nvalue != value) {
-                        diffs[nbase] = change(VALUE_UPDATED, value, nvalue);
-                    }
-                    if (_.isObject(value)) {
-                        _.extend(diffs, mapDiff(nvalue, value, nbase));
-                    }
-
-                });
-                return diffs;
-            };
-            
-            return mapDiff(this.toJSON(), state);
         }
     });
 
@@ -25111,11 +24953,7 @@ define('hr/list',[
             searchAttribute: null,
             displayEmptyList: true,
             displayHasMore: true,
-            loadAtInit: true,
-            style: "default"
-        },
-        styles: {
-            "default": ""
+            loadAtInit: true
         },
         events: {
             "click *[data-list-action='showmore']": "getItems"
@@ -25126,7 +24964,6 @@ define('hr/list',[
          */
         initialize: function() {
             ListView.__super__.initialize.apply(this, arguments);
-            this.setRenderStyle(this.options.style);
             this.items = {};
             if (this.options.collection instanceof Collection) {
                 this.collection = this.options.collection;
@@ -25280,20 +25117,6 @@ define('hr/list',[
         },
 
         /*
-         * Change render style
-         * @style style to apply
-         */
-        setRenderStyle: function(style) {
-            var c = this.styles[style];
-            if (c != null) {
-                this.$el.attr("class", this.className);
-                this.$el.addClass(c);
-                this.currentStyle = style;
-            }
-            return this;
-        },
-
-        /*
          *  Refresh the list
          */
         refresh: function() {
@@ -25334,12 +25157,9 @@ define('hr/list',[
          *  Return items as a lists
          */
         getItemsList: function(i) {
-            var a = [];
-            _.each(this.items, function(item) {
-                var i = this.$(this.Item.prototype.tagName).index(item.$el);
-                a[i] = item;
+            return _.map(this.items, function(item) {
+                return this.$(this.Item.prototype.tagName).index(item.$el);
             }, this);
-            return a;
         },
 
         /*
@@ -25757,7 +25577,7 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
     
     return hr;
 });}());
-define('hr/args',[],function() { return {"revision":1389890985680,"baseUrl":"/hr.js/"}; });
+define('hr/args',[],function() { return {"revision":1390046951371,"baseUrl":"/hr.js/"}; });
 define('views/counter',[
     "hr/hr"
 ], function(hr) {
@@ -26211,7 +26031,7 @@ define('text!resources/code/class/on_sub.js',[],function () { return 'var object
 
 define('text!resources/code/class/off.js',[],function () { return '// Removes just the `onChange` callback.\nobject.off("change", onChange);\n\n// Removes all "change" callbacks.\nobject.off("change");\n\n// Removes the `onChange` callback for all events.\nobject.off(null, onChange);\n\n// Removes all callbacks for `context` for all events.\nobject.off(null, null, context);\n\n// Removes all callbacks on `object`.\nobject.off();';});
 
-define('text!resources/code/model/extend.js',[],function () { return 'var Author = hr.Model.extend({\n    defaults: {\n        "name": "",\n        "fullname": ""\n    },\n}, {\n    getByArticle: function(article) {\n        return new Author({}, {\n            "name": article.get("author"),\n            "fullname": "Mr. "+article.get("author").toUpperCase()\n        })\n    }\n});\n\nvar Article = hr.Model.extend({\n    defaults: {\n        "title": "",\n        "description": "No description for this article",\n        "content": "",\n        "author": "nobody",\n        "interactions": {\n            "comments": "",\n            "likes": ""\n        }\n    },\n\n    joints: {\n        "author": Author.getByArticle\n    }\n});\n\nvar article = new Article({}, {\n    "title": "My first article",\n    "description": "It\'s my first article on this website",\n    "author": "samy"\n});\n\nalert(article.get("title") + " by " + article.get("author.fullname"));\n\n\n';});
+define('text!resources/code/model/extend.js',[],function () { return 'var Article = hr.Model.extend({\n    defaults: {\n        "title": "",\n        "description": "No description for this article",\n        "content": "",\n        "author": "nobody",\n        "interactions": {\n            "comments": "",\n            "likes": ""\n        }\n    }\n});\n\nvar article = new Article({}, {\n    "title": "My first article",\n    "description": "It\'s my first article on this website",\n    "author": "Samy"\n});\n\nalert(article.get("title") + " by " + article.get("author"));\n\n\n';});
 
 define('text!resources/code/model/set.js',[],function () { return 'var article = new hr.Model({}, {\n    "title": "My first article",\n    "description": "It\'s my first article on this website",\n    "author": "samy",\n    "interactions": {\n        "comments": 0,\n        "likes": 0\n    }\n});\narticle.on("change:interactions.likes", function() {\n    alert("like occurs on the article");\n});\n\narticle.set("interactions.likes", 1);';});
 
