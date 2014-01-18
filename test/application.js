@@ -8,6 +8,7 @@ require([
     "benchmark-events",
     "benchmark-underscore",
     
+    "test-class",
     "test-storage",
     "test-model"
 ], function(_, hr, args, tests, benchmarks) {

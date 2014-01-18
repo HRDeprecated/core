@@ -27,7 +27,7 @@ define([
     };
 
     var addBenchmark = function(name, f, n) {
-        n = n || 50000;
+        n = n || 100000;
         benchmarks.push({
             'name': name,
             'run': function() {

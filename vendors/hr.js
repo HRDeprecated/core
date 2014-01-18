@@ -10364,10 +10364,13 @@ define('hr/class',[
         trigger: function(name) {
             var args = Array.prototype.slice.call(arguments, 0);
             if (!this.multipleEvents('trigger', name, args)) return this;
-            _.each(name.split(":"), function(part, n, parts) {
-                args[0] = parts.slice(0, n+1).join(":");
+            var index = 0;
+             
+            do {
+                index = name.indexOf(':', index+1);
+                args[0] = name.slice(0, index === -1 ? undefined : index);
                 this.triggerOnly.apply(this, args);
-            }, this);
+            } while(index !== -1)
             return this;
         },
         triggerEvents: function(events, args) {
