@@ -29,11 +29,7 @@ define([
             searchAttribute: null,
             displayEmptyList: true,
             displayHasMore: true,
-            loadAtInit: true,
-            style: "default"
-        },
-        styles: {
-            "default": ""
+            loadAtInit: true
         },
         events: {
             "click *[data-list-action='showmore']": "getItems"
@@ -44,7 +40,6 @@ define([
          */
         initialize: function() {
             ListView.__super__.initialize.apply(this, arguments);
-            this.setRenderStyle(this.options.style);
             this.items = {};
             if (this.options.collection instanceof Collection) {
                 this.collection = this.options.collection;
@@ -198,20 +193,6 @@ define([
         },
 
         /*
-         * Change render style
-         * @style style to apply
-         */
-        setRenderStyle: function(style) {
-            var c = this.styles[style];
-            if (c != null) {
-                this.$el.attr("class", this.className);
-                this.$el.addClass(c);
-                this.currentStyle = style;
-            }
-            return this;
-        },
-
-        /*
          *  Refresh the list
          */
         refresh: function() {
@@ -252,12 +233,9 @@ define([
          *  Return items as a lists
          */
         getItemsList: function(i) {
-            var a = [];
-            _.each(this.items, function(item) {
-                var i = this.$(this.Item.prototype.tagName).index(item.$el);
-                a[i] = item;
+            return _.map(this.items, function(item) {
+                return this.$(this.Item.prototype.tagName).index(item.$el);
             }, this);
-            return a;
         },
 
         /*

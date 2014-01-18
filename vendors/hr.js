@@ -10692,7 +10692,7 @@ define('hr/storage',[
          *  Return storage context
          */
         storage: function() {
-            if (_.isUndefined(localStorage)) {
+            if (typeof window.localStorage === 'undefined') {
                 return null;
             } else {
                 return localStorage;
@@ -12312,11 +12312,11 @@ define('hr/model',[
          *  @defaults : Default value for this field
          */
         get: function(basescope, defaults, options) {
-            var scope, attributes, subjoint, value;
+            var scope, attributes, value;
 
             // Define options
             options = _.defaults(options || {}, {
-                ignoreJoints: false
+                
             });
 
             scope = basescope.split(".");
@@ -12817,11 +12817,7 @@ define('hr/list',[
             searchAttribute: null,
             displayEmptyList: true,
             displayHasMore: true,
-            loadAtInit: true,
-            style: "default"
-        },
-        styles: {
-            "default": ""
+            loadAtInit: true
         },
         events: {
             "click *[data-list-action='showmore']": "getItems"
@@ -12832,7 +12828,6 @@ define('hr/list',[
          */
         initialize: function() {
             ListView.__super__.initialize.apply(this, arguments);
-            this.setRenderStyle(this.options.style);
             this.items = {};
             if (this.options.collection instanceof Collection) {
                 this.collection = this.options.collection;
@@ -12986,20 +12981,6 @@ define('hr/list',[
         },
 
         /*
-         * Change render style
-         * @style style to apply
-         */
-        setRenderStyle: function(style) {
-            var c = this.styles[style];
-            if (c != null) {
-                this.$el.attr("class", this.className);
-                this.$el.addClass(c);
-                this.currentStyle = style;
-            }
-            return this;
-        },
-
-        /*
          *  Refresh the list
          */
         refresh: function() {
@@ -13040,12 +13021,9 @@ define('hr/list',[
          *  Return items as a lists
          */
         getItemsList: function(i) {
-            var a = [];
-            _.each(this.items, function(item) {
-                var i = this.$(this.Item.prototype.tagName).index(item.$el);
-                a[i] = item;
+            return _.map(this.items, function(item) {
+                return this.$(this.Item.prototype.tagName).index(item.$el);
             }, this);
-            return a;
         },
 
         /*

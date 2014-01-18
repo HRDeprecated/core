@@ -38,11 +38,11 @@ define([
          *  @defaults : Default value for this field
          */
         get: function(basescope, defaults, options) {
-            var scope, attributes, subjoint, value;
+            var scope, attributes, value;
 
             // Define options
             options = _.defaults(options || {}, {
-                ignoreJoints: false
+                
             });
 
             scope = basescope.split(".");

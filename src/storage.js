@@ -11,7 +11,7 @@ define([
          *  Return storage context
          */
         storage: function() {
-            if (_.isUndefined(localStorage)) {
+            if (typeof window.localStorage === 'undefined') {
                 return null;
             } else {
                 return localStorage;
