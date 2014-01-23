@@ -12369,7 +12369,7 @@ define('hr/model',[
             // New unique id
             var oldId = this.id;
             if (this.idAttribute in this.attributes) {
-                this.id =this.attributes[this.idAttribute];
+                this.id = this.attributes[this.idAttribute];
             } else {
                 this.id = this.cid;
             }

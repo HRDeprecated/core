@@ -10,7 +10,8 @@ require([
     
     "test-class",
     "test-storage",
-    "test-model"
+    "test-model",
+    "test-collection"
 ], function(_, hr, args, tests, benchmarks) {
     // Configure hr
     hr.configure(args);

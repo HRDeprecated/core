@@ -22,6 +22,7 @@ define([
                 d.reject()
             },
             assert: function(value, realvalue) {
+                if (realvalue == undefined) realvalue = true;
                 if (value != realvalue) {
                     test.fail(new Error("Error asserting: "+value+"!="+realvalue));
                 } else {
@@ -71,6 +72,7 @@ define([
         }, function() {
             logger.error("");
             logger.error("Tests failed: "+n+"/"+total);
+            return Q.reject(new Error("Tests failed"));
         });
     };
 
