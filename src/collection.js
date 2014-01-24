@@ -28,6 +28,7 @@ define([
             Collection.__super__.initialize.call(this, options);
             this.queue = new Queue();
             this.models = [];
+            this._byId = {};
             this._totalCount = null;
             this.reset(this.options.models || [], {silent: true});
             return this;
@@ -98,6 +99,7 @@ define([
             }
             this.options.startIndex = 0;
             this.models = [];
+            this._byId = {};
             this.add(models, _.extend({silent: true}, options || {}));
             options = _.defaults(options || {}, {
                 silent: false
@@ -111,7 +113,7 @@ define([
          *  @model : model to add
          */
         add: function(model, options) {
-            var index;
+            var index, existing;
 
             if (_.isArray(model)) {
                 _.each(model, function(m) {
@@ -135,7 +137,23 @@ define([
 
             model = this._prepareModel(model);
 
+
+
+            if (existing = this.get(model)) {
+                if (options.merge) {
+                    existing.set(model.toJSON())
+                }
+                return this;
+            }
+
+            this._byId[model.id] = model;
+
             model.on('all', this._onModelEvent, this);
+            model.on("id", function(newId, oldId) {
+                this._byId[newId] = this._byId[oldId];
+                delete this._byId[oldId];
+            }, this);
+
             index = options.at;
             this.models.splice(index, 0, model);
 
@@ -167,8 +185,9 @@ define([
 
             model = this._prepareModel(model);
 
+            delete this._byId[model.id];
             _.each(this.models, function(m, i) {
-                if (model.cid == m.cid) {
+                if (model.id == m.id) {
                     this.models.splice(i, 1);
                     index = i;
                     return;
@@ -245,6 +264,14 @@ define([
                 this.remove(model, options);
             }
             this.trigger.apply(this, arguments);
+        },
+
+        /*
+         *  Get a model from the set by id.
+         */
+        get: function(obj) {
+            if (obj == null) return void 0;
+            return this._byId[obj] || this._byId[obj.id];
         },
 
         /*

@@ -4,7 +4,7 @@ define([
     'hr/hr'
 ], function(Q, _, hr) {
     var benchmarks = [];
-    var logger = hr.Logger.addNamespace("benchmark");
+    var logger = hr.Logger.addNamespace("benchmarks");
 
     var runBenchmarks = function() {
         var total = _.size(benchmarks);

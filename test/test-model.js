@@ -12,18 +12,18 @@ define([
 
     tests.add("model.defaults", function(test) {
         var m = new Model();
-        test.assert(m.get("test"), "hello");
+        test.assert(m.get("test") == "hello");
     });
 
     tests.add("model.set", function(test) {
         var m = new Model();
         m.set("test", "world")
-        test.assert(m.get("test"), "world");
+        test.assert(m.get("test") == "world");
     });
 
     tests.add("model.toJSON()", function(test) {
         var m = new Model();
-        test.assert(m.toJSON().test, "hello");
+        test.assert(m.toJSON().test == "hello");
     });
 
     tests.add("model.event.change", function(test) {

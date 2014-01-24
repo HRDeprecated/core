@@ -4,7 +4,7 @@ define([
     'hr/hr'
 ], function(Q, _, hr) {
     var tests = [];
-    var logger = hr.Logger.addNamespace("test");
+    var logger = hr.Logger.addNamespace("tests");
 
     var addTest = function(name, func) {
         var startTime, endTime;
