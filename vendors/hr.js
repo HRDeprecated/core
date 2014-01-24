@@ -12858,7 +12858,7 @@ define('hr/list',[
         initialize: function() {
             ListView.__super__.initialize.apply(this, arguments);
 
-            this._filter = {};
+            this._filter = null;
             this.items = {};
 
 
@@ -12925,7 +12925,8 @@ define('hr/list',[
                 delete this.items[oldId];
             }, this);
             item.update();
-            tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
+            tag = this.Item.prototype.tagName;
+            if (this.Item.prototype.className) tag = tag+"."+this.Item.prototype.className.split(" ")[0];
 
             if (options.at > 0) {
                 this.$("> "+tag).eq(options.at-1).after(item.$el);
@@ -13063,16 +13064,12 @@ define('hr/list',[
         },
 
         /*
-         *      Apply filter on a item
+         *  Apply filter on a item
          */
         applyFilter: function(item) {
-            if (this._filter != null && !this._filter(item.model, item)) {
-                item.$el.hide();
-                return false;
-            } else {
-                item.$el.show();
-                return true;
-            }
+            var state = !(this._filter != null && !this._filter(item.model, item));
+            item.$el.toggleClass("hr-list-fiter-on", !state);
+            return state;
         },
 
         /*
