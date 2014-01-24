@@ -34,7 +34,7 @@
         }
     ],
     "scripts": {
-        "test": "grunt test; ./node_modules/.bin/phantomjs test/run.js"
+        "test": "./node_modules/.bin/grunt test; ./node_modules/.bin/phantomjs test/run.js"
     },
     "devDependencies": {
         "grunt": "~0.4.2",
