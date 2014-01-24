@@ -13026,10 +13026,22 @@ define('hr/list',[
         },
 
         /*
-         *  Return number of elements in collections
+         *  Return number of elements in the list collection
+         */
+        size: function() {
+            return this.collection.size();
+        },
+
+        /*
+         *  Return number of elements in collections visible (not filtered)
          */
         count: function() {
-            return this.collection.count();
+            return _.reduce(this.items, function(n, item) {
+                if (this.applyFilter(item)) {
+                    n = n + 1;
+                }
+                return n;
+            }, 0, this);
         },
 
         /*
@@ -13067,8 +13079,11 @@ define('hr/list',[
          *  Apply filter on a item
          */
         applyFilter: function(item) {
+            var hasFiltered = this.$el.hasClass("hr-list-fiter-on");
             var state = !(this._filter != null && !this._filter(item.model, item));
             item.$el.toggleClass("hr-list-fiter-on", !state);
+
+            if (hasFiltered == state) this.trigger("filter", item, state);
             return state;
         },
 
@@ -13084,12 +13099,7 @@ define('hr/list',[
                 this._filter = null;
             }
             
-            return _.reduce(this.items, function(n, item) {
-                if (this.applyFilter(item)) {
-                    n = n + 1;
-                }
-                return n;
-            }, 0, this);
+            return this.count();
         },
 
         /*
