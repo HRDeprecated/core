@@ -22317,7 +22317,7 @@ define('hr/configs',[],function() {
         "args": {},
 
         // Hr version
-        "version": "0.5.0",
+        "version": "0.5.1",
 
         // Log level
         // "log", "debug", "warn", "error", "none"
@@ -24505,7 +24505,7 @@ define('hr/model',[
             // New unique id
             var oldId = this.id;
             if (this.idAttribute in this.attributes) {
-                this.id =this.attributes[this.idAttribute];
+                this.id = this.attributes[this.idAttribute];
             } else {
                 this.id = this.cid;
             }
@@ -24624,6 +24624,7 @@ define('hr/collection',[
             Collection.__super__.initialize.call(this, options);
             this.queue = new Queue();
             this.models = [];
+            this._byId = {};
             this._totalCount = null;
             this.reset(this.options.models || [], {silent: true});
             return this;
@@ -24694,6 +24695,7 @@ define('hr/collection',[
             }
             this.options.startIndex = 0;
             this.models = [];
+            this._byId = {};
             this.add(models, _.extend({silent: true}, options || {}));
             options = _.defaults(options || {}, {
                 silent: false
@@ -24707,7 +24709,7 @@ define('hr/collection',[
          *  @model : model to add
          */
         add: function(model, options) {
-            var index;
+            var index, existing;
 
             if (_.isArray(model)) {
                 _.each(model, function(m) {
@@ -24731,7 +24733,24 @@ define('hr/collection',[
 
             model = this._prepareModel(model);
 
+            if (existing = this.get(model)) {
+                if (options.merge) {
+                    existing.set(model.toJSON())
+                }
+                return this;
+            }
+
+            this._byId[model.id] = model;
+
             model.on('all', this._onModelEvent, this);
+            model.on("id", function(newId, oldId) {
+                var m = this.get(newId);
+                if (m) this.remove(m);
+
+                this._byId[newId] = this._byId[oldId];
+                delete this._byId[oldId];
+            }, this);
+
             index = options.at;
             this.models.splice(index, 0, model);
 
@@ -24763,8 +24782,9 @@ define('hr/collection',[
 
             model = this._prepareModel(model);
 
+            delete this._byId[model.id];
             _.each(this.models, function(m, i) {
-                if (model.cid == m.cid) {
+                if (model.id == m.id) {
                     this.models.splice(i, 1);
                     index = i;
                     return;
@@ -24841,6 +24861,14 @@ define('hr/collection',[
                 this.remove(model, options);
             }
             this.trigger.apply(this, arguments);
+        },
+
+        /*
+         *  Get a model from the set by id.
+         */
+        get: function(obj) {
+            if (obj == null) return void 0;
+            return this._byId[obj] || this._byId[obj.id];
         },
 
         /*
@@ -24953,7 +24981,8 @@ define('hr/list',[
             searchAttribute: null,
             displayEmptyList: true,
             displayHasMore: true,
-            loadAtInit: true
+            loadAtInit: true,
+            baseFilter: null
         },
         events: {
             "click *[data-list-action='showmore']": "getItems"
@@ -24964,7 +24993,11 @@ define('hr/list',[
          */
         initialize: function() {
             ListView.__super__.initialize.apply(this, arguments);
+
+            this._filter = null;
             this.items = {};
+
+
             if (this.options.collection instanceof Collection) {
                 this.collection = this.options.collection;
             } else {
@@ -24991,6 +25024,7 @@ define('hr/list',[
             });
 
             if (this.options.loadAtInit) this.getItems();
+            if (this.options.baseFilter) this.filter(this.options.baseFilter);
 
             return this.update();
         },
@@ -25021,13 +25055,15 @@ define('hr/list',[
             });
             model.on("set", function() {
                 item.update();
-            });
+                this.applyFilter(item);
+            }, this);
             model.on("id", function(newId, oldId) {
                 this.items[newId] = this.items[oldId];
                 delete this.items[oldId];
             }, this);
             item.update();
-            tag = this.Item.prototype.tagName+"."+this.Item.prototype.className.split(" ")[0];
+            tag = this.Item.prototype.tagName;
+            if (this.Item.prototype.className) tag = tag+"."+this.Item.prototype.className.split(" ")[0];
 
             if (options.at > 0) {
                 this.$("> "+tag).eq(options.at-1).after(item.$el);
@@ -25036,7 +25072,9 @@ define('hr/list',[
             }
             this.items[model.id] = item;
 
-            if (!options.silent) this.trigger("change:add", model);
+            this.applyFilter(item);
+
+            if (!options.silent) this.trigger("add", model);
             if (options.render) this.update();
 
             return this;
@@ -25078,7 +25116,7 @@ define('hr/list',[
             this.items[model.id] = null;
             delete this.items[model.id];
 
-            if (!options.silent) this.trigger("change:remove", model);
+            if (!options.silent) this.trigger("remove", model);
             if (options.render) this.update();
 
             return this;
@@ -25111,7 +25149,7 @@ define('hr/list',[
                 });
             }, this);
 
-            if (!options.silent) this.trigger("change:reset");
+            if (!options.silent) this.trigger("reset");
             if (options.render) this.update();
             return this;
         },
@@ -25125,10 +25163,22 @@ define('hr/list',[
         },
 
         /*
-         *  Return number of elements in collections
+         *  Return number of elements in the list collection
+         */
+        size: function() {
+            return this.collection.size();
+        },
+
+        /*
+         *  Return number of elements in collections visible (not filtered)
          */
         count: function() {
-            return this.collection.count();
+            return _.reduce(this.items, function(n, item) {
+                if (this.applyFilter(item)) {
+                    n = n + 1;
+                }
+                return n;
+            }, 0, this);
         },
 
         /*
@@ -25163,25 +25213,37 @@ define('hr/list',[
         },
 
         /*
+         *  Apply filter on a item
+         */
+        applyFilter: function(item) {
+            var hasFiltered = item.$el.hasClass("hr-list-fiter-on");
+            var state = !(this._filter != null && !this._filter(item.model, item));
+            item.$el.toggleClass("hr-list-fiter-on", !state);
+
+            if (hasFiltered == state) this.trigger("filter", item, state);
+            return state;
+        },
+
+        /*
          *  Filter the items list
          *  @filt : function to apply to each model
          *  @context
          */
         filter: function(filt, context) {
-            var n = 0;
-            if (_.isFunction(filt) == false) {
-                return n;
+            if (_.isFunction(filt)) {
+                this._filter = _.bind(filt, context);
+            } else {
+                this._filter = null;
             }
-            filt = _.bind(filt, context);
-            _.each(this.items, function(item) {
-                if (!filt(item.model, item)) {
-                    item.$el.hide();
-                } else {
-                    item.$el.show();
-                    n = n + 1;
-                }
-            });
-            return n;
+            
+            return this.count();
+        },
+
+        /*
+         *  Clear filter
+         */
+        clearFilter: function() {
+            return this.filter(null);
         },
 
         /*
@@ -25577,7 +25639,7 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
     
     return hr;
 });}());
-define('hr/args',[],function() { return {"revision":1390046951371,"baseUrl":"/hr.js/"}; });
+define('hr/args',[],function() { return {"revision":1390578785106,"baseUrl":"/hr.js/"}; });
 define('views/counter',[
     "hr/hr"
 ], function(hr) {
