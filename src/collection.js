@@ -137,8 +137,6 @@ define([
 
             model = this._prepareModel(model);
 
-
-
             if (existing = this.get(model)) {
                 if (options.merge) {
                     existing.set(model.toJSON())
@@ -150,6 +148,9 @@ define([
 
             model.on('all', this._onModelEvent, this);
             model.on("id", function(newId, oldId) {
+                var m = this.get(newId);
+                if (m) this.remove(m);
+
                 this._byId[newId] = this._byId[oldId];
                 delete this._byId[oldId];
             }, this);

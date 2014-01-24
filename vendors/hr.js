@@ -12597,8 +12597,6 @@ define('hr/collection',[
 
             model = this._prepareModel(model);
 
-
-
             if (existing = this.get(model)) {
                 if (options.merge) {
                     existing.set(model.toJSON())
@@ -12610,6 +12608,12 @@ define('hr/collection',[
 
             model.on('all', this._onModelEvent, this);
             model.on("id", function(newId, oldId) {
+                var m = this.get(newId);
+                if (m) {
+                    console.log("remove model", m);
+                    this.remove(m);
+                }
+
                 this._byId[newId] = this._byId[oldId];
                 delete this._byId[oldId];
             }, this);

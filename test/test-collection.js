@@ -4,7 +4,6 @@ define([
     'underscore'
 ], function(tests, hr, _) {
 
-
     tests.add("collection.add.unique", function(test) {
         var c = new hr.Collection();
 
@@ -34,5 +33,21 @@ define([
         });
         
         test.assert(c.get(uid).get("test") == 2);
+    });
+
+    tests.add("collection.change.id", function(test) {
+        var c = new hr.Collection();
+
+        c.add({
+            'id': 'id1'
+        });
+        c.add({
+            'id': 'id2'
+        });
+
+        var m = c.get("id1");
+        m.set("id", "id2");
+
+        test.assert(c.size() == 1);
     });
 })
