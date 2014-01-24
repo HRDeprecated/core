@@ -103,7 +103,8 @@ define([
             });
             model.on("set", function() {
                 item.update();
-            });
+                this.applyFilter(item);
+            }, this);
             model.on("id", function(newId, oldId) {
                 this.items[newId] = this.items[oldId];
                 delete this.items[oldId];
@@ -263,7 +264,7 @@ define([
          *  Apply filter on a item
          */
         applyFilter: function(item) {
-            var hasFiltered = this.$el.hasClass("hr-list-fiter-on");
+            var hasFiltered = item.$el.hasClass("hr-list-fiter-on");
             var state = !(this._filter != null && !this._filter(item.model, item));
             item.$el.toggleClass("hr-list-fiter-on", !state);
 
