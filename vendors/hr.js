@@ -12609,10 +12609,7 @@ define('hr/collection',[
             model.on('all', this._onModelEvent, this);
             model.on("id", function(newId, oldId) {
                 var m = this.get(newId);
-                if (m) {
-                    console.log("remove model", m);
-                    this.remove(m);
-                }
+                if (m) this.remove(m);
 
                 this._byId[newId] = this._byId[oldId];
                 delete this._byId[oldId];
@@ -12848,7 +12845,8 @@ define('hr/list',[
             searchAttribute: null,
             displayEmptyList: true,
             displayHasMore: true,
-            loadAtInit: true
+            loadAtInit: true,
+            baseFilter: null
         },
         events: {
             "click *[data-list-action='showmore']": "getItems"
@@ -12859,7 +12857,11 @@ define('hr/list',[
          */
         initialize: function() {
             ListView.__super__.initialize.apply(this, arguments);
+
+            this._filter = {};
             this.items = {};
+
+
             if (this.options.collection instanceof Collection) {
                 this.collection = this.options.collection;
             } else {
@@ -12886,6 +12888,7 @@ define('hr/list',[
             });
 
             if (this.options.loadAtInit) this.getItems();
+            if (this.options.baseFilter) this.filter(this.options.baseFilter);
 
             return this.update();
         },
@@ -12930,6 +12933,8 @@ define('hr/list',[
                 this.$el.prepend(item.$el);
             }
             this.items[model.id] = item;
+
+            this.applyFilter(item);
 
             if (!options.silent) this.trigger("change:add", model);
             if (options.render) this.update();
@@ -13058,25 +13063,43 @@ define('hr/list',[
         },
 
         /*
+         *      Apply filter on a item
+         */
+        applyFilter: function(item) {
+            if (this._filter != null && !this._filter(item.model, item)) {
+                item.$el.hide();
+                return false;
+            } else {
+                item.$el.show();
+                return true;
+            }
+        },
+
+        /*
          *  Filter the items list
          *  @filt : function to apply to each model
          *  @context
          */
         filter: function(filt, context) {
-            var n = 0;
-            if (_.isFunction(filt) == false) {
-                return n;
+            if (_.isFunction(filt)) {
+                this._filter = _.bind(filt, context);
+            } else {
+                this._filter = null;
             }
-            filt = _.bind(filt, context);
-            _.each(this.items, function(item) {
-                if (!filt(item.model, item)) {
-                    item.$el.hide();
-                } else {
-                    item.$el.show();
+            
+            return _.reduce(this.items, function(n, item) {
+                if (this.applyFilter(item)) {
                     n = n + 1;
                 }
-            });
-            return n;
+                return n;
+            }, 0, this);
+        },
+
+        /*
+         *  Clear filter
+         */
+        clearFilter: function() {
+            return this.filter(null);
         },
 
         /*
