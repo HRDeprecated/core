@@ -12938,7 +12938,7 @@ define('hr/list',[
 
             this.applyFilter(item);
 
-            if (!options.silent) this.trigger("change:add", model);
+            if (!options.silent) this.trigger("add", model);
             if (options.render) this.update();
 
             return this;
@@ -12980,7 +12980,7 @@ define('hr/list',[
             this.items[model.id] = null;
             delete this.items[model.id];
 
-            if (!options.silent) this.trigger("change:remove", model);
+            if (!options.silent) this.trigger("remove", model);
             if (options.render) this.update();
 
             return this;
@@ -13013,7 +13013,7 @@ define('hr/list',[
                 });
             }, this);
 
-            if (!options.silent) this.trigger("change:reset");
+            if (!options.silent) this.trigger("reset");
             if (options.render) this.update();
             return this;
         },
