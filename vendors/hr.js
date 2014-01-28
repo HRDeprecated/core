@@ -13626,7 +13626,10 @@ define('hr/backend',[
 
             return Q(methodHandler(args, options, method)).then(function(results) {
                 if (handler.after) {
-                    return Q(handler.after(args, results, options, method)).then(function() {
+                    return Q.all([
+                        Q(handler.after(args, results, options, method)),
+                        Q((that.defaultHandler.after || function() {})(args, results, options, method))
+                    ]).then(function() {
                         return Q(results);
                     }, function() {
                         return Q(results);
