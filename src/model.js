@@ -1,8 +1,9 @@
 define([
     "underscore",
+    "jsondiffpatch",
     "hr/class",
     "hr/logger"
-], function(_, Class, Logger) {
+], function(_, jsondiffpatch, Class, Logger) {
     var logging = Logger.addNamespace("models");
 
     var Model = Class.extend({
@@ -90,7 +91,8 @@ define([
             });
 
             // Calcul new attributes
-            this.attributes = _.deepExtend(this.attributes || {}, attrs);
+            diffs = jsondiffpatch.diff(this.attributes || {}, attrs);
+            this.attributes = jsondiffpatch.patch(this.attributes || {}, diffs);
 
             // New unique id
             var oldId = this.id;
@@ -103,7 +105,7 @@ define([
 
             // Calcul diffs
             if (!options.silent) {
-                diffs = _.deepkeys(attrs, true);
+                diffs = _.deepkeys(diffs, true);
                 _.each(diffs, function(tag) {
                     this.trigger("change:"+tag, tag);
                 }, this);

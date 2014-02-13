@@ -7,6 +7,8 @@ require([
 
     "benchmark-events",
     "benchmark-underscore",
+    "benchmark-jsondiff",
+    "benchmark-model",
     
     "test-class",
     "test-storage",

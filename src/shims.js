@@ -59,7 +59,7 @@ define([
 
             _.each(_obj, function(value, key) {
                 _base = getBase(base, key);
-                _isObject = _.isObject(value);
+                _isObject = _.isObject(value) && !_.isArray(value);
 
                 if (_isObject) addKeys(value, _base);
                 if (all == true || !_isObject) keys.push(_base);

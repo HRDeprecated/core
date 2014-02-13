@@ -7,17 +7,23 @@ define([
     var logger = hr.Logger.addNamespace("tests");
 
     var addTest = function(name, func) {
-        var startTime, endTime;
+        var startTime, endTime, _ended;
         var d = Q.defer();
 
         var test =  {
             done: function() {
+                if (_ended) return;
+                _ended = true;
                 endTime = Date.now();
 
                 logger.log(name+": succeed in "+((endTime-startTime)/1000)+" seconds");
+
                 d.resolve()
             },
             fail: function(err) {
+                if (_ended) return;
+                _ended = true;
+                
                 logger.error(name+": failed", err);
                 d.reject()
             },

@@ -34,6 +34,24 @@ define([
         m.set("test", "world");
     });
 
+    tests.add("model.event.change.valid", function(test) {
+        var data = {
+            'a': {
+                'b': 1
+            }
+        };
+        var m = new hr.Model({}, data);
+        m.on("change:a", function() {
+            test.fail();
+        });
+        m.set({
+            'a': {
+                'b': 1
+            }
+        });
+        test.done();
+    });
+
     tests.add("model.event.change.deep", function(test) {
         var m = new Model({}, {
             deep: {

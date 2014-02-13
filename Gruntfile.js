@@ -16,6 +16,7 @@ module.exports = function (grunt) {
                     paths: {
                         'underscore':     '../vendors/underscore',
                         'jQuery':         '../vendors/jquery',
+                        'jsondiffpatch':  '../vendors/jsondiffpatch',
                         'q':              '../vendors/q',
                         'text':           '../vendors/require-text',
                         'hr': './',
@@ -29,6 +30,9 @@ module.exports = function (grunt) {
                         },
                         'jQuery': {
                             exports: '$'
+                        },
+                        'jsondiffpatch': {
+                            exports: 'jsondiffpatch'
                         }
                     },
                     wrap: {
