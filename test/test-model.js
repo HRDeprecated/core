@@ -52,7 +52,7 @@ define([
         test.done();
     });
 
-    tests.add("model.event.change.deep", function(test) {
+    tests.add("model.event.change.deep.1", function(test) {
         var m = new Model({}, {
             deep: {
                 deep2: 2
@@ -64,5 +64,33 @@ define([
         });
 
         m.set("deep.deep2", 3);
+    });
+
+    tests.add("model.event.change.deep.2", function(test) {
+        var m = new Model({}, {
+            deep: {
+                deep2: [1,2]
+            }
+        });
+
+        m.on("change:deep.deep2", function() {
+            test.done();
+        });
+
+        m.set("deep.deep2", [1, 2, 3]);
+    });
+
+    tests.add("model.event.change.deep.3", function(test) {
+        var m = new Model({}, {
+            deep: {
+                deep2: [1,2]
+            }
+        });
+
+        m.on("change:deep.deep3", function() {
+            test.done();
+        });
+
+        m.set("deep.deep3", [1, 2, 3]);
     });
 })

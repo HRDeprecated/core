@@ -105,7 +105,7 @@ define([
 
             // Calcul diffs
             if (!options.silent) {
-                diffs = _.deepkeys(diffs, true);
+                diffs = _.diffkeys(diffs);
                 _.each(diffs, function(tag) {
                     this.trigger("change:"+tag, tag);
                 }, this);

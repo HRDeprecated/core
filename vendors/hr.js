@@ -10372,7 +10372,7 @@ define('hr/shims',[
             }
     }
 
-    var arrays, basicObjects, deepClone, deepExtend, isBasicObject, sum, removeHtml, deepKeys;
+    var arrays, basicObjects, deepClone, deepExtend, isBasicObject, sum, removeHtml, deepKeys, diffkeys;
 
     deepClone = function(obj) {
         return $.extend(true, {}, obj);
@@ -10432,6 +10432,31 @@ define('hr/shims',[
         return keys;
     };
 
+    diffkeys = function(obj) {
+        var keys= [];
+        var getBase = function(base, key) {
+            if (_.size(base) == 0) return key;
+            return base+"."+key;
+        };
+
+        var addKeys = function(_obj, base) {
+            var _base, _isObject;
+            base = base || "";
+
+            _.each(_obj, function(value, key) {
+                _base = getBase(base, key);
+                _isObject = _.isObject(value) && !_.isArray(value);
+
+                if (_isObject && value._t != "a") addKeys(value, _base);
+                keys.push(_base);
+            });
+        };
+
+        addKeys(obj);
+
+        return keys;
+    };
+
     _.mixin({
         deepClone: deepClone,
         isBasicObject: isBasicObject,
@@ -10440,7 +10465,8 @@ define('hr/shims',[
         deepExtend: deepExtend,
         sum: sum,
         removeHtml: removeHtml,
-        deepkeys: deepkeys
+        deepkeys: deepkeys,
+        diffkeys: diffkeys
     });
 
     return {};
@@ -13550,7 +13576,7 @@ define('hr/model',[
 
             // Calcul diffs
             if (!options.silent) {
-                diffs = _.deepkeys(diffs, true);
+                diffs = _.diffkeys(diffs);
                 _.each(diffs, function(tag) {
                     this.trigger("change:"+tag, tag);
                 }, this);
