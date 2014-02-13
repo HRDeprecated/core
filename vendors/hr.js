@@ -13562,8 +13562,9 @@ define('hr/model',[
             });
 
             // Calcul new attributes
-            diffs = jsondiffpatch.diff(this.attributes || {}, attrs);
-            this.attributes = jsondiffpatch.patch(this.attributes || {}, diffs);
+            newattributes = _.deepExtend({}, this.attributes || {}, attrs);
+            if (!options.silent) diffs = jsondiffpatch.diff(this.attributes || {}, newattributes);
+            this.attributes = newattributes;
 
             // New unique id
             var oldId = this.id;

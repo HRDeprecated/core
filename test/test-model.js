@@ -21,6 +21,31 @@ define([
         test.assert(m.get("test") == "world");
     });
 
+    tests.add("model.set.deep", function(test) {
+        var m = new Model({}, {
+            deep: {
+                deep2: [1,2]
+            }
+        });
+
+        m.set("deep.deep2", [1, 2, 3]);
+        test.assert(m.get("deep.deep2").length == 3 && m.get("test") == "hello");
+    });
+
+    tests.add("model.set.deep.2", function(test) {
+        var m = new Model({}, {
+            deep: {
+                deep2: "hello"
+            }
+        });
+
+        m.set("deep.deep2", {
+            hello: "world"
+        });
+
+        test.assert(m.get("deep.deep2.hello") == "world");
+    });
+
     tests.add("model.toJSON()", function(test) {
         var m = new Model();
         test.assert(m.toJSON().test == "hello");
@@ -32,6 +57,7 @@ define([
             test.done();
         });
         m.set("test", "world");
+        test.fail();
     });
 
     tests.add("model.event.change.valid", function(test) {
@@ -64,6 +90,7 @@ define([
         });
 
         m.set("deep.deep2", 3);
+        test.fail();
     });
 
     tests.add("model.event.change.deep.2", function(test) {
@@ -78,6 +105,7 @@ define([
         });
 
         m.set("deep.deep2", [1, 2, 3]);
+        test.fail();
     });
 
     tests.add("model.event.change.deep.3", function(test) {
@@ -92,5 +120,6 @@ define([
         });
 
         m.set("deep.deep3", [1, 2, 3]);
+        test.fail();
     });
 })
