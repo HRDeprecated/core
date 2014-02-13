@@ -60,6 +60,24 @@ define([
         test.fail();
     });
 
+    tests.add("model.event.set.valid", function(test) {
+        var data = {
+            'a': {
+                'b': 1
+            }
+        };
+        var m = new hr.Model({}, data);
+        m.on("set", function() {
+            test.fail();
+        });
+        m.set({
+            'a': {
+                'b': 1
+            }
+        });
+        test.done();
+    });
+
     tests.add("model.event.change.valid", function(test) {
         var data = {
             'a': {

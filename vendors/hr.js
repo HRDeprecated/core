@@ -13581,7 +13581,7 @@ define('hr/model',[
                 _.each(diffs, function(tag) {
                     this.trigger("change:"+tag, tag);
                 }, this);
-                this.trigger("set", diffs);
+                if (diffs.length > 0) this.trigger("set", diffs);
             }
 
             return this;
