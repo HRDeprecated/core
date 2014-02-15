@@ -91,6 +91,10 @@ define([
          *  Reset the collection
          */
         reset: function(models, options) {
+            options = _.defaults(options || {}, {
+                totalCount: false
+            });
+
             // Manage {list:[], n:0} for infinite list
             if (_.size(models) == 2
             && models.list != null && models.n != null) {
@@ -100,6 +104,7 @@ define([
             this.options.startIndex = 0;
             this.models = [];
             this._byId = {};
+            if (options.totalCount) this._totalCount = null;
             this.add(models, _.extend({silent: true}, options || {}));
             options = _.defaults(options || {}, {
                 silent: false
