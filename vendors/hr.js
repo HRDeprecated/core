@@ -13491,6 +13491,7 @@ define('hr/model',[
             attributes = attributes || {};
             attributes = _.deepExtend({}, _.result(this, "defaults"), attributes);
 
+            this._prevAttributes = null;
             this.collection = this.options.collection;
             this.attributes = {};
             this.set(attributes, {silent: true})
@@ -13524,10 +13525,7 @@ define('hr/model',[
                 attributes = attributes[currentScope];
             }
             if (scope.length == 0 && _.isUndefined(attributes) == false) {
-                if (_.isFunction(attributes)) return attributes;
-                if (_.isObject(attributes) && !_.isArray(attributes)) return _.deepClone(attributes);
-
-                return _.clone(attributes);
+                return attributes;
             } else {
                 return defaults;
             }
@@ -13566,7 +13564,8 @@ define('hr/model',[
 
             // Calcul new attributes
             newattributes = _.deepExtend({}, this.attributes || {}, attrs);
-            if (!options.silent) diffs = jsondiffpatch.diff(this.attributes || {}, newattributes);
+            if (!options.silent) diffs = jsondiffpatch.diff(this._prevAttributes, newattributes);
+            this._prevAttributes = this._prevAttributes == null ? _.deepClone(newattributes) : this.attributes;
             this.attributes = newattributes;
 
             // New unique id

@@ -15,16 +15,22 @@ define([
         test.assert(m.get("test") == "hello");
     });
 
-    tests.add("model.get", function(test) {
+    tests.add("model.set.deep.modification", function(test) {
         var m = new Model({}, {
             a: {
                 b: 1
             }
         });
-            
+
         var a = m.get("a");
         a.b = 2;
-        test.assert(m.get("a.b") == 1);
+
+        m.on("change:a.b", function() {
+            test.assert(m.get("a.b") == 2);
+        });
+
+        m.set("a", a);
+        test.fail();
     });
 
     tests.add("model.set", function(test) {
@@ -150,21 +156,6 @@ define([
         });
 
         m.set("deep.deep3", [1, 2, 3]);
-        test.fail();
-    });
-
-    tests.add("model.event.change.deep.4", function(test) {
-        var o1 = {"name":"samypesse@gmail.com","userId":"samypesse@gmail.com","email":"samypesse@gmail.com","settings":{"search":{"commands":true,"files":true,"tags":true,"doks":true,"stackoverflow":true},"files":{"ace":true,"imageviewer":true,"markdownviewer":true},"themes":{"theme":"dark"},"editor":{"keyboard":"textinput","fontsize":"12","printmargincolumn":"80","wraplimitrange":"80","autocollaboration":true,"showprintmargin":false,"highlightactiveline":false,"enablesoftwrap":false,"enablesofttabs":true,"tabsize":"4","theme":"github"},"manager":{"registry":"https://api.codebox.io"},"offline":{"enabled":false,"syncInterval":"10","syncIgnore":""},"terminal":{"font":"monospace","size":"13","line-height":"1.3","theme":"monokai_soda"},"heroku":{"key":""},"videochat":{"state":"online","position":"right-bottom","size":"normal"},"files-panel":{"openfiles":true,"hiddenfiles":true,"gitfolder":false},"deploymentSolutions":{"solutions":{"3115fb34dfcb5ba8aa049707c596b733":{"name":"heroku","type":"heroku","settings":{"name":"test","key":"lol"}}}}},"token":"t628i79zfr","mtime":1392504749};
-        var o2 = {"name":"samypesse@gmail.com","userId":"samypesse@gmail.com","email":"samypesse@gmail.com","settings":{"search":{"commands":true,"files":true,"tags":true,"doks":true,"stackoverflow":true},"files":{"ace":true,"imageviewer":true,"markdownviewer":true},"themes":{"theme":"dark"},"editor":{"keyboard":"textinput","fontsize":"12","printmargincolumn":"80","wraplimitrange":"80","autocollaboration":true,"showprintmargin":false,"highlightactiveline":false,"enablesoftwrap":false,"enablesofttabs":true,"tabsize":"4","theme":"github"},"manager":{"registry":"https://api.codebox.io"},"offline":{"enabled":false,"syncInterval":"10","syncIgnore":""},"terminal":{"font":"monospace","size":"13","line-height":"1.3","theme":"monokai_soda"},"heroku":{"key":""},"videochat":{"state":"online","position":"right-bottom","size":"normal"},"files-panel":{"openfiles":true,"hiddenfiles":true,"gitfolder":false},"deploymentSolutions":{"solutions":{"3115fb34dfcb5ba8aa049707c596b733":{"name":"heroku","type":"heroku","settings":{"name":"test","key":"test"}}}}},"token":"t628i79zfr","mtime":1392504749};
-    
-        var m = new hr.Model({}, o1);
-        m.on("set", function() {
-            console.log(arguments);
-        })
-        m.on("change:settings.deploymentSolutions", function() {
-            test.done();
-        });
-        m.set("settings.deploymentSolutions.solutions", {"3115fb34dfcb5ba8aa049707c596b733":{"name":"heroku","type":"heroku","settings":{"name":"test","key":"test"}}});
         test.fail();
     });
 })
