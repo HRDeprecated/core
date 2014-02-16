@@ -96,7 +96,25 @@ define([
         test.fail();
     });
 
-    tests.add("model.event.set.valid", function(test) {
+    tests.add("model.event.change.2", function(test) {
+        var data = {
+            'a': {
+                'b': 1
+            }
+        };
+        var m = new hr.Model({}, data);
+        m.on("change:a", function() {
+            test.fail();
+        });
+        m.set({
+            'a': {
+                'b': 1
+            }
+        });
+        test.done();
+    });
+
+    tests.add("model.event.set", function(test) {
         var data = {
             'a': {
                 'b': 1
@@ -114,22 +132,17 @@ define([
         test.done();
     });
 
-    tests.add("model.event.change.valid", function(test) {
-        var data = {
-            'a': {
-                'b': 1
-            }
-        };
-        var m = new hr.Model({}, data);
-        m.on("change:a", function() {
-            test.fail();
+    tests.add("model.event.change.next", function(test) {
+        var m = new Model({}, {
+            'test': "b"
         });
-        m.set({
-            'a': {
-                'b': 1
-            }
+
+        m.set("test", "a");
+        m.on("set", function() {
+            test.done();
         });
-        test.done();
+        m.set("test", "b");
+        test.fail();
     });
 
     tests.add("model.event.change.deep.1", function(test) {

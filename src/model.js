@@ -94,7 +94,10 @@ define([
 
             // Calcul new attributes
             newattributes = _.deepExtend({}, this.attributes || {}, attrs);
-            if (!options.silent) diffs = jsondiffpatch.diff(this._prevAttributes, newattributes);
+            if (!options.silent) {
+                diffs = jsondiffpatch.diff(this._prevAttributes, newattributes);
+                if (_.size(diffs) == 0) diffs = jsondiffpatch.diff(this.attributes, newattributes);
+            }
             this._prevAttributes = this._prevAttributes == null ? _.deepClone(newattributes) : this.attributes;
             this.attributes = newattributes;
 
