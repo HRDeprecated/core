@@ -20,4 +20,19 @@ define([
             }
         });
     });
+
+    benchmarks.add("model.get", function() {
+        var data = {
+            'a': {
+                'b': {
+                    c: 3,
+                    d: {
+                        lol: 1
+                    }
+                }
+            }
+        };
+        var m = new hr.Model({}, data);
+        m.get("a.b", 2);
+    });
 })

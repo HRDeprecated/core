@@ -13524,7 +13524,10 @@ define('hr/model',[
                 attributes = attributes[currentScope];
             }
             if (scope.length == 0 && _.isUndefined(attributes) == false) {
-                return attributes;
+                if (_.isFunction(attributes)) return attributes;
+                if (_.isObject(attributes) && !_.isArray(attributes)) return _.deepClone(attributes);
+
+                return _.clone(attributes);
             } else {
                 return defaults;
             }
