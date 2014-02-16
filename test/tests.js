@@ -45,16 +45,14 @@ define([
 
                 // Call the test
                 startTime = Date.now();
-                var ret = func(test);
-
-                // Promise returned
-                if (Q.isPromise(ret)) {
-                    ret.then(function() {
-                        test.done();
-                    }, function(err) {
-                        test.fail(err);
-                    })
-                }
+                Q().then(function() {
+                    return func(test);
+                }) 
+                .then(function() {
+                    test.done();
+                }, function(err) {
+                    test.fail(err);
+                });
 
                 return d.promise;
             }

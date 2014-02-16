@@ -1,6 +1,6 @@
 define([
     "q",
-    "hr/shims",
+    "hr/utils",
     "hr/configs",
     "hr/class",
     "hr/view",
@@ -24,7 +24,7 @@ define([
     "hr/queue",
     "hr/i18n",
     "hr/views"
-], function(Q, shims, configs, 
+], function(Q, _, configs, 
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
 Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, Backend, Queue, I18n, views) {
 

@@ -47,7 +47,7 @@ define([
 
         var m = c.get("id1");
         m.set("id", "id2");
-
+        
         test.assert(c.size() == 1);
     });
 })

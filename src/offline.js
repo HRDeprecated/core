@@ -1,7 +1,7 @@
 define([
-    'jQuery',
-    'hr/logger',
-    'hr/class'
+    "hr/dom",
+    "hr/logger",
+    "hr/class"
 ], function($, Logger, Class) {
     var logging = Logger.addNamespace("offline");
 

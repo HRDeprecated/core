@@ -14,7 +14,7 @@ module.exports = function (grunt) {
                     include: ["hr/hr"],
                     optimize: "none",
                     paths: {
-                        'underscore':     '../vendors/underscore',
+                        'lodash':         '../vendors/lodash',
                         'jQuery':         '../vendors/jquery',
                         'jsondiffpatch':  '../vendors/jsondiffpatch',
                         'q':              '../vendors/q',
@@ -22,7 +22,7 @@ module.exports = function (grunt) {
                         'hr': './',
                     },
                     shim: {
-                        'underscore': {
+                        'lodash': {
                             exports: '_'
                         },
                         'q': {

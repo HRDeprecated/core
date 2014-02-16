@@ -1,5 +1,5 @@
 define([
-    "underscore",
+    "hr/utils",
 ], function(_) {
     // Regular expression used to split event strings.
     var eventSplitter = /\s+/;

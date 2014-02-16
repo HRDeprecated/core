@@ -1,5 +1,5 @@
 define([
-    "underscore",
+    "hr/utils",
     "hr/view",
     "hr/template"
 ], function(_, View, Template) {

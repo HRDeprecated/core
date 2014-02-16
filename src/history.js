@@ -1,6 +1,6 @@
 define([
-    "jQuery",
-    "underscore",
+    "hr/dom",
+    "hr/utils",
     "hr/configs",
     "hr/class",
     "hr/logger",

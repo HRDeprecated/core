@@ -1,5 +1,5 @@
 define([
-    "underscore",
+    "hr/utils",
     "hr/configs",
     "hr/logger"
 ], function(_, configs, Logger) {

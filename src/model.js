@@ -1,5 +1,5 @@
 define([
-    "underscore",
+    "hr/utils",
     "jsondiffpatch",
     "hr/class",
     "hr/logger"
@@ -69,21 +69,22 @@ define([
             var attrs, subattrs, scope, changes, newattributes, diffs;
 
             // Handle both `"key", value` and `{key: value}` -style arguments.
-            if (_.isObject(key) || key == null) {
+            if (typeof key === 'object') {
                 attrs = key;
                 options = value;
             } else {
                 attrs = {};
                 scope = key.split(".");
                 subattrs = attrs;
-                _.each(scope, function(key, i) {
-                    if (i == (_.size(scope) - 1)) {
+                for (var i in scope) {
+                    var key = scope[i];
+                    if (i == (scope.length - 1)) {
                         subattrs[key] = value;
                     } else {
                         subattrs[key] = {};
                         subattrs = subattrs[key];
                     }
-                });
+                }
             }
 
             // Define options

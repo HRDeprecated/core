@@ -1,5 +1,5 @@
 define([
-    "underscore",
+    "hr/utils",
     "q",
     "hr/class",
     "hr/model",
@@ -191,14 +191,14 @@ define([
 
             model = this._prepareModel(model);
 
-            delete this._byId[model.id];
             _.each(this.models, function(m, i) {
-                if (model.id == m.id) {
+                if (!m || model.id == m.id) {
                     this.models.splice(i, 1);
                     index = i;
                     return;
                 }
             }, this);
+            delete this._byId[model.id];
 
             if (options.silent) return this;
             options.index = index;

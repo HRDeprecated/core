@@ -1,52 +1,53 @@
 define([
-        "underscore",
-        "jQuery",
+    "lodash",
+    "hr/dom",
 ], function(_, $) {
     if(!Function.prototype.bind) {
-            Function.prototype.bind = function(newThis) {
-                    var that = this;
-                    return function(){ 
-                            return that.apply(newThis, arguments); 
-                    };
-            }
+        Function.prototype.bind = function(newThis) {
+                var that = this;
+                return function(){ 
+                        return that.apply(newThis, arguments); 
+                };
+        }
     }
 
-    var arrays, basicObjects, deepClone, deepExtend, isBasicObject, sum, removeHtml, deepKeys, diffkeys;
-
-    deepClone = function(obj) {
+    var deepClone = function(obj) {
         return $.extend(true, {}, obj);
     };
 
-    isBasicObject = function(object) {
-        return (object != null && (object.prototype === {}.prototype || object.prototype === Object.prototype) && _.isObject(object) && !_.isArray(object) && !_.isFunction(object) && !_.isDate(object) && !_.isRegExp(object) && !_.isArguments(object));
+    var isBasicObject = function(object) {
+        return (object != null
+        && (object.prototype === {}.prototype|| object.prototype === Object.prototype)
+        && _.isObject(object) && !_.isArray(object) && !_.isFunction(object) && !_.isDate(object)
+        && !_.isRegExp(object) && !_.isArguments(object));
     };
 
-    basicObjects = function(object) {
+    var basicObjects = function(object) {
         return _.filter(_.keys(object), function(key) {
                 return isBasicObject(object[key]);
         });
     };
 
-    arrays = function(object) {
+    var arrays = function(object) {
         return _.filter(_.keys(object), function(key) {
                 return _.isArray(object[key]);
         });
     };
 
-    deepExtend = _.partial($.extend, true);
+    var deepExtend = _.partial($.extend, true);
 
-    sum = function(obj) {
+    var sum = function(obj) {
         if (!$.isArray(obj) || obj.length == 0) return 0;
         return _.reduce(obj, function(sum, n) {
             return sum += n;
         });
     };
 
-    removeHtml = function(t) {
+    var removeHtml = function(t) {
         return $("<div>").html(t).text();
     };
 
-    deepkeys = function(obj, all) {
+    var deepkeys = function(obj, all) {
         var keys= [];
         var getBase = function(base, key) {
             if (_.size(base) == 0) return key;
@@ -71,7 +72,7 @@ define([
         return keys;
     };
 
-    diffkeys = function(obj) {
+    var diffkeys = function(obj) {
         var keys= [];
         var getBase = function(base, key) {
             if (_.size(base) == 0) return key;
@@ -108,5 +109,5 @@ define([
         diffkeys: diffkeys
     });
 
-    return {};
+    return _;
 });

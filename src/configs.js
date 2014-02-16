@@ -1,4 +1,4 @@
-define(function() {
+define(["hr/utils"], function(_) {
     var Config = {
         // Revision
         "revision": 0,

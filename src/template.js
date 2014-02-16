@@ -1,5 +1,5 @@
 define([
-    "underscore",
+    "hr/utils",
     "q",
     "hr/configs",
     "hr/class",

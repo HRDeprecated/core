@@ -39,6 +39,24 @@ define([
         test.assert(m.get("test") == "world");
     });
 
+    tests.add("model.del", function(test) {
+        var m = new Model();
+        m.set("test2", "world")
+        m.del("test2")
+        test.assert(m.get("test2") == null);
+    });
+
+    tests.add("model.del.deep", function(test) {
+        var m = new Model();
+        m.set({
+            test2: {
+                test3: 1
+            }
+        })
+        m.del("test2.test3")
+        test.assert(m.get("test2") != null && m.get("test2.test3") == null);
+    });
+
     tests.add("model.set.deep", function(test) {
         var m = new Model({}, {
             deep: {

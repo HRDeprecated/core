@@ -1,6 +1,6 @@
 define([
-    "jQuery",
-    "underscore",
+    "hr/dom",
+    "hr/utils",
     "hr/view"
 ], function($, _, View) {
     var Head = View.extend({

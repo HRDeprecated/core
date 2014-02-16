@@ -6,7 +6,7 @@ require([
     "benchmarks",
 
     "benchmark-events",
-    "benchmark-underscore",
+    "benchmark-utils",
     "benchmark-jsondiff",
     "benchmark-model",
     
@@ -28,6 +28,6 @@ require([
     app.run();
 
     tests.run().then(function() {
-        //return benchmarks.run();
+        return benchmarks.run();
     });
 });
