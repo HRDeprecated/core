@@ -1,5 +1,5 @@
 define([
-    "lodash",
+    "underscore",
     "hr/dom",
 ], function(_, $) {
     if(!Function.prototype.bind) {

@@ -1,6 +1,6 @@
 define([
     "hr/utils",
-    "q",
+    "hr/promise",
     "hr/class"
 ], function(_, q, Class) {
     var Queue = Class.extend({

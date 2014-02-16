@@ -1,5 +1,5 @@
 define([
-    'q',
+    'hr/promise',
     'hr/class',
     'hr/offline',
     'hr/storage'

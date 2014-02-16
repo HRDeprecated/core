@@ -5,43 +5,6 @@ module.exports = function (grunt) {
     var docsPath = path.resolve(__dirname, 'docs');
 
     grunt.initConfig({
-        'requirejs': {
-            'compile': {
-                options: {
-                    name: "hr/hr",
-                    baseUrl: './src',
-                    out: './vendors/hr.js',
-                    include: ["hr/hr"],
-                    optimize: "none",
-                    paths: {
-                        'lodash':         '../vendors/lodash',
-                        'jQuery':         '../vendors/jquery',
-                        'jsondiffpatch':  '../vendors/jsondiffpatch',
-                        'q':              '../vendors/q',
-                        'text':           '../vendors/require-text',
-                        'hr': './',
-                    },
-                    shim: {
-                        'lodash': {
-                            exports: '_'
-                        },
-                        'q': {
-                            exports: 'Q'
-                        },
-                        'jQuery': {
-                            exports: '$'
-                        },
-                        'jsondiffpatch': {
-                            exports: 'jsondiffpatch'
-                        }
-                    },
-                    wrap: {
-                        'start': "(function() {",
-                        'end': "}());"
-                    }
-                }
-            }
-        },
         'http-server': {
             'docs': {
                 root: path.resolve(__dirname, "docs/build"),
@@ -56,8 +19,6 @@ module.exports = function (grunt) {
             src: ['**']
         }
     });
-
-    grunt.loadNpmTasks('grunt-requirejs');
     grunt.loadNpmTasks('grunt-gh-pages');
 
 
@@ -103,16 +64,11 @@ module.exports = function (grunt) {
         });
     });
 
-    grunt.registerTask('build', [
-        'requirejs:compile'
-    ]);
-
     grunt.registerTask('docs', [
         'buildapp:docs/'
     ]);
 
     grunt.registerTask('test', [
-        'build',
         'buildapp:test/'
     ]);
 
@@ -122,7 +78,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', [
-        'build',
-        'docs'
+        'docs',
+        'test'
     ]);
 };

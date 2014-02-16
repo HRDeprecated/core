@@ -1,7 +1,7 @@
 define([
     "hr/dom",
     "hr/utils",
-    "q",
+    "hr/promise",
     "hr/configs",
     "hr/urls",
     "hr/logger",

@@ -1,6 +1,6 @@
 define([
     "hr/utils",
-    "q",
+    "hr/promise",
     "hr/configs",
     "hr/class",
     "hr/logger",

@@ -1,5 +1,5 @@
 define([
-    "q",
+    "hr/promise",
     "hr/utils",
     "hr/configs",
     "hr/class",
