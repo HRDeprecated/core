@@ -10,6 +10,10 @@ define([
         initialize: function() {
             this.tasks = [];
             this.empty = true;
+
+            this.defaultTask = this.options.task;
+            this.defaultContext = this.options.context;
+
             return this;
         },
 
@@ -20,6 +24,12 @@ define([
          *  @context : context to the task
          */
         defer: function(task, context, args) {
+            if (!_.isFunction(task)) {
+                args = task;
+                task = null;
+                context = null;
+            }
+
             var d = Q.defer();
             this.tasks.push({
                 "task": task,
@@ -38,7 +48,9 @@ define([
          *  @task task object to start
          */
         startTask: function(task) {
-            Q(task.task.apply(task.context, task.args)).then(function() {
+            var f = task.task || this.defaultTask;
+
+            Q(f.apply(task.context || this.defaultContext, task.args)).then(function() {
                 task.result.resolve.apply(task.result, arguments);
             }, function() {
                 task.result.reject.apply(task.result, arguments);
