@@ -24,11 +24,14 @@ define([
          *  @context : context to the task
          */
         defer: function(task, context, args) {
+            // can used to default task
             if (!_.isFunction(task)) {
                 args = task;
                 task = null;
                 context = null;
             }
+
+            if (!_.isArray(args)) args = [args];
 
             var d = Q.defer();
             this.tasks.push({
