@@ -49,6 +49,7 @@ define([
         remove: function() {
             this.undelegateEvents();
             this.$el.remove();
+            this.stopListening();
             this.off();
             return this;
         },
@@ -57,16 +58,22 @@ define([
          *  Detach the view from the dom (to be reinserted later)
          */
         detach: function() {
-            // Detach components
-            this.eachComponent(function(view) {
-                view.detach();
-            });
-
             // Signal detachment
             this.trigger("detach");
 
             // Detach dom el
             this.$el.detach();
+            return this;
+        },
+
+        /*
+         *  Append view
+         */
+        appendTo: function(el) {
+            if (!(el instanceof $)) {
+                el = el.$el;
+            }
+            this.$el.appendTo(el);
             return this;
         },
 
@@ -162,7 +169,7 @@ define([
         empty: function() {
             // Detach components
             this.eachComponent(function(component) {
-                component.$el.detach();
+                component.remove();
             }, this);
 
             // Empty the dom

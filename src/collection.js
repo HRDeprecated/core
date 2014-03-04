@@ -151,14 +151,14 @@ define([
 
             this._byId[model.id] = model;
 
-            model.on('all', this._onModelEvent, this);
-            model.on("id", function(newId, oldId) {
+            this.listenTo(model, 'all', this._onModelEvent);
+            this.listenTo(model, 'id', function(newId, oldId) {
                 var m = this.get(newId);
                 if (m) this.remove(m);
 
                 this._byId[newId] = this._byId[oldId];
                 delete this._byId[oldId];
-            }, this);
+            });
 
             index = options.at;
             this.models.splice(index, 0, model);
@@ -204,6 +204,9 @@ define([
             options.index = index;
             if (this._totalCount != null) this._totalCount = _.max([0, this._totalCount - 1]);
             this.trigger('remove', model, this, options);
+
+            this.stopListening(model);
+
             return this;
         },
 

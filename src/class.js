@@ -104,31 +104,66 @@ define([
          *  callbacks for all events.
          */
         off: function(name, callback, context) {
-            var retain, ev, events, names, i, l, j, k;
             if (!this._events || !this.multipleEvents('off', name, [callback, context])) return this;
+
+            // Remove all callbacks for all events.
             if (!name && !callback && !context) {
                 this._events = void 0;
                 return this;
             }
 
-            names = name ? [name] : _.keys(this._events);
-            for (i = 0, l = names.length; i < l; i++) {
+            var names = name ? [name] : _.keys(this._events);
+            for (var i = 0, length = names.length; i < length; i++) {
                 name = names[i];
-                if (events = this._events[name]) {
-                    this._events[name] = retain = [];
-                    if (callback || context) {
-                        for (j = 0, k = events.length; j < k; j++) {
-                            ev = events[j];
-                            if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
-                            (context && context !== ev.context)) {
-                                retain.push(ev);
-                            }
-                        }
+
+                // Bail out if there are no events stored.
+                var events = this._events[name];
+                if (!events) continue;
+
+                // Remove all callbacks for this event.
+                if (!callback && !context) {
+                    delete this._events[name];
+                    continue;
+                }
+
+                // Find any remaining events.
+                var remaining = [];
+                for (var j = 0, k = events.length; j < k; j++) {
+                    var event = events[j];
+                    if (
+                        callback && callback !== event.callback &&
+                        callback !== event.callback._callback ||
+                        context && context !== event.context
+                    ) {
+                        remaining.push(event);
                     }
-                    if (!retain.length) delete this._events[name];
+                }
+
+                // Replace events if there are any remaining.  Otherwise, clean up.
+                if (remaining.length) {
+                    this._events[name] = remaining;
+                } else {
+                    delete this._events[name];
                 }
             }
 
+            return this;
+        },
+
+        // Tell this object to stop listening to either specific events ... or
+        // to every object it's currently listening to.
+        stopListening: function(obj, name, callback) {
+            var listeningTo = this._listeningTo;
+            if (!listeningTo) return this;
+
+            var remove = !name && !callback;
+            if (!callback && typeof name === 'object') callback = this;
+            if (obj) (listeningTo = {})[obj.cid] = obj;
+            for (var id in listeningTo) {
+                obj = listeningTo[id];
+                obj.off(name, callback, this);
+                if (remove || _.isEmpty(obj._events)) delete this._listeningTo[id];
+            }
             return this;
         },
 
@@ -198,5 +233,28 @@ define([
             return true;
         }
     });
+
+    // Inversion-of-control versions of `on` and `once`. Tell *this* object to
+    // listen to an event in another object ... keeping track of what it's
+    // listening to.
+    var listenMethods = {
+        listenTo: 'on',
+        listenToOnce: 'once'
+    };
+    _.each(listenMethods, function(implementation, method) {
+        Class.prototype[method] = function(obj, name, callback) {
+            var listeningTo = this._listeningTo || (this._listeningTo = {});
+            var id = obj.cid;
+            listeningTo[id] = obj;
+            if (!callback && typeof name === 'object') callback = this;
+            obj[implementation](name, callback, this);
+            return this;
+        };
+    });
+
+    Class.prototype.bind   = Class.prototype.on;
+    Class.prototype.unbind = Class.prototype.off;
+
+
     return Class;
 })

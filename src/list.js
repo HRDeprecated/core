@@ -51,21 +51,21 @@ define([
             } else {
                 this.collection = new this.Collection(this.options.collection);
             }
-            this.collection.on("reset", function() {
+            this.listenTo(this.collection, "reset", function() {
                 this.resetModels();
-            }, this);
-            this.collection.on("sort", function() {
+            });
+            this.listenTo(this.collection, "sort", function() {
                 this.orderItems();
-            }, this);
-            this.collection.on("add", function(elementmodel, collection, options) {
+            });
+            this.listenTo(this.collection, "add", function(elementmodel, collection, options) {
                 this.addModel(elementmodel, options);
-            }, this);
-            this.collection.on("remove", function(elementmodel) {
+            });
+            this.listenTo(this.collection, "remove", function(elementmodel) {
                 this.removeModel(elementmodel)
-            }, this);
-            this.collection.queue.on("tasks", function() {
+            });
+            this.listenTo(this.collection.queue, "tasks", function() {
                 this.update();
-            }, this);
+            });
 
             this.resetModels({
                 silent: true
@@ -75,6 +75,16 @@ define([
             if (this.options.baseFilter) this.filter(this.options.baseFilter);
 
             return this.update();
+        },
+
+        /*
+         *  Remove the view and all children
+         */
+        remove: function() {
+            _.each(this.items, function(view) {
+                view.remove();
+            });
+            return ListView.__super__.remove.apply(this, arguments);
         },
 
         /*
@@ -101,14 +111,15 @@ define([
                 "list": this,
                 "collection": this.collection
             });
-            model.on("set", function() {
+            this.listenTo(model, "set", function() {
                 item.update();
                 this.applyFilter(item);
-            }, this);
-            model.on("id", function(newId, oldId) {
+            });
+            this.listenTo(model, "id", function() {
                 this.items[newId] = this.items[oldId];
                 delete this.items[oldId];
-            }, this);
+            });
+
             item.update();
             tag = this.Item.prototype.tagName;
             if (this.Item.prototype.className) tag = tag+"."+this.Item.prototype.className.split(" ")[0];
@@ -133,7 +144,7 @@ define([
          */
         orderItems: function() {
             _.each(this.items, function(item) {
-                item.$el.detach();
+                item.detach();
             }, this);
 
             this.collection.each(function(model) {
@@ -142,7 +153,7 @@ define([
                     logging.warn("sort list with non existant item");
                     return;
                 }
-                item.$el.appendTo(this.$el);
+                item.appendTo(this);
             }, this);
             return this;
         },
@@ -158,6 +169,9 @@ define([
                 silent: false,
                 render: true
             });
+
+            this.stopListening(model);
+
             if (this.items[model.id] == null) return this;
 
             this.items[model.id].remove();
