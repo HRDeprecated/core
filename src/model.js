@@ -149,6 +149,7 @@ define([
          */
         destroy: function(options) {
             this.trigger("destroy", this, this.collection, options);
+            this.off();
             return this;
         },
 
