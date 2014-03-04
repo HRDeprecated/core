@@ -230,6 +230,9 @@ define([
          *  Clear components
          */
         clearComponents: function() {
+            this.eachComponent(function(view) {
+                view.remove();
+            });
             this.countComponents = 0;
             this.components = {};
             this.trigger("components:clear");
