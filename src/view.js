@@ -49,6 +49,24 @@ define([
         remove: function() {
             this.undelegateEvents();
             this.$el.remove();
+            this.off();
+            return this;
+        },
+
+        /*
+         *  Detach the view from the dom (to be reinserted later)
+         */
+        detach: function() {
+            // Detach components
+            this.eachComponent(function(view) {
+                view.detach();
+            });
+
+            // Signal detachment
+            this.trigger("detach");
+
+            // Detach dom el
+            this.$el.detach();
             return this;
         },
 
