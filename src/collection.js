@@ -101,6 +101,12 @@ define([
                 this._totalCount = models.n;
                 return this.reset(models.list, options);
             }
+
+            // Remove reference
+            for (var i = 0, length = this.models.length; i < length; i++) {
+                this._removeReference(this.models[i], options);
+            }
+            options.previousModels = this.models;
             this.options.startIndex = 0;
             this.models = [];
             this._byId = {};
@@ -152,13 +158,7 @@ define([
             this._byId[model.id] = model;
 
             this.listenTo(model, 'all', this._onModelEvent);
-            this.listenTo(model, 'id', function(newId, oldId) {
-                var m = this.get(newId);
-                if (m) this.remove(m);
-
-                this._byId[newId] = this._byId[oldId];
-                delete this._byId[oldId];
-            });
+            this.listenTo(model, 'id', this._onModelId);
 
             index = options.at;
             this.models.splice(index, 0, model);
@@ -169,6 +169,14 @@ define([
 
             if (this.comparator) this.sort({silent: options.silent});
             return this;
+        },
+
+        /*
+         *  Internal method to sever a model's ties to a collection.
+         */
+        _removeReference: function(model, options) {
+            if (this === model.collection) delete model.collection;
+            this.stopListening(model);
         },
 
         /*
@@ -204,10 +212,33 @@ define([
             options.index = index;
             if (this._totalCount != null) this._totalCount = _.max([0, this._totalCount - 1]);
             this.trigger('remove', model, this, options);
-
-            this.stopListening(model);
+            this._removeReference(model);
 
             return this;
+        },
+
+        /*
+         *  Pipe this colleciton into another one
+         */
+        pipe: function(to) {
+            to.listenTo(this, "add", function(model) {
+                this.add(model);
+            });
+            to.listenTo(this, "remove", function(model) {
+                this.remove(model);
+            });
+            to.listenTo(this, "reset", function(colleciton, options) {
+                _.each(options.previousModels, function(model) {
+                    this.remove(model);
+                }, this);
+                collection.each(function(model) {
+                    this.add(model);
+                }, this);
+            });
+
+            this.each(function(model) {
+                to.add(model);
+            });
         },
 
         /*
@@ -273,6 +304,17 @@ define([
                 this.remove(model, options);
             }
             this.trigger.apply(this, arguments);
+        },
+
+        /*
+         *  Internal method called every time a model id change
+         */
+        _onModelId: function(newId, oldId) {
+            var m = this.get(newId);
+            if (m) this.remove(m);
+
+            this._byId[newId] = this._byId[oldId];
+            delete this._byId[oldId];
         },
 
         /*
