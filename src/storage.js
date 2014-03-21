@@ -11,10 +11,11 @@ define([
          *  Return storage context
          */
         storage: function() {
-            if (typeof window.localStorage === 'undefined') {
+            try {
+                return (typeof window.localStorage === 'undefined')? null : window.localStorage;
+            } catch (e) {
+                logging.error("Error accessing localStorage: ", e);
                 return null;
-            } else {
-                return localStorage;
             }
         },
 
