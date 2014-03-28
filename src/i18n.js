@@ -1,3 +1,6 @@
+/**
+ * @module hr/i18n
+ */
 define([
     "hr/dom",
     "hr/utils",
@@ -8,20 +11,55 @@ define([
     "hr/resources"
 ], function($, _, Q, configs, Urls, Logger, Resources) {
     var logging = Logger.addNamespace("i18n");
+
+    /**
+     * @class i18n
+     */
     var i18n = {};
 
-    // Set default locale to english
+    /**
+     * Default locale to fallback to (default is english).
+     *
+     * @property {string} defaultLocale
+     * @private
+     */
     i18n.defaultLocale = "en";
 
-    // Set default separator
+    /**
+     * Default separator.
+     *
+     * @property {string} defaultSeparator
+     * @private
+     * @default "."
+     */
     i18n.defaultSeparator = ".";
 
-    // Set current locale to null
+    /**
+     * Current language
+     *
+     * @property {string} locale
+     * @private
+     * @default null
+     */
     i18n.locale = null;
 
-    // Languages loaded
+    /**
+     * List of loaded languages
+     *
+     * @property {array} locales
+     * @private
+     * @default []
+     */
     i18n.locales = [];
 
+    /**
+     * Calcul the output of a message with some options
+     *
+     * @method interpolate
+     * @param {string} message message to interpolate
+     * @param {object} options options to pass for interpolation
+     * @return {string} message interpolated with options
+     */
     i18n.interpolate = function(message, options) {
         options = options || {};
         
@@ -37,14 +75,33 @@ define([
         return compiled(options);
     };
 
+    /**
+     * Return current language if set or default language
+     *
+     * @method currentLocale
+     * @return {string}
+     */
     i18n.currentLocale = function() {
         return (i18n.locale || i18n.defaultLocale);
     };
 
+    /**
+     * Set current language
+     *
+     * @method setCurrentLocale
+     * @param {string} lang new language to set
+     */
     i18n.setCurrentLocale = function(lang) {
         i18n.locale = lang;
     };
 
+    /**
+     * Load a language using Resources loader
+     *
+     * @method loadLocale
+     * @param {string} lng language to load
+     * @param {object} options options for loading
+     */
     i18n.loadLocale = function(lng, options) {
         options = _.defaults({}, options || {}, {
             'loader': 'i18n'
@@ -108,6 +165,14 @@ define([
         return messages;
     };
 
+    /**
+     * Translate a scope
+     *
+     * @method translate
+     * @param {string} scope scope message to translate
+     * @param {object} options options to pass for translation
+     * @return {string} message translated
+     */
     i18n.translate = function(scope, options) {
         var translation = this.lookup(scope, options);
 

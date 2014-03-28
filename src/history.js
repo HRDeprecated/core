@@ -1,3 +1,6 @@
+/**
+ * @module hr/history
+ */
 define([
     "hr/dom",
     "hr/utils",
@@ -6,24 +9,30 @@ define([
     "hr/logger",
     "hr/urls",
 ], function($, _, configs, Class, Logger, urls) {
-
     var logging = Logger.addNamespace("history");
 
-    var History = new (Class.extend({   
-        /*
-         *  Initialize the router
-         */
+    /**
+     * Represent an interface for managing the web navigation in a global way.
+     * History uses hash change for triggering navigation event and regex as routes.
+     * See Router for a more up level interface.
+     *
+     * @class History
+     * @extends Class
+     * @constructor
+     */
+    var History = Class.extend({   
         initialize: function() {
             this.handlers = [];
             this.started = false;
-            return this;
         },
 
-        /*
-         *  Add a route
-         *  @route : regex ou route string
-         *  @name : name for the route
-         *  @callback : callback when routing
+        /**
+         * Add a new navigation route
+         * 
+         * @method route
+         * @param {regex} route regex for the route
+         * @param {function} callback function to call as a navigation callback
+         * @chainable
          */
         route: function(route, callback) {
             this.handlers.unshift({
@@ -34,8 +43,11 @@ define([
             return this;
         },
 
-        /*
-         *  Start the routers system
+        /**
+         * Add the navigation handling
+         * 
+         * @method start
+         * @chainable
          */
         start: function() {
             if (this.started) {
@@ -56,19 +68,23 @@ define([
             return true;
         },
 
-        /*
-         *  Navigate
+        /**
+         * Navigation to a specific route
+         * 
+         * @method navigate
+         * @param {string} route to navigate to
+         * @param {object} [args] arguments for the route
+         * @chainable
          */
         navigate: function(route, args) {
             url = urls.route(route, args);
             logging.log("navigate to ", url);
             window.location.hash = url;
+            return this;
         },
 
         /*
          *  Handle a state changement in history
-         *  @url : url of the state
-         *  @state : state object
          */
         _handleState: function(url) {
             if (url == null) return this;
@@ -92,7 +108,8 @@ define([
             var url = window.location.hash.replace("#", "");
             return this._handleState(url);
         },
-    }));
+    });
 
-    return History;
+    var history = new History();
+    return history;
 });
