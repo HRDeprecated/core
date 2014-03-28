@@ -1,8 +1,0 @@
-<% _.each(photos, function(photo) { %>
-    <a href="<%- hr.urls.static("images", photo.Id, "1024.jpg") %>">
-        <img src="<%- hr.urls.static("images", photo.Id, "128.jpg") %>" />
-    </a>
-    <a href="<%- hr.urls.route("photos/comments/:Id", photo) %>">
-        <%- photo.comments %> Comments
-    </a>
-<% }); %>

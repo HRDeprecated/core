@@ -1,8 +1,0 @@
-<h1><%- hr.i18n.t("homepage.title", {name: user.name}) %></h1>
-
-<% if (user.admin) { %>
-    <p><%= hr.i18n.t("homepage.messages.admin", {name: user.name}) %></p>
-    <%- view.component("admin") %>
-<% } else { %>
-    <p><%= hr.i18n.t("homepage.messages.user", {name: user.name}) %></p>
-<% } %>

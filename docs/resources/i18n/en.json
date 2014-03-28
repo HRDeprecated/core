@@ -1,5 +1,0 @@
-{
-    "message": {
-        "hello": "Hello <%- name %> !"
-    }
-}
