@@ -4,9 +4,7 @@ define([
     // Regular expression used to split event strings.
     var eventSplitter = /\s+/;
 
-    /*
-     *  hr.Class is the base for objects in hr
-     */
+    
     var Class = function(options) {
         this.options = _.extend({}, options || {});
         _.defaults(this.options, this.defaults);
@@ -14,11 +12,14 @@ define([
         this.initialize.apply(this, arguments);
     };
 
-    /*
-     * Class.extend is used for herited from this class
-     *  exemples:
+    /**
+     * Class.extend is used for herited from this class object
+     * @examples:
      *      Class.extend(Class1, staticProps)
      *      Class.extend([Class1, Class2], staticProps)
+     *
+     * @function extend
+     * @static
      */
     Class.extend = function(protoProps, staticProps) {
         var parent = this;
@@ -53,22 +54,38 @@ define([
         return child;
     };
 
+    /**
+     * Base object representation: manage events and extensibility
+     *
+     * @class Class
+     * @constructor
+     */
     Class = Class.extend({
-        /*
-         *  Default options for this.options in the class object
+        /**
+         * Default options for this.options in the class object
+         *
+         * @property
+         * @type {object}
+         * @default {}
          */
         defaults: {},
 
         /*
-         *  This method is a kind of constructor in class definition.
+         * Initialize this object, called at the construction
+         *
+         * @method initialize
          */
-        initialize: function() {
-            return this;
-        },
+        initialize: function() {},
 
         /*
-         *  Bind an event to a `callback` function. Passing `"all"` will bind
-         *  the callback to all events fired.
+         * Bind an event to a `callback` function. Passing `"all"` will bind
+         * the callback to all events fired.
+         *
+         * @method on
+         * @param {string} name event name (or names separated by space)
+         * @param {function} callback callback for this event
+         * @param {object} [context] content for the callback
+         * @chainable
          */
         on: function(name, callback, context) {
             if (!this.multipleEvents('on', name, [callback, context]) || !callback) return this;
@@ -85,6 +102,12 @@ define([
         /*
          *  Bind an event to only be triggered a single time. After the first time
          *  the callback is invoked, it will be removed.
+         *
+         * @method once
+         * @param {string} name event name (or names separated by space)
+         * @param {function} callback callback for this event
+         * @param {object} [context] content for the callback
+         * @chainable
          */
         once: function(name, callback, context) {
             if (!this.multipleEvents('once', name, [callback, context]) || !callback) return this;
@@ -102,6 +125,12 @@ define([
          *  callbacks with that function. If `callback` is null, removes all
          *  callbacks for the event. If `name` is null, removes all bound
          *  callbacks for all events.
+         *
+         * @method off
+         * @param {string} name event name (or names separated by space)
+         * @param {function} [callback] callback for this event
+         * @param {object} [context] content for the callback
+         * @chainable
          */
         off: function(name, callback, context) {
             if (!this._events || !this.multipleEvents('off', name, [callback, context])) return this;

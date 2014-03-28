@@ -12,12 +12,14 @@ define([
      * Represent an entire application on the document DOM
      *
      * @class Application
+     * @extends Class
+     * @constructor
      */
     var Application = View.extend({
         /**
          * The main element for this application.
          *
-         * @property
+         * @attribute el
          * @type {jQueryElement}
          * @default $("body")
          */
@@ -26,7 +28,7 @@ define([
         /**
          * The head manager to use
          *
-         * @property
+         * @attribute Head
          * @type {Class}
          */
         Head: Head,
@@ -34,7 +36,7 @@ define([
         /**
          * Name of the application
          *
-         * @property
+         * @attribute name
          * @type {string}
          */
         name: null,
@@ -42,7 +44,7 @@ define([
         /**
          * Map of meta tags
          *
-         * @property
+         * @attribute metas
          * @type {object<string>}
          */
         metas: {},
@@ -50,7 +52,7 @@ define([
         /**
          * Map of link tags
          *
-         * @property
+         * @attribute links
          * @type {object<string>}
          */
         links: {},
@@ -58,7 +60,7 @@ define([
         /**
          * The router manager to use
          *
-         * @property
+         * @attribute Router
          * @type {Class}
          */
         Router: Router,
@@ -66,18 +68,20 @@ define([
         /**
          * Map of routes
          *
-         * @property
+         * @attribute routes
          * @type {object<string:string|function>}
          */
         routes: {},
 
-        /**
-         * @constructor
-         */
         initialize: function() {
             Application.__super__.initialize.apply(this, arguments);
 
-            // Initialize head manager
+            /**
+             * Head manager for this application
+             *
+             * @property head
+             * @type {this.Head}
+             */
             this.head = new this.Head({
                 app: this
             });
@@ -115,7 +119,7 @@ define([
          * Set page title
          * 
          * @method title
-         * @param {string} title - new page title
+         * @param {string} [title] new page title
          * @return {string} - page title
          */
         title: function() {
@@ -126,8 +130,8 @@ define([
          * Add new route
          * 
          * @method route
-         * @param {string} route - regex or route string
-         * @param {string} name - method to use as a route callback
+         * @param {string} route regex or route string
+         * @param {string} name method to use as a route callback
          * @return {string} - page title
          */
         route: function(route, name) {
@@ -148,6 +152,12 @@ define([
                 };
             }
 
+            /**
+             * Router controller for this application
+             *
+             * @property router
+             * @type {this.Router}
+             */
             if (!this.router) this.router = new this.Router();
             this.router.route(route, name, _.bind(handler, this));
             return this;
