@@ -1,3 +1,8 @@
+/**
+ * Utils module, return a LoDash/Underscore compatible API.
+ *
+ * @module hr/utils
+ */
 define([
     "underscore",
     "hr/dom",
