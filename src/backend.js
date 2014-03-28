@@ -4,20 +4,24 @@ define([
     'hr/offline',
     'hr/storage'
 ], function(Q, Class, Offline, Storage) {
-    /*
-     *  A backend define the way the application will manage:
-     *      - access to a resources
-     *      - caching of results
-     *      - fallback when offline
-     *      - resync when online
-     */
-
     // Cached regular expressions for matching named param parts and splatted
     // parts of route strings.
     var namedParam    = /:\w+/g;
     var splatParam    = /\*\w+/g;
     var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
 
+
+    /*
+     *  A backend define the way the application will manage:
+     *      - access to a resources
+     *      - caching of results
+     *      - fallback when offline
+     *      - resync when online
+     *
+     * @class Backend
+     * @extends Class
+     * @constructor
+     */
     var Backend = Class.extend({
         defaults: {
             // use defaults '*' when method not found
@@ -37,8 +41,12 @@ define([
             this.defaultHandler = null;
         },
 
-        /*
-         *  Add a method
+        /**
+         * Add a backend method
+         * 
+         * @method addMethod
+         * @param {string} method name for this method
+         * @param {object} informations about this method
          */
         addMethod: function(method, properties) {
             if (this.methods[method]) throw "Method already define for this backend: "+method;
@@ -50,8 +58,12 @@ define([
             return this;
         },
 
-        /*
-         *  Add a cached method for offline use
+        /**
+         * Add a cached method for offline mode only
+         * 
+         * @method addCachedMethod
+         * @param {string} method name for this method
+         * @param {string} [sId] id used for caching
          */
         addCachedMethod: function(method, sId) {
             sId = sId || method;
@@ -66,8 +78,10 @@ define([
             });
         },
 
-        /*
-         *  Get the method handler to use
+        /**
+         * Get the method handler to use for a method
+         * 
+         * @method getHandler
          */
         getHandler: function(method) {
             return _.find(this.methods, function(handler) {
@@ -75,16 +89,24 @@ define([
             }) || this.defaultHandler;
         },
 
-        /*
-         *  Get default handler
+        /**
+         * Define default handler
+         * 
+         * @param {function} handler
+         * @chainable
          */
         defaultMethod: function(handler) {
             this.defaultHandler = handler;
             return this;
         },
 
-        /*
-         *  Execute a method
+        /**
+         * Execute a method
+         * 
+         * @param {string} method name of the method to execute
+         * @param {object} args arguments for this method
+         * @param {options} [options] options for execution
+         * @return {promise<object>}
          */
         execute: function(method, args, options) {
             var that = this, methodHandler;
