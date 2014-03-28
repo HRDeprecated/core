@@ -24,7 +24,7 @@ define([
         el: $("body"),
 
         /**
-         * The head manager to maanage title, meta, links
+         * The head manager to use
          *
          * @property
          * @type {Class}
@@ -39,18 +39,40 @@ define([
          */
         name: null,
 
-        /* Base map of meta/link name -> value */
+        /**
+         * Map of meta tags
+         *
+         * @property
+         * @type {object<string>}
+         */
         metas: {},
+
+        /**
+         * Map of link tags
+         *
+         * @property
+         * @type {object<string>}
+         */
         links: {},
 
-        /* Router to use */
+        /**
+         * The router manager to use
+         *
+         * @property
+         * @type {Class}
+         */
         Router: Router,
 
-        /* Routes map of pattern -> method */
+        /**
+         * Map of routes
+         *
+         * @property
+         * @type {object<string:string|function>}
+         */
         routes: {},
 
-        /*
-         *  Initialize the application
+        /**
+         * @constructor
          */
         initialize: function() {
             Application.__super__.initialize.apply(this, arguments);
@@ -73,8 +95,10 @@ define([
             return this;
         },
 
-        /*
-         *  Run application
+        /**
+         * Start this application: prepare cache and render the application
+         * 
+         * @method run
          */
         run: function() {
             logging.log("Run application", this.name);
@@ -87,17 +111,24 @@ define([
             return this;
         },
 
-        /*
-         *  Set of get page title
+        /**
+         * Set page title
+         * 
+         * @method title
+         * @param {string} title - new page title
+         * @return {string} - page title
          */
         title: function() {
             return this.head.title.apply(this.head, arguments);
         },
 
-        /*
-         *  Add routing
-         *  @route : regex or route string
-         *  @name : name of the method for the route callback
+        /**
+         * Add new route
+         * 
+         * @method route
+         * @param {string} route - regex or route string
+         * @param {string} name - method to use as a route callback
+         * @return {string} - page title
          */
         route: function(route, name) {
             var handler;

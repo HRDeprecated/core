@@ -34,7 +34,7 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
     };
 
     /**
-     * Contains the all HR APIs
+     * Contains all the HR APIs
      *
      * @module
      */
@@ -65,7 +65,7 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
         Backend: Backend,
 
         app: null,
-
+        
         configure: function(args, options) {
             options = options || {};
             args = args || {};
