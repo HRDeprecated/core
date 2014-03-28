@@ -1,3 +1,6 @@
+/**
+ * @module hr/hr
+ */
 define([
     "hr/promise",
     "hr/utils",
@@ -33,11 +36,6 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
         Logger.logging.error(err);
     };
 
-    /**
-     * Contains all the HR APIs
-     *
-     * @module
-     */
     var hr = {
         configs: configs,
         Class: Class,
@@ -65,7 +63,7 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
         Backend: Backend,
 
         app: null,
-        
+
         configure: function(args, options) {
             options = options || {};
             args = args || {};

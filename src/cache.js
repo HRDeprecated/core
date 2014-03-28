@@ -1,3 +1,6 @@
+/**
+ * @module hr/cache
+ */
 define([
     "hr/utils",
     "hr/configs",
@@ -8,9 +11,14 @@ define([
     var logging = Logger.addNamespace("cache");
     var cache_methods = ["get", "set", "remove"];
 
+    /**
+     * @class Cache
+     */
     var Cache = {
-        /*
-         *  Initialize the cache : delete all the "old-version" values
+        /**
+         * Initialize the cache : delete all the "old-version" values
+         *
+         * @method init
          */
         init: function() {
             var s = Storage.storage();
@@ -25,9 +33,12 @@ define([
         },
 
         /*
-         *  Transform a key in cache key
-         *  @namespace : cat of the key
-         *  @key : key of the data to cache
+         * Transform a key in cache key
+         *
+         * @method key 
+         * @param {string} namespace namespace for this key
+         * @param {string} key key of the data to cache
+         * @return {string} complete key for the cache
          */
         key: function(namespace, key) {
             key = JSON.stringify(key);
@@ -35,9 +46,12 @@ define([
         },
 
         /*
-         *  Get a data from the cache
-         *  @namespace : cat of the key
-         *  @key : key of the data to get
+         * Get data from the cache
+         *
+         * @method get
+         * @param {string} namespace namespace for this key
+         * @param {string} key key of the data to cache
+         * @return {object} value from the cache
          */
         get: function(namespace, key) {
             var ckey = Cache.key(namespace, key);
@@ -57,9 +71,11 @@ define([
         },
 
         /*
-         *  Delete a cache value
-         *  @namespace : cat of the key
-         *  @key : key of the data to get
+         * Delete a cache value
+         *
+         * @method remove
+         * @param {string} namespace namespace for this key
+         * @param {string} key key of the data to cache
          */
         remove: function(namespace, key) {
             var ckey = Cache.key(namespace, key);
@@ -68,11 +84,13 @@ define([
         },
 
         /*
-         *  Set a data in the cache
-         *  @namespace : cat of the key
-         *  @key : key of the data to set
-         *  @value : value for the key
-         *  @expiration : time before cache is invalid (in second)
+         * Set a data in the cache
+         *
+         * @method get
+         * @param {string} namespace namespace for this key
+         * @param {string} key key of the data to cache
+         * @param {object} value value to store in teh cache associated to this key
+         * @param {number} [expiration] seconds before epiration of this value in the cache
          */
         set: function(namespace, key, value, expiration) {
             var ckey = Cache.key(namespace, key);
@@ -91,8 +109,10 @@ define([
             return Cache.get(key);
         },
 
-        /*
-         *  Clear the all cache
+        /**
+         * Clear the entire cache
+         *
+         * @method clear
          */
         clear: function() {
             var s = Storage.storage();
@@ -106,9 +126,11 @@ define([
             });
         },
 
-        /*
-         *  Return a cache interface for a namespace
-         *  @namespace : namespace for this interface
+        /**
+         * Return a cahce interface for a specific namespace
+         *
+         * @method namespace
+         * @param {string} namespace name of the namespace
          */
         namespace: function(namespace) {
             var ncache = {};

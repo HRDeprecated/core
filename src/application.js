@@ -1,3 +1,6 @@
+/**
+ * @module hr/application
+ */
 define([
     "hr/dom",
     "hr/utils",

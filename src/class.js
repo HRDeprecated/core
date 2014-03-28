@@ -1,3 +1,6 @@
+/**
+ * @module hr/class
+ */
 define([
     "hr/utils",
 ], function(_) {
@@ -14,11 +17,11 @@ define([
 
     /**
      * Class.extend is used for herited from this class object
-     * @examples:
+     * @example
      *      Class.extend(Class1, staticProps)
      *      Class.extend([Class1, Class2], staticProps)
      *
-     * @function extend
+     * @method extend
      * @static
      */
     Class.extend = function(protoProps, staticProps) {
@@ -64,7 +67,7 @@ define([
         /**
          * Default options for this.options in the class object
          *
-         * @property
+         * @property defaults
          * @type {object}
          * @default {}
          */

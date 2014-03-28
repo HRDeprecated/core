@@ -1,3 +1,6 @@
+/**
+ * @module hr/backend
+ */
 define([
     'hr/promise',
     'hr/class',
@@ -92,6 +95,7 @@ define([
         /**
          * Define default handler
          * 
+         * @method defaultMethod
          * @param {function} handler
          * @chainable
          */
@@ -103,6 +107,7 @@ define([
         /**
          * Execute a method
          * 
+         * @method execute
          * @param {string} method name of the method to execute
          * @param {object} args arguments for this method
          * @param {options} [options] options for execution
