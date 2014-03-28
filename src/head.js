@@ -1,14 +1,29 @@
+/**
+ * @module hr/head
+ */
 define([
     "hr/dom",
     "hr/utils",
     "hr/view"
 ], function($, _, View) {
+    /**
+     * Represent an interface for the head element of the dom.
+     * Makes it easy to manage links, meta, title, ...
+     *
+     * @class Head
+     * @extends View
+     * @constructor
+     */
     var Head = View.extend({
+        /**
+         * The main element for this head interface.
+         *
+         * @attribute el
+         * @type {jQueryElement}
+         * @default $("head")
+         */
         el: $("head"),
 
-        /*
-         *  Initialize the header
-         */
         initialize: function() {
             Head.__super__.initialize.apply(this, arguments);
 
@@ -19,8 +34,12 @@ define([
             return this;
         },
 
-        /*
-         *  Transform a page name in complete title
+        /**
+         * Transform a page name in complete title
+         * 
+         * @method completeTitle
+         * @param {string} title title of the page
+         * @return {string} complete name with application name
          */
         completeTitle: function(title) {
             if (this._preTitle.length > 0) title = this._preTitle + " " + title;
@@ -28,11 +47,14 @@ define([
             return title + " - " + this.app.name;
         },
 
-        /*
-         *  Set or get meta value
-         *  @name : name of the meta
-         *  @value : new value (if null: return current value)
-         *  @metaName : value of the name selector
+        /**
+         * Set or get a meta tag value
+         * 
+         * @method meta
+         * @param {string} name name of the meta tag
+         * @param {string} [value] value to set on the meta tag
+         * @param {string} [metaName="name"] selector for the meta name
+         * @return {string} value of the meta tag
          */
         meta: function(name, value, metaName) {
             if (_.isObject(name)) {
@@ -55,11 +77,14 @@ define([
             }
         },
 
-        /*
-         *  Set or get link elements
-         *  @rel : relationship between the current document and the linked document
-         *  @href : Specifies the location of the linked document (if null : return current value)
-         *  @mimetype : Specifies the MIME type of the linked document
+        /**
+         * Set or get a link tag value
+         * 
+         * @method link
+         * @param {string} ref name of the link tag
+         * @param {string} [href] value to set on the link tag
+         * @param {string} [mimetype] mimetype for this link
+         * @return {string} value of the link tag
          */
         link: function(rel, href, mimetype) {
             if (_.isObject(rel)) {
@@ -81,10 +106,13 @@ define([
             }
         },
 
-        /*
-         *  Set or get title
-         *  @value : new value for title (if null: return current value)
-         *  @absolute : if true : define the all title without using the application name
+        /**
+         * Set or get the page title
+         * 
+         * @method title
+         * @param {string} value value for the title
+         * @param {boolean} [absolute] if true, it'll not use completeTitle
+         * @return {string} value of the title
          */
         title: function(value, absolute) {
             var mt =  this.$('title');
@@ -100,27 +128,37 @@ define([
             }
         },
 
-        /*
-         *  Set or get the pre-title
+        /**
+         * Set the pre-title, could be use for signaling notification.
+         * @example
+         *      head.pretitle("(1)"); // One notification
+         * 
+         * @method preTitle
+         * @param {string} value value for the pre-title
          */
-        preTitle: function(v) {
-            if (v == null) return this._preTitle;
-            this._preTitle = v;
+        preTitle: function(value) {
+            if (value == null) return this._preTitle;
+            this._preTitle = value;
             this.title(this._title);
         },
 
-        /*
-         *  Set or get description
-         *  @value : new value for description
+        /**
+         * Set or get description
+         * 
+         * @method description
+         * @param {string} value value for the description
+         * @return {string} return current description
          */
         description: function(value) {
             return this.meta("description", value);
         },     
 
-        /*
-         *  Active or desactive crawling
-         *  @index : indexation state (true or false)
-         *  @follow : follow state (true or false) (default as index)
+        /**
+         * Active or desactive page indexation using robots meta tag
+         * 
+         * @method setCrawling
+         * @param {boolean} index
+         * @return {boolean} follow
          */
         setCrawling: function(index, follow) {
             if (_.isNull(follow)) follow = index;
@@ -132,7 +170,7 @@ define([
         },
 
         render: function() {
-            return this;
+            return this.ready();
         }
     });
 

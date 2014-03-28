@@ -15,7 +15,7 @@ define([
      * Represent an entire application on the document DOM
      *
      * @class Application
-     * @extends Class
+     * @extends View
      * @constructor
      */
     var Application = View.extend({
@@ -48,7 +48,7 @@ define([
          * Map of meta tags
          *
          * @attribute metas
-         * @type {object<string>}
+         * @type {object}
          */
         metas: {},
 
@@ -56,7 +56,7 @@ define([
          * Map of link tags
          *
          * @attribute links
-         * @type {object<string>}
+         * @type {object}
          */
         links: {},
 
@@ -72,7 +72,7 @@ define([
          * Map of routes
          *
          * @attribute routes
-         * @type {object<string:string|function>}
+         * @type {object}
          */
         routes: {},
 
@@ -123,7 +123,7 @@ define([
          * 
          * @method title
          * @param {string} [title] new page title
-         * @return {string} - page title
+         * @return {string} page title
          */
         title: function() {
             return this.head.title.apply(this.head, arguments);
@@ -135,7 +135,7 @@ define([
          * @method route
          * @param {string} route regex or route string
          * @param {string} name method to use as a route callback
-         * @return {string} - page title
+         * @return {string} page title
          */
         route: function(route, name) {
             var handler;
