@@ -1,3 +1,6 @@
+/**
+ * @module hr/cookies
+ */
 define([
     "hr/utils",
     "hr/configs",
@@ -5,10 +8,16 @@ define([
 ], function(_, configs, Logger) {
     var logging = Logger.addNamespace("cookies");
 
+    /**
+     * @class Cookies
+     */
     var Cookies = {
-        /*
-         *  Read a cookie
-         *  @name: cookie name to read
+        /**
+         * Read a cookie.
+         *
+         * @method get
+         * @param {string} name name of the cookie to read
+         * @return {string} value of the cookie or null
          */
         get: function(name) {
             var nameEQ = name + "=";
@@ -21,10 +30,13 @@ define([
             return null;
         },
 
-        /*
-         *  Set a cookie data
-         *  @name : key of the data to set
-         *  @value : value for the key
+        /**
+         * Write a cookie.
+         *
+         * @method set
+         * @param {string} name name of the cookie to write
+         * @param {string} value new value for the cookie
+         * @param {number} [days] number of days before expiration
          */
         set: function(name, value, days) {
             if (days) {
@@ -37,16 +49,20 @@ define([
             document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
         },
 
-        /*
-         *  Remove a data from the cookies
-         *  @key : key of the data to remove
+        /**
+         * Remove a data from the cookies.
+         *
+         * @method remove
+         * @param {string} name name of the cookie to remove
          */
         remove: function(name) {
             return Cookies.set(name, "", -1);
         },
 
-        /*
-         *  Clear the all storage
+        /**
+         * Clear the all cookie storage.
+         *
+         * @method clear
          */
         clear: function() {
             document.cookie = "";
