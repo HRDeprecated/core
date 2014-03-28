@@ -41,6 +41,7 @@
         "grunt-cli": "0.1.11",
         "grunt-requirejs": "0.4.0",
         "grunt-gh-pages": "0.9.0",
+        "grunt-contrib-yuidoc ": "0.5.2",
         "phantomjs": "1.9.2-6"
     }
 }

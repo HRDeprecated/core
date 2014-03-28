@@ -3,3 +3,4 @@ test/build/
 node_modules/
 npm-debug.log
 .grunt
+docs/

@@ -5,6 +5,7 @@ module.exports = function (grunt) {
     var docsPath = path.resolve(__dirname, 'docs');
 
     grunt.initConfig({
+        'pkg': grunt.file.readJSON('package.json'),
         'http-server': {
             'docs': {
                 root: path.resolve(__dirname, "docs/build"),
@@ -14,12 +15,25 @@ module.exports = function (grunt) {
         },
         'gh-pages': {
             options: {
-                base: 'docs/build'
+                base: 'docs'
             },
             src: ['**']
+        },
+        'yuidoc': {
+            compile: {
+                name: '<%= pkg.name %>',
+                description: '<%= pkg.description %>',
+                version: '<%= pkg.version %>',
+                url: '<%= pkg.homepage %>',
+                options: {
+                    paths: path.join(__dirname, "src"),
+                    outdir: path.join(__dirname, "docs")
+                }
+            }
         }
     });
     grunt.loadNpmTasks('grunt-gh-pages');
+    grunt.loadNpmTasks('grunt-contrib-yuidoc');
 
 
     grunt.registerTask('buildapp', function(dir) {
@@ -65,7 +79,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('docs', [
-        'buildapp:docs/'
+        'yuidoc'
     ]);
 
     grunt.registerTask('test', [
