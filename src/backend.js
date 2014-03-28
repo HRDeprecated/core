@@ -14,17 +14,6 @@ define([
     var escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g;
 
 
-    /*
-     *  A backend define the way the application will manage:
-     *      - access to a resources
-     *      - caching of results
-     *      - fallback when offline
-     *      - resync when online
-     *
-     * @class Backend
-     * @extends Class
-     * @constructor
-     */
     var Backend = Class.extend({
         defaults: {
             // use defaults '*' when method not found
@@ -34,6 +23,16 @@ define([
             prefix: "backend",
         },
 
+        /**
+         *  A backend define the way the application will manage:
+         *      - access to a resources
+         *      - caching of results
+         *      - fallback when offline
+         *      - resync when online
+         *
+         * @class Backend
+         * @constructor
+         */
         initialize: function() {
             Backend.__super__.initialize.apply(this, arguments);
 

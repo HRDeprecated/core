@@ -1,3 +1,6 @@
+/**
+ * @module hr/collection
+ */
 define([
     "hr/utils",
     "hr/promise",
@@ -8,11 +11,22 @@ define([
 ], function(_, Q, Class, Model, Logger, Queue) {
     var logging = Logger.addNamespace("collections");
 
+    /**
+     * A collection represents a table of data (list of Model)
+     *
+     * @class Collection
+     * @extends Class
+     * @constructor
+     */
     var Collection = Class.extend({
-        // Model for this colleciton
+        /**
+         * Constructor of model in this collection
+         *
+         * @attribute model
+         * @type {Model}
+         * @default Model
+         */
         model: Model,
-
-        // Defaults settings
         defaults: {
             loader: null,   // Load for infinite collections
             loaderArgs: [], // Arguments for the loader
@@ -21,9 +35,7 @@ define([
             models: []
         },
 
-        /*
-         *  Initialize the colleciton
-         */
+
         initialize: function(options) {
             Collection.__super__.initialize.call(this, options);
             this.queue = new Queue();
@@ -34,16 +46,23 @@ define([
             return this;
         },
 
-        /*
-         *  The JSON representation of a Collection is an array of the
-         *  models' attributes.
+        /**
+         * The JSON representation of a Collection is an array of the
+         * models' attributes.
+         * 
+         * @method toJSON
+         * @return {array<object>} Array of models' attributes
          */
         toJSON: function(options) {
             return this.map(function(model){ return model.toJSON(options); });
         },
 
-        /*
-         *  Get the model at the given index.
+        /**
+         * Get the model at the given index.
+         * 
+         * @method at
+         * @param {number} index
+         * @return {this.Model} Model at the given index
          */
         at: function(index) {
             return this.models[index];

@@ -32,7 +32,7 @@ define([
             });
         },
 
-        /*
+        /**
          * Transform a key in cache key
          *
          * @method key 
@@ -45,7 +45,7 @@ define([
             return "cache_" + configs.revision + "_" + namespace + "_" + key;
         },
 
-        /*
+        /**
          * Get data from the cache
          *
          * @method get
@@ -70,7 +70,7 @@ define([
             }
         },
 
-        /*
+        /**
          * Delete a cache value
          *
          * @method remove
@@ -83,7 +83,7 @@ define([
             Storage.remove(ckey);
         },
 
-        /*
+        /**
          * Set a data in the cache
          *
          * @method get

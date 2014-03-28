@@ -83,7 +83,7 @@ define([
              * Head manager for this application
              *
              * @property head
-             * @type {this.Head}
+             * @type {Head}
              */
             this.head = new this.Head({
                 app: this
@@ -159,7 +159,7 @@ define([
              * Router controller for this application
              *
              * @property router
-             * @type {this.Router}
+             * @type {Router}
              */
             if (!this.router) this.router = new this.Router();
             this.router.route(route, name, _.bind(handler, this));

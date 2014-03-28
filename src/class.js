@@ -73,14 +73,14 @@ define([
          */
         defaults: {},
 
-        /*
+        /**
          * Initialize this object, called at the construction
          *
          * @method initialize
          */
         initialize: function() {},
 
-        /*
+        /**
          * Bind an event to a `callback` function. Passing `"all"` will bind
          * the callback to all events fired.
          *
@@ -102,7 +102,7 @@ define([
             return this;
         },
 
-        /*
+        /**
          *  Bind an event to only be triggered a single time. After the first time
          *  the callback is invoked, it will be removed.
          *
@@ -123,7 +123,7 @@ define([
             return this.on(name, once, context);
         },
 
-        /*
+        /**
          *  Remove one or many callbacks. If `context` is null, removes all
          *  callbacks with that function. If `callback` is null, removes all
          *  callbacks for the event. If `name` is null, removes all bound
@@ -182,8 +182,16 @@ define([
             return this;
         },
 
-        // Tell this object to stop listening to either specific events ... or
-        // to every object it's currently listening to.
+        /**
+         * Tell this object to stop listening to either specific events or
+         * to every object it's currently listening to.
+         *
+         * @method stopListening
+         * @param {Class} [obj] object to stop listening to
+         * @param {string} [name] event to stop listening for
+         * @param {function} [callback] callback to stop listening for
+         * @chainable
+         */
         stopListening: function(obj, name, callback) {
             var listeningTo = this._listeningTo;
             if (!listeningTo) return this;
@@ -214,6 +222,27 @@ define([
             if (allEvents) this.triggerEvents(allEvents, arguments);
             return this;
         },
+        triggerEvents: function(events, args) {
+            var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
+            switch (args.length) {
+                case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
+                case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
+                case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
+                case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
+                default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
+            }
+        },
+
+        /**
+         * Trigger one or many events, firing all bound callbacks. Callbacks are
+         * passed the same arguments as `trigger` is, apart from the event name
+         * (unless you're listening on `"all"`, which will cause your callback to
+         * receive the true name of the event as the first argument).
+         *
+         * @method trigger
+         * @param {string} [name] event to trigger
+         * @chainable
+         */
         trigger: function(name) {
             var args = Array.prototype.slice.call(arguments, 0);
             if (!this.multipleEvents('trigger', name, args)) return this;
@@ -225,16 +254,6 @@ define([
                 this.triggerOnly.apply(this, args);
             } while(index !== -1)
             return this;
-        },
-        triggerEvents: function(events, args) {
-            var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
-            switch (args.length) {
-                case 0: while (++i < l) (ev = events[i]).callback.call(ev.ctx); return;
-                case 1: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1); return;
-                case 2: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2); return;
-                case 3: while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3); return;
-                default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
-            }
         },
 
         /*
