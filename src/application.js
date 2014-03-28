@@ -6,16 +6,37 @@ define([
     "hr/router",
     "hr/logger"
 ], function($, _, View, Head, Router, Logger) {
-
     var logging = Logger.addNamespace("application");
 
+    /**
+     * Represent an entire application on the document DOM
+     *
+     * @class Application
+     */
     var Application = View.extend({
+        /**
+         * The main element for this application.
+         *
+         * @property
+         * @type {jQueryElement}
+         * @default $("body")
+         */
         el: $("body"),
 
-        /* Header manager to use */
+        /**
+         * The head manager to maanage title, meta, links
+         *
+         * @property
+         * @type {Class}
+         */
         Head: Head,
 
-        /* Name of the application */
+        /**
+         * Name of the application
+         *
+         * @property
+         * @type {string}
+         */
         name: null,
 
         /* Base map of meta/link name -> value */

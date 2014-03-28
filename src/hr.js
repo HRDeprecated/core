@@ -33,7 +33,11 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
         Logger.logging.error(err);
     };
 
-
+    /**
+     * Contains the all HR APIs
+     *
+     * @module
+     */
     var hr = {
         configs: configs,
         Class: Class,

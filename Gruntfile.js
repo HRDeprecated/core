@@ -15,7 +15,7 @@ module.exports = function (grunt) {
         },
         'gh-pages': {
             options: {
-                base: 'docs'
+                base: 'docs/build'
             },
             src: ['**']
         },
@@ -26,8 +26,10 @@ module.exports = function (grunt) {
                 version: '<%= pkg.version %>',
                 url: '<%= pkg.homepage %>',
                 options: {
-                    paths: path.join(__dirname, "src"),
-                    outdir: path.join(__dirname, "docs")
+                    'paths': path.join(__dirname, "src"),
+                    'outdir': path.join(__dirname, "docs/build"),
+                    'themedir': path.join(__dirname, "docs/theme"),
+                    'noCode': true
                 }
             }
         }
