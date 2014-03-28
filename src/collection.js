@@ -13,6 +13,13 @@ define([
 
     /**
      * A collection represents a table of data (list of Model)
+     * A bunch of methods from hr/utils are available to process a collection:
+     *
+     *      'forEach', 'each', 'map', 'reduce', 'reduceRight', 'find',
+     *      'detect', 'filter', 'select', 'reject', 'every', 'all', 'some', 'any',
+     *      'include', 'contains', 'invoke', 'max', 'min', 'sortBy', 'sortedIndex',
+     *      'toArray', 'size', 'first', 'initial', 'rest', 'last', 'without', 'indexOf',
+     *      'shuffle', 'lastIndexOf', 'isEmpty', 'groupBy'
      *
      * @class Collection
      * @extends Class
@@ -51,7 +58,7 @@ define([
          * models' attributes.
          * 
          * @method toJSON
-         * @return {array<object>} Array of models' attributes
+         * @return {Array} Array of models' attributes
          */
         toJSON: function(options) {
             return this.map(function(model){ return model.toJSON(options); });
@@ -62,14 +69,17 @@ define([
          * 
          * @method at
          * @param {number} index
-         * @return {this.Model} Model at the given index
+         * @return {Model} Model at the given index
          */
         at: function(index) {
             return this.models[index];
         },
 
-        /*
-         *  Return models with matching attributes. Useful for simple cases of `filter`.
+        /**
+         * Return models with matching attributes. Useful for simple cases of `filter`.
+         * 
+         * @method where
+         * @return {Array} Array of models
          */
         where: function(attrs) {
             if (_.isEmpty(attrs)) return [];
@@ -81,17 +91,25 @@ define([
             });
         },
 
-        /*
-         *  Pluck an attribute from each model in the collection.
+        /**
+         * Pluck an attribute from each model in the collection.
+         * 
+         * @method pluck
+         * @param {string} attr name of the attribute to pluck
+         * @return {Array} Array of values
          */
         pluck: function(attr) {
             return _.map(this.models, function(model){ return model.get(attr); });
         },
 
-        /*
-         *  Force the collection to re-sort itself. You don't need to call this under
-         *  normal circumstances, as the set will maintain sort order as each item
-         *  is added.
+        /**
+         * Force the collection to re-sort itself. You don't need to call this under
+         * normal circumstances, as the set will maintain sort order as each item
+         * is added.
+         * 
+         * @method sort
+         * @param {object} [options] options for sorting
+         * @chainable
          */
         sort: function(options) {
             if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
@@ -106,8 +124,13 @@ define([
             return this;
         },
 
-        /*
-         *  Reset the collection
+        /**
+         * Reset the collection with new models or new data.
+         * 
+         * @method reset
+         * @param {array} models array of models or data to set in the collection
+         * @param {object} [options] options for reseting
+         * @chainable
          */
         reset: function(models, options) {
             options = _.defaults(options || {}, {
@@ -138,9 +161,13 @@ define([
             return this;
         },
 
-        /*
-         *  Add a model to the collection
-         *  @model : model to add
+        /**
+         * Add a model to the collection (or an array of model)
+         * 
+         * @method add
+         * @param {Model} model model or data to add (could also be an array)
+         * @param {object} [options] options for adding
+         * @chainable
          */
         add: function(model, options) {
             var index, existing;
@@ -198,9 +225,13 @@ define([
             this.stopListening(model);
         },
 
-        /*
-         *  Remove from model to the collection
-         *  @model : model to remove
+        /**
+         * Remove a model from the collection.
+         * 
+         * @method remove
+         * @param {Model} model model or data to remove
+         * @param {object} [options] options for removing
+         * @chainable
          */
         remove: function(model, options) {
             var index;
@@ -236,8 +267,13 @@ define([
             return this;
         },
 
-        /*
-         *  Pipe this colleciton into another one
+        /**
+         * Pipe this collection into another one: all the models from this collection
+         *  will always also be in the other collection
+         * 
+         * @method pipe
+         * @param {Collection} to collection to pipe to
+         * @chainable
          */
         pipe: function(to) {
             to.listenTo(this, "add", function(model) {
@@ -260,8 +296,13 @@ define([
             });
         },
 
-        /*
-         *  Add a model to the end of the collection.
+        /**
+         * Add a model at the end of the collection.
+         * 
+         * @method push
+         * @param {Model} model model or data to add
+         * @param {object} [options] options for adding
+         * @return {Model} Return the new added model
          */
         push: function(model, options) {
             model = this._prepareModel(model, options);
@@ -269,17 +310,13 @@ define([
             return model;
         },
 
-        /*
-         *  Remove a model from the end of the collection.
-         */
-        pop: function(options) {
-            var model = this.at(this.length - 1);
-            this.remove(model, options);
-            return model;
-        },
-
-        /*
-         *  Add a model to the beginning of the collection.
+        /**
+         * Add a model to the beginning of the collection.
+         * 
+         * @method unshift
+         * @param {Model} model model or data to add
+         * @param {object} [options] options for adding
+         * @return {Model} Return the new added model
          */
         unshift: function(model, options) {
             model = this._prepareModel(model, options);
@@ -287,8 +324,25 @@ define([
             return model;
         },
 
-        /*
-         *  Remove a model from the beginning of the collection.
+        /**
+         * Remove a model from the end of the collection.
+         * 
+         * @method pop
+         * @param {object} [options]
+         * @return {Model}
+         */
+        pop: function(options) {
+            var model = this.at(this.length - 1);
+            this.remove(model, options);
+            return model;
+        },
+
+        /**
+         * Remove a model from the beginning of the collection.
+         * 
+         * @method shift
+         * @param {object} [options]
+         * @return {Model}
          */
         shift: function(options) {
             var model = this.at(0);
@@ -336,37 +390,53 @@ define([
             delete this._byId[oldId];
         },
 
-        /*
-         *  Get a model from the set by id.
+        /**
+         * Get a model from the set by id.
+         * 
+         * @method get
+         * @param {string|Model} obj object id or complete object
+         * @return {Model}
          */
         get: function(obj) {
             if (obj == null) return void 0;
             return this._byId[obj] || this._byId[obj.id];
         },
 
-        /*
-         *  Return number of elements in collections
+        /**
+         * Return number of elements in the collection
+         * 
+         * @method count
+         * @return {number}
          */
         count: function() {
             return _.size(this.models);
         },
 
-        /*
-         *  Return the total number of elements in the source (for exemple in the database)
+        /**
+         * Return the total number of elements in the source (for exemple in the database)
+         * 
+         * @method totalCount
+         * @return {number}
          */
         totalCount: function() {
             return this._totalCount || this.count();
         },
 
-        /*
-         *  Get more elements from an infinite collection
+        /**
+         * Check if there is more elements available from the source (database, ...)
+         * 
+         * @method getMore
+         * @return {boolean}
          */
         hasMore: function() {
             return this.totalCount() - this.count();
         },
 
-        /*
-         *  Get more elements from an infinite collection
+        /**
+         * Get more elements from an infinite collection
+         * 
+         * @method getMore
+         * @chainable
          */
         getMore: function(options) {
             this.queue.defer(function() {
@@ -394,10 +464,14 @@ define([
 
                 return d;
             }, this);
+
+            return this;
         },
 
-        /*
-         *  Refresh the list
+        /**
+         * Refresh the collection with data from the source
+         * 
+         * @method refresh
          */
         refresh: function() {
             this.getMore({

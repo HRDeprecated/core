@@ -67,7 +67,7 @@ define([
         /**
          * Default options for this.options in the class object
          *
-         * @property defaults
+         * @attribute defaults
          * @type {object}
          * @default {}
          */
