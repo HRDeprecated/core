@@ -110,7 +110,7 @@ define([
                 "model": model,
                 "list": this,
                 "collection": this.collection
-            });
+            }, this);
             this.listenTo(model, "set", function() {
                 item.update();
                 this.applyFilter(item);
