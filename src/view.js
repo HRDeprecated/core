@@ -9,7 +9,7 @@ define([
 ], function($, _, q, Class, Logger, Queue, Template) {
     var logging = Logger.addNamespace("templates");
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-    
+
     var View = Class.extend({
         tagName: "div",
         template: null,
@@ -198,7 +198,11 @@ define([
          */
         render: function() {
             var tpl = _.result(this, 'template')
-            if (tpl) return this.renderTemplate(tpl);
+            if (tpl) {
+                return this.renderTemplate(tpl);
+            } else {
+                return this.ready();
+            }
         },
 
         /*
@@ -270,7 +274,7 @@ define([
                     logging.exception(err, "Error rendering component:");
                 })
             }), this);
-            
+
             _.each(this.components, function(value, cid) {
                 if (_.isArray(value)) {
                     _.each(value, addComponent);
@@ -280,7 +284,7 @@ define([
             });
 
             this.trigger("components:render");
-            return this;   
+            return this;
         },
 
         /*
