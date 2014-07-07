@@ -96,7 +96,6 @@ define([
             this.route(_.result(this, "routes"));
             this.on("ready", _.once(function() {
                 logging.log("Application is ready");
-                if (this.router) this.router.start();
             }), this);
 
             return this;
@@ -104,7 +103,7 @@ define([
 
         /**
          * Start this application: prepare cache and render the application
-         * 
+         *
          * @method run
          */
         run: function() {
@@ -113,14 +112,14 @@ define([
             var hr = require("hr/hr");
             hr.Cache.init();
             hr.app = this;
-            
+
             this.update();
             return this;
         },
 
         /**
          * Set page title
-         * 
+         *
          * @method title
          * @param {string} [title] new page title
          * @return {string} page title
@@ -131,7 +130,7 @@ define([
 
         /**
          * Add new route
-         * 
+         *
          * @method route
          * @param {string} route regex or route string
          * @param {string} name method to use as a route callback

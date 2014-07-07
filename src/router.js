@@ -60,8 +60,7 @@ define([
          */
         start: function() {
             logging.log("start routing");
-            History.start();
-            return this;
+            return History.start();
         },
 
         /*

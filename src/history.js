@@ -20,7 +20,7 @@ define([
      * @extends Class
      * @constructor
      */
-    var History = Class.extend({   
+    var History = Class.extend({
         initialize: function() {
             this.handlers = [];
             this.started = false;
@@ -28,7 +28,7 @@ define([
 
         /**
          * Add a new navigation route
-         * 
+         *
          * @method route
          * @param {regex} route regex for the route
          * @param {function} callback function to call as a navigation callback
@@ -45,7 +45,7 @@ define([
 
         /**
          * Add the navigation handling
-         * 
+         *
          * @method start
          * @chainable
          */
@@ -62,15 +62,15 @@ define([
             logging.log("start routing history");
             $window.bind('hashchange', _.bind(this._handleCurrentState, this));
 
-            this._handleCurrentState();
+            var ret = this._handleCurrentState();
             this.started = true;
 
-            return true;
+            return ret;
         },
 
         /**
          * Navigation to a specific route
-         * 
+         *
          * @method navigate
          * @param {string} route to navigate to
          * @param {object} [args] arguments for the route
@@ -96,9 +96,10 @@ define([
                     handler.callback(url);
                     return true;
                 }
+                return false;
             });
             logging.log("handle state ", url, matched != null);
-            return this;
+            return matched;
         },
 
         /*
