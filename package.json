@@ -31,6 +31,7 @@
         "grunt": "0.4.2",
         "grunt-cli": "0.1.11",
         "grunt-shell": "0.7.0",
+        "grunt-hr-builder": "1.1.0",
         "phantomjs": "1.9.2-6"
     }
 }
