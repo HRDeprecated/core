@@ -12,8 +12,8 @@ module.exports = function (grunt) {
         grunt.log.writeln('processing ' + dir);
 
         grunt.util.spawn({
-            grunt: true,
-            args:[],
+            cmd: "hr-builder",
+            args:["build"],
             opts: {
                 cwd: dir
             }
