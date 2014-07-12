@@ -4,14 +4,14 @@
  * @module hr/utils
  */
 define([
-    "underscore",
+    "lodash",
     "hr/dom",
 ], function(_, $) {
     if(!Function.prototype.bind) {
         Function.prototype.bind = function(newThis) {
                 var that = this;
-                return function(){ 
-                        return that.apply(newThis, arguments); 
+                return function(){
+                        return that.apply(newThis, arguments);
                 };
         }
     }
