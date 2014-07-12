@@ -25,11 +25,12 @@
         }
     ],
     "scripts": {
-        "test": "./node_modules/.bin/grunt test; ./node_modules/.bin/phantomjs test/run.js"
+        "test": "./node_modules/.bin/grunt tests"
     },
     "devDependencies": {
         "grunt": "0.4.2",
         "grunt-cli": "0.1.11",
+        "grunt-shell": "0.7.0",
         "phantomjs": "1.9.2-6"
     }
 }

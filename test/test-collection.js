@@ -1,7 +1,7 @@
 define([
     'tests',
     'hr/hr',
-    'underscore'
+    'hr/utils'
 ], function(tests, hr, _) {
 
     tests.add("collection.add.unique", function(test) {
@@ -31,7 +31,7 @@ define([
         }, {
             merge: true
         });
-        
+
         test.assert(c.get(uid).get("test") == 2);
     });
 
@@ -47,7 +47,7 @@ define([
 
         var m = c.get("id1");
         m.set("id", "id2");
-        
+
         test.assert(c.size() == 1);
     });
 })

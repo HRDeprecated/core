@@ -163,6 +163,16 @@ define([
             if (!this.router) this.router = new this.Router();
             this.router.route(route, name, _.bind(handler, this));
             return this;
+        },
+
+        /*
+         * Return a query string paramater value
+         */
+        getQuery: function(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
         }
     });
 

@@ -1,7 +1,7 @@
 define([
     'tests',
     'hr/hr',
-    'underscore'
+    'hr/utils'
 ], function(tests, hr, _) {
 
     tests.add("list.count", function(test) {

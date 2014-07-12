@@ -1,6 +1,6 @@
 define([
-    'q',
-    'underscore',
+    'hr/promise',
+    'hr/utils',
     'hr/hr'
 ], function(Q, _, hr) {
     var tests = [];
@@ -23,7 +23,7 @@ define([
             fail: function(err) {
                 if (_ended) return;
                 _ended = true;
-                
+
                 logger.error(name+": failed", err);
                 d.reject()
             },
@@ -47,7 +47,7 @@ define([
                 startTime = Date.now();
                 Q().then(function() {
                     return func(test);
-                }) 
+                })
                 .then(function() {
                     test.done();
                 }, function(err) {

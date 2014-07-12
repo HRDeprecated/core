@@ -1,41 +1,30 @@
 var path = require("path");
-var express = require("express");
 
 module.exports = function (grunt) {
+    grunt.loadNpmTasks('grunt-shell');
+
     grunt.initConfig({
-        'pkg': grunt.file.readJSON('package.json')
+        'pkg': grunt.file.readJSON('package.json'),
+        'shell': {
+            tests: {
+                command: "./node_modules/.bin/phantomjs ./test/run.js"
+            },
+            benchmarks: {
+                command: "./node_modules/.bin/phantomjs ./test/run.js --benchmarks"
+            }
+        }
     });
 
-    grunt.registerTask('buildapp', function(dir) {
-        var done = this.async();
+    grunt.registerTask('tests', [
+        'shell:tests'
+    ]);
 
-        grunt.log.writeln('processing ' + dir);
-
-        grunt.util.spawn({
-            cmd: "hr-builder",
-            args:["build"],
-            opts: {
-                cwd: dir
-            }
-        },
-
-        function(err, result, code) {
-            if (err == null) {
-                grunt.log.writeln('processed ' + dir);
-                done();
-            }
-            else {
-                grunt.log.writeln('processing ' + dir + ' failed: ' + code);
-                done(false);
-            }
-        })
-    });
-
-    grunt.registerTask('test', [
-        'buildapp:test/'
+    grunt.registerTask('benchmarks', [
+        'shell:benchmarks'
     ]);
 
     grunt.registerTask('default', [
-        'test'
+        'tests',
+        'benchmarks'
     ]);
 };

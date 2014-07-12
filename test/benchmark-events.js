@@ -1,10 +1,10 @@
 define([
     'benchmarks',
     'hr/hr',
-    'underscore',
+    'hr/utils',
     'jQuery'
 ], function(benchmarks, hr, _, $) {
-    
+
     var o = new hr.Class();
 
     o.on("test:test2", function() {
@@ -12,7 +12,7 @@ define([
     });
 
     o.on("test", function() {
-        
+
     });
 
     benchmarks.add("event.trigger", function() {

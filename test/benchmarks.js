@@ -1,6 +1,6 @@
 define([
-    'q',
-    'underscore',
+    'hr/promise',
+    'hr/utils',
     'hr/hr'
 ], function(Q, _, hr) {
     var benchmarks = [];
@@ -34,9 +34,9 @@ define([
                 var s = Date.now();
 
                 for (var i=0;i<n;i++) f();
-                
+
                 var e = Date.now();
-                
+
                 logger.log(name+": took "+((e-s)/1000)+" seconds for "+n+" operations");
 
                 return Q();
