@@ -10,7 +10,7 @@ module.exports = function (grunt) {
                 "base": testPath,
 
                 // Application name
-                "name": "Hr.js tests",
+                "name": "HappyRhino Tests",
 
                 // Mode debug
                 "debug": true,

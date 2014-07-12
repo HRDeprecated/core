@@ -1,13 +1,13 @@
 {
     "author": "Samy Pesse",
-    "name": "hr.js",
+    "name": "happyrhino",
     "description": "Client-side framework for structured applications.",
     "version": "0.6.8",
     "keywords": [
         "clientside"
     ],
-    "homepage": "https://github.com/FriendCode/hr.js",
-    "bugs": "https://github.com/FriendCode/hr.js/issues",
+    "homepage": "https://github.com/HappyRhino/core",
+    "bugs": "https://github.com/HappyRhino/core/issues",
     "dependencies": {
         "express": "3.0.0",
         "requirejs": "2.1.6",
@@ -24,7 +24,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/FriendCode/hr.js"
+        "url": "https://github.com/HappyRhino/core"
     },
     "contributors": [
         {
@@ -39,9 +39,6 @@
     "devDependencies": {
         "grunt": "0.4.2",
         "grunt-cli": "0.1.11",
-        "grunt-requirejs": "0.4.0",
-        "grunt-gh-pages": "0.9.0",
-        "grunt-contrib-yuidoc ": "0.5.2",
         "phantomjs": "1.9.2-6"
     }
 }
