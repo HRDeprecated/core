@@ -56,7 +56,7 @@ define([
         /**
          * The JSON representation of a Collection is an array of the
          * models' attributes.
-         * 
+         *
          * @method toJSON
          * @return {Array} Array of models' attributes
          */
@@ -66,7 +66,7 @@ define([
 
         /**
          * Get the model at the given index.
-         * 
+         *
          * @method at
          * @param {number} index
          * @return {Model} Model at the given index
@@ -77,7 +77,7 @@ define([
 
         /**
          * Return models with matching attributes. Useful for simple cases of `filter`.
-         * 
+         *
          * @method where
          * @return {Array} Array of models
          */
@@ -93,7 +93,7 @@ define([
 
         /**
          * Pluck an attribute from each model in the collection.
-         * 
+         *
          * @method pluck
          * @param {string} attr name of the attribute to pluck
          * @return {Array} Array of values
@@ -106,7 +106,7 @@ define([
          * Force the collection to re-sort itself. You don't need to call this under
          * normal circumstances, as the set will maintain sort order as each item
          * is added.
-         * 
+         *
          * @method sort
          * @param {object} [options] options for sorting
          * @chainable
@@ -119,14 +119,14 @@ define([
             } else {
                 this.models.sort(_.bind(this.comparator, this));
             }
-            
+
             if (!options.silent) this.trigger('sort', this, options);
             return this;
         },
 
         /**
          * Reset the collection with new models or new data.
-         * 
+         *
          * @method reset
          * @param {array} models array of models or data to set in the collection
          * @param {object} [options] options for reseting
@@ -163,7 +163,7 @@ define([
 
         /**
          * Add a model to the collection (or an array of model)
-         * 
+         *
          * @method add
          * @param {Model} model model or data to add (could also be an array)
          * @param {object} [options] options for adding
@@ -173,10 +173,9 @@ define([
             var index, existing;
 
             if (_.isArray(model)) {
-                _.each(model, function(m) {
-                    this.add(m, _.clone(options));
+                return _.map(model, function(m) {
+                    return this.add(m, _.clone(options));
                 }, this);
-                return this;
             }
 
             // Manage {list:[], n:0} for infinite list
@@ -214,7 +213,7 @@ define([
             this.trigger('add', model, this, options);
 
             if (this.comparator) this.sort({silent: options.silent});
-            return this;
+            return model;
         },
 
         /*
@@ -227,7 +226,7 @@ define([
 
         /**
          * Remove a model from the collection.
-         * 
+         *
          * @method remove
          * @param {Model} model model or data to remove
          * @param {object} [options] options for removing
@@ -270,7 +269,7 @@ define([
         /**
          * Pipe this collection into another one: all the models from this collection
          *  will always also be in the other collection
-         * 
+         *
          * @method pipe
          * @param {Collection} to collection to pipe to
          * @chainable
@@ -298,7 +297,7 @@ define([
 
         /**
          * Add a model at the end of the collection.
-         * 
+         *
          * @method push
          * @param {Model} model model or data to add
          * @param {object} [options] options for adding
@@ -312,7 +311,7 @@ define([
 
         /**
          * Add a model to the beginning of the collection.
-         * 
+         *
          * @method unshift
          * @param {Model} model model or data to add
          * @param {object} [options] options for adding
@@ -326,7 +325,7 @@ define([
 
         /**
          * Remove a model from the end of the collection.
-         * 
+         *
          * @method pop
          * @param {object} [options]
          * @return {Model}
@@ -339,7 +338,7 @@ define([
 
         /**
          * Remove a model from the beginning of the collection.
-         * 
+         *
          * @method shift
          * @param {object} [options]
          * @return {Model}
@@ -392,7 +391,7 @@ define([
 
         /**
          * Get a model from the set by id.
-         * 
+         *
          * @method get
          * @param {string|Model} obj object id or complete object
          * @return {Model}
@@ -404,7 +403,7 @@ define([
 
         /**
          * Return number of elements in the collection
-         * 
+         *
          * @method count
          * @return {number}
          */
@@ -414,7 +413,7 @@ define([
 
         /**
          * Return the total number of elements in the source (for exemple in the database)
-         * 
+         *
          * @method totalCount
          * @return {number}
          */
@@ -424,7 +423,7 @@ define([
 
         /**
          * Check if there is more elements available from the source (database, ...)
-         * 
+         *
          * @method getMore
          * @return {boolean}
          */
@@ -434,7 +433,7 @@ define([
 
         /**
          * Get more elements from an infinite collection
-         * 
+         *
          * @method getMore
          * @chainable
          */
@@ -470,7 +469,7 @@ define([
 
         /**
          * Refresh the collection with data from the source
-         * 
+         *
          * @method refresh
          */
         refresh: function() {
