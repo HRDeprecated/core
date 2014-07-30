@@ -44,7 +44,7 @@ define([
 
             // Define options
             options = _.defaults(options || {}, {
-                
+
             });
 
             scope = basescope.split(".");
@@ -95,11 +95,10 @@ define([
             // Calcul new attributes
             newattributes = _.deepExtend({}, this.attributes || {}, attrs);
             if (!options.silent) {
-                diffs = jsondiffpatch.diff(this._prevAttributes, newattributes);
-                if (_.size(diffs) == 0) diffs = jsondiffpatch.diff(this.attributes, newattributes);
+                diffs = jsondiffpatch.diff(this._prevAttributes || {}, newattributes);
             }
-            this._prevAttributes = this._prevAttributes == null ? _.deepClone(newattributes) : this.attributes;
             this.attributes = newattributes;
+            this._prevAttributes = _.deepClone(this.attributes);
 
             // New unique id
             var oldId = this.id;
