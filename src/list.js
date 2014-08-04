@@ -9,7 +9,7 @@ define([
 
     var ItemView = View.extend({
         tagName: "li",
-        
+
         initialize: function() {
             ItemView.__super__.initialize.apply(this, arguments);
             this.collection = this.options.collection;
@@ -35,7 +35,7 @@ define([
         events: {
             "click *[data-list-action='showmore']": "getItems"
         },
-        
+
         /*
          *  Initialize the list view
          */
@@ -115,7 +115,7 @@ define([
                 item.update();
                 this.applyFilter(item);
             });
-            this.listenTo(model, "id", function() {
+            this.listenTo(model, "id", function(newId, oldId) {
                 this.items[newId] = this.items[oldId];
                 delete this.items[oldId];
             });
@@ -297,7 +297,7 @@ define([
             } else {
                 this._filter = null;
             }
-            
+
             return this.count();
         },
 
