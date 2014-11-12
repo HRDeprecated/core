@@ -59,12 +59,13 @@ define([
             r.on("error", function(err) {
                 var e = new Error(err.error);
 
-                if (err.textStatus) {
-                    e = new Error(err.textStatus+": "+err.content);
+                if (err.status) {
+                    e = new Error(err.status+": "+err.content);
                 }
 
+                e.content = err.content;
                 e.xhr = err.xhr;
-                e.textStatus = err.textStatus,
+                e.textStatus = err.status,
                 e.httpRes = err.content;
                 d.reject(e);
             });
