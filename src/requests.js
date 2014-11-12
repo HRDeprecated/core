@@ -4,7 +4,7 @@ define([
     "hr/class",
     "hr/logger"
 ], function(Q, configs, Class, Logger) {
-    
+
     var logging = Logger.addNamespace("requests");
 
     var Requests = Class.extend({
@@ -57,7 +57,13 @@ define([
                 d.resolve(content);
             });
             r.on("error", function(err) {
-                var e = new Error(err.textStatus+": "+err.content);
+                var e = new Error(err.error);
+
+                if (err.textStatus) {
+                    e = new Error(err.textStatus+": "+err.content);
+                }
+
+                e.xhr = err.xhr;
                 e.textStatus = err.textStatus,
                 e.httpRes = err.content;
                 d.reject(e);
@@ -69,7 +75,7 @@ define([
 
         /*
          *  Method for a GET method
-         *  @url : url to request 
+         *  @url : url to request
          *  @args : arguments for GET
          *  @callback : callback for results
          */
@@ -82,7 +88,7 @@ define([
 
         /*
          *  Method for a GET method, suing JSONP
-         *  @url : url to request 
+         *  @url : url to request
          *  @args : arguments for GET
          *  @callback : callback for results
          */
@@ -96,7 +102,7 @@ define([
 
         /*
          *  Method for a POST method
-         *  @url : url to request 
+         *  @url : url to request
          *  @args : arguments for POST
          *  @callback : callback for results
          */
@@ -109,7 +115,7 @@ define([
 
         /*
          *  Method for a PUT method
-         *  @url : url to request 
+         *  @url : url to request
          *  @args : arguments for PUT
          *  @callback : callback for results
          */
@@ -122,7 +128,7 @@ define([
 
         /*
          *  Method for a DELETE method
-         *  @url : url to request 
+         *  @url : url to request
          *  @args : arguments for DELETE
          *  @callback : callback for results
          */
@@ -135,7 +141,7 @@ define([
 
         /*
          *  Method for a HEAD method
-         *  @url : url to request 
+         *  @url : url to request
          *  @args : arguments for HEAD
          *  @callback : callback for results
          */
