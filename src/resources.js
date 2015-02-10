@@ -6,7 +6,7 @@ define([
     "hr/cache",
     "hr/requests",
     "hr/urls"
-], function(_, q, configs, Logger, Cache, Requests, Urls) {
+], function(_, Q, configs, Logger, Cache, Requests, Urls) {
 
     var logging = Logger.addNamespace("resources");
     var cache = Cache.namespace("resources");
@@ -22,7 +22,7 @@ define([
             var d = Q.defer();
             var namespace_configs = _.extend({}, Resources.namespaces[namespace] || {}, options || {});
             var loader = namespace_configs.loader || namespace;
-            
+
             if (Resources.loaders[loader] == null) {
                 logging.error("Loader doesn't exists ", loader, "namespace=",namespace);
                 d.reject();
@@ -59,19 +59,19 @@ define([
     };
 
     // Text loader
-    Resources.addLoader("text", function(ressourcename, callback, args, config) {  
+    Resources.addLoader("text", function(ressourcename, callback, args, config) {
         callback.resolve(ressourcename);
     });
 
     // Require loader
-    Resources.addLoader("require", function(ressourcename, callback, args, config) {  
+    Resources.addLoader("require", function(ressourcename, callback, args, config) {
         _.defaults(config, {
             mode: "text",
             base: "",
             extension: ""
         });
         ressourcename = config.mode + "!" + Urls.join(config.base, ressourcename) + config.extension;
-        
+
         logging.debug("Load using require ", ressourcename);
         try {
             var content = require(ressourcename);
@@ -89,7 +89,7 @@ define([
             extension: ""
         });
         var ressourceurl = Urls.static(config.base, ressourcename) + config.extension;
-        
+
         // Check application cache
         var content = cache.get(ressourceurl);
         if (content != null) { callback.resolve(content); return; }

@@ -6,7 +6,7 @@ define([
     "hr/logger",
     "hr/queue",
     "hr/template"
-], function($, _, q, Class, Logger, Queue, Template) {
+], function($, _, Q, Class, Logger, Queue, Template) {
     var logging = Logger.addNamespace("templates");
     var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
