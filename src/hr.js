@@ -26,10 +26,11 @@ define([
     "hr/backend",
     "hr/queue",
     "hr/i18n",
+    "hr/worker",
     "hr/views"
-], function(Q, _, configs, 
+], function(Q, _, configs,
 Class, View, Application, Head, History, Router, Model, Collection, ListView,
-Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, Backend, Queue, I18n, views) {
+Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, Backend, Queue, I18n, TaskWorker, views) {
 
 
     Q.onerror = function(err) {
@@ -61,6 +62,7 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
         views: views,
         Offline: Offline,
         Backend: Backend,
+        TaskWorker: TaskWorker,
 
         app: null,
 
@@ -79,6 +81,6 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
             });
         }
     };
-    
+
     return hr;
 })

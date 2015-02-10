@@ -72,7 +72,7 @@ define([
             } else {
                 this.empty = true;
                 this.trigger("tasks:finish");
-            }      
+            }
         },
 
         /*
