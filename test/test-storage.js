@@ -13,4 +13,4 @@ define([
         test.assert(hr.Storage.get("hello") == null);
     });
 
-})
+});

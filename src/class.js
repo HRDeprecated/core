@@ -7,7 +7,7 @@ define([
     // Regular expression used to split event strings.
     var eventSplitter = /\s+/;
 
-    
+
     var Class = function(options) {
         this.options = _.extend({}, options || {});
         _.defaults(this.options, this.defaults);
@@ -247,7 +247,7 @@ define([
             var args = Array.prototype.slice.call(arguments, 0);
             if (!this.multipleEvents('trigger', name, args)) return this;
             var index = 0;
-             
+
             do {
                 index = name.indexOf(':', index+1);
                 args[0] = name.slice(0, index === -1 ? undefined : index);

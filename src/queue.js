@@ -2,7 +2,7 @@ define([
     "hr/utils",
     "hr/promise",
     "hr/class"
-], function(_, q, Class) {
+], function(_, Q, Class) {
     var Queue = Class.extend({
         /*
          *  Initialize

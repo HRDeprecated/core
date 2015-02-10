@@ -2,14 +2,13 @@
  * @module hr/i18n
  */
 define([
-    "hr/dom",
     "hr/utils",
     "hr/promise",
     "hr/configs",
     "hr/urls",
     "hr/logger",
     "hr/resources"
-], function($, _, Q, configs, Urls, Logger, Resources) {
+], function(_, Q, configs, Urls, Logger, Resources) {
     var logging = Logger.addNamespace("i18n");
 
     /**
@@ -62,7 +61,7 @@ define([
      */
     i18n.interpolate = function(message, options) {
         options = options || {};
-        
+
         var compiled = _.template(message);
 
         _.extend(options, {
@@ -146,7 +145,7 @@ define([
             , messages = translations[locale] || {}
             , currentScope
         ;
-        
+
         if (typeof(scope) == "object") {
             scope = scope.join(this.defaultSeparator);
         }

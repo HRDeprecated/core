@@ -8,6 +8,7 @@ define([
             TaskWorker.__super__.initialize.apply(this, arguments);
 
             this.worker = null;
+            this.workerLoading = null;
             this.methods = {};
         },
 
@@ -15,38 +16,54 @@ define([
         getRemoteWorker: function() {
             var that = this;
 
-            if (!this.worker) {
-                this.worker = new Worker(this.options.worker);
+            if (this.workerLoading) return this.workerLoading;
+            if (this.worker) return Q(this.workerLoading);
 
-                this.worker.addEventListener('message', function(e) {
+
+            var d = Q.defer();
+            this.workerLoading = d.promise;
+
+            this.worker = new Worker(this.options.worker);
+            this.worker.postMessage();
+            this.worker.addEventListener('message', function(e) {
+                if (e.data.message == "ready") {
+                    d.resolve(that.worker);
+                } else {
                     that.trigger("task:"+e.data.id, e.data);
-                }, false);
-            }
-            return this.worker;
+                }
+            }, false);
+
+            return this.workerLoading;
         },
 
         // Call a metod from the worker
         callMethod: function(method) {
-            var d = Q.defer();
+            var that = this;
+            var args = Array.prototype.slice.call(arguments, 1);
 
-            var taskId = _.uniqueId("task");
-            var args = {
-                id: taskId,
-                method: method,
-                arguments: Array.prototype.slice.call(arguments)
-            };
+            return that.getRemoteWorker()
+            .then(function(wk) {
+                var d = Q.defer();
 
-            var wk = this.getRemoteWorker();
+                var taskId = _.uniqueId("task");
+                var msg = {
+                    id: taskId,
+                    method: method,
+                    arguments: args
+                };
 
-            this.once("task:"+taskId, function(data) {
-                if (data.rejected) {
-                    d.reject(data.rejected);
-                } else {
-                    d.resolve(data.resolved);
-                }
+                that.once("task:"+taskId, function(data) {
+                    if (data.rejected) {
+                        d.reject(data.rejected);
+                    } else {
+                        d.resolve(data.resolved);
+                    }
+                });
+
+                wk.postMessage(msg)
+
+                return d.promise;
             });
-
-            return d.promise;
         },
 
         // Register a method
@@ -67,9 +84,8 @@ define([
         run: function() {
             var that = this;
 
+            // Handle message from app
             addEventListener('message', function(e) {
-                var wk = this;
-
                 var data = e.data;
                 var method = data.method;
                 var taskId = data.id;
@@ -94,9 +110,13 @@ define([
                 })
                 .then(function(r) {
                     r.id = taskId;
-                    wk.postMessage(r);
+                    r.message = "result";
+                    postMessage(r);
                 })
             }, false);
+
+            // Signal that the worker is ready
+            postMessage({ message: "ready" })
         }
     });
 

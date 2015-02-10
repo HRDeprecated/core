@@ -15,7 +15,7 @@ define([
             $(window).bind("online offline", function() {
                 that.check();
             });
-            
+
             if (this.available) {
                 window.applicationCache.addEventListener('updateready', function() {
                     that.trigger("update");

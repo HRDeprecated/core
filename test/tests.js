@@ -25,7 +25,7 @@ define([
                 _ended = true;
 
                 logger.error(name+": failed", err);
-                d.reject()
+                d.reject(err)
             },
             assert: function(value, realvalue) {
                 if (realvalue == undefined) realvalue = true;
@@ -46,12 +46,15 @@ define([
                 // Call the test
                 startTime = Date.now();
                 Q().then(function() {
-                    return func(test);
-                })
-                .then(function() {
-                    test.done();
-                }, function(err) {
-                    test.fail(err);
+                    var p = func(test);
+
+                    if (Q.isPromise(p)) {
+                        p.then(function() {
+                            test.done();
+                        }, function(err) {
+                            test.fail(err);
+                        });
+                    }
                 });
 
                 return d.promise;

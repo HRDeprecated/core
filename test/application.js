@@ -14,7 +14,8 @@ require([
     "test-storage",
     "test-model",
     "test-collection",
-    "test-list"
+    "test-list",
+    "test-worker"
 ], function(_, hr, args, tests, benchmarks) {
     // Configure hr
     hr.configure(args);

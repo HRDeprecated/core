@@ -34,7 +34,7 @@ Logger, Requests, Urls, Storage, Cache, Cookies, Template, Resources, Offline, B
 
 
     Q.onerror = function(err) {
-        Logger.logging.error(err);
+        Logger.logging.exception(err);
     };
 
     var hr = {
