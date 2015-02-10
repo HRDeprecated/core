@@ -1,6 +1,6 @@
 define([
     "hr/utils",
-    "ht/promise",
+    "hr/promise",
     "hr/class"
 ], function(_, Q, Class) {
     var TaskWorker = Class.extend({
