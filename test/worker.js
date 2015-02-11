@@ -15,8 +15,10 @@ require([
 		});
 	});
 
-	worker.register("testError", function() {
-		throw "test";
+	worker.register({
+		"testError": function() {
+			throw "test";
+		}
 	});
 
 	// Run the worker

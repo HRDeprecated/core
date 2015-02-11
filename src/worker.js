@@ -75,12 +75,19 @@ define([
         register: function(method, handler) {
             var that = this;
 
+            if (_.isObject(method)) {
+                _.each(_.methods(method), function(name) {
+                    this.register(name, method[name]);
+                }, this);
+                return;
+            }
+
             this.methods[method] = function() {
                 var args = Array.prototype.slice.apply(arguments);
 
                 return Q()
                 .then(function() {
-                    return handler.apply(that, args);
+                    return _.partial.apply(_, [handler].concat(args))();
                 });
             };
         },
