@@ -3,7 +3,7 @@ define([
     'hr/hr',
     'hr/promise',
 ], function(tests, hr, Q) {
-    var worker = new hr.TaskWorker({ worker: "static/worker.js" });
+    var worker = new hr.TaskWorker({ script: "static/worker.js" });
 
 
     tests.add("worker.callMethod.sync", function() {

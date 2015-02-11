@@ -23,7 +23,7 @@ define([
             var d = Q.defer();
             this.workerLoading = d.promise;
 
-            this.worker = new Worker(this.options.worker);
+            this.worker = new Worker(this.options.script);
             this.worker.postMessage();
             this.worker.addEventListener('message', function(e) {
                 if (e.data.message == "ready") {
