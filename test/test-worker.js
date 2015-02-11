@@ -1,7 +1,8 @@
 define([
     'tests',
-    'hr/hr'
-], function(tests, hr) {
+    'hr/hr',
+    'hr/promise',
+], function(tests, hr, Q) {
     var worker = new hr.TaskWorker({ worker: "static/worker.js" });
 
 
@@ -19,4 +20,22 @@ define([
         });
     });
 
+    tests.add("worker.method", function() {
+        var testSync = worker.method("testSync");
+
+        return testSync(2, 3)
+        .then(function(r) {
+            if (r != 5) throw "Invalid return";
+        });
+    });
+
+    tests.add("worker.error", function() {
+        return worker.callMethod("testError")
+        .then(function() {
+            throw "Invalid return";
+        }, function(err) {
+            if (err.message != "test") throw "Invalid error returned";
+            return Q();
+        });
+    });
 });

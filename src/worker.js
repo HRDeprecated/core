@@ -54,7 +54,7 @@ define([
 
                 that.once("task:"+taskId, function(data) {
                     if (data.rejected) {
-                        d.reject(data.rejected);
+                        d.reject(new Error(data.rejected));
                     } else {
                         d.resolve(data.resolved);
                     }
@@ -64,6 +64,11 @@ define([
 
                 return d.promise;
             });
+        },
+
+        // Return a method as a function ca be called
+        method: function(method) {
+            return _.partial(this.callMethod.bind(this), method);
         },
 
         // Register a method
