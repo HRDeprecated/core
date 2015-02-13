@@ -1,9 +1,10 @@
 define([
     "hr/promise",
+    "hr/dom",
     "hr/configs",
     "hr/class",
     "hr/logger"
-], function(Q, configs, Class, Logger) {
+], function(Q, $, configs, Class, Logger) {
 
     var logging = Logger.addNamespace("requests");
 
