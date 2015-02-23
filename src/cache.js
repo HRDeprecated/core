@@ -89,7 +89,7 @@ define([
          * @method get
          * @param {string} namespace namespace for this key
          * @param {string} key key of the data to cache
-         * @param {object} value value to store in teh cache associated to this key
+         * @param {object} value value to store in the cache associated to this key
          * @param {number} [expiration] seconds before epiration of this value in the cache
          */
         set: function(namespace, key, value, expiration) {
@@ -127,7 +127,7 @@ define([
         },
 
         /**
-         * Return a cahce interface for a specific namespace
+         * Return a cache interface for a specific namespace
          *
          * @method namespace
          * @param {string} namespace name of the namespace
