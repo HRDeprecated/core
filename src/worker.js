@@ -24,7 +24,9 @@ define([
             this.workerLoading = d.promise;
 
             this.worker = new Worker(this.options.script);
-            this.worker.postMessage();
+            this.worker.postMessage({
+                message: "init"
+            });
             this.worker.addEventListener('message', function(e) {
                 if (e.data.message == "ready") {
                     d.resolve(that.worker);
@@ -47,6 +49,7 @@ define([
 
                 var taskId = _.uniqueId("task");
                 var msg = {
+                    message: "call",
                     id: taskId,
                     method: method,
                     arguments: args
