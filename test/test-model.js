@@ -39,6 +39,14 @@ define([
         test.assert(m.get("test") == "world");
     });
 
+    tests.add("model.set.array", function(test) {
+        var m = new hr.Model({}, {
+            "test": ["hello", "world"]
+        });
+        m.set("test", ["hello 2"])
+        test.assert(m.get("test").length == 2 && m.get("test")[0] == "hello 2");
+    });
+
     tests.add("model.del", function(test) {
         var m = new Model();
         m.set("test2", "world")

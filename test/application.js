@@ -10,6 +10,7 @@ require([
     "benchmark-jsondiff",
     "benchmark-model",
 
+    "test-utils",
     "test-class",
     "test-storage",
     "test-model",

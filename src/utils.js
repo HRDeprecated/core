@@ -27,7 +27,7 @@ define([
         if ( typeof target === "boolean" ) {
             deep = target;
 
-            // Skip the boolean and the target
+            // skip the boolean and the target
             target = arguments[ i ] || {};
             i++;
         }
@@ -35,12 +35,6 @@ define([
         // Handle case when target is a string or something (possible in deep copy)
         if ( typeof target !== "object" && !_.isFunction(target) ) {
             target = {};
-        }
-
-        // Extend jQuery itself if only one argument is passed
-        if ( i === length ) {
-            target = this;
-            i--;
         }
 
         for ( ; i < length; i++ ) {
@@ -57,9 +51,7 @@ define([
                     }
 
                     // Recurse if we're merging plain objects or arrays
-                    if ( deep && copy && ( _.isPlainObject(copy) ||
-                        (copyIsArray = _.isArray(copy)) ) ) {
-
+                    if ( deep && copy && ( _.isPlainObject(copy) || (copyIsArray = _.isArray(copy)) ) ) {
                         if ( copyIsArray ) {
                             copyIsArray = false;
                             clone = src && _.isArray(src) ? src : [];
