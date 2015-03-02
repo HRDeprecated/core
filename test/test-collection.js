@@ -50,4 +50,13 @@ define([
 
         test.assert(c.size() == 1);
     });
+
+    tests.add("collection.remove.destroy", function(test) {
+        var c = new hr.Collection();
+        var m = new hr.Model();
+
+        c.add(m);
+        m.destroy();
+        test.assert(c.size() == 0);
+    });
 })
