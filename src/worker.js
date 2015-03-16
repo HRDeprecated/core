@@ -119,9 +119,9 @@ define([
                         resolved: r
                     };
                 }, function(err) {
-                    return {
-                        rejected: err
-                    };
+                    return Q({
+                        rejected: err.toString()
+                    });
                 })
                 .then(function(r) {
                     r.id = taskId;
