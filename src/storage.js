@@ -1,12 +1,41 @@
 define([
     "hr/utils",
+    "hr/class",
     "hr/configs",
     "hr/logger"
-], function(_, configs, Logger) {
-
+], function(_, Class, configs, Logger) {
     var logging = Logger.addNamespace("storage");
 
-    var Storage = {
+    var Storage = Class.extend({
+        defaults: {
+            key: ""
+        },
+
+        /*
+         *  Initialize a storage instance
+         */
+        initialize: function() {},
+
+        /*
+         *  Return a key
+         */
+        key: function(key) {
+            return [this.options.key, key].join(":");
+        },
+
+        set: function(key, value) {
+            return Storage.set(this.key(key), value);
+        },
+        get: function(key) {
+            return Storage.get(this.key(key));
+        },
+        has: function(key) {
+            return Storage.has(this.key(key));
+        },
+        remove: function(key) {
+            return Storage.remove(this.key(key));
+        }
+    }, {
         /*
          *  Return storage context
          */
@@ -55,7 +84,7 @@ define([
                     logging.error("Error parsing ", s[key], err);
                     return s[key];
                 }
-                
+
             } else {
                 return null;
             }
@@ -98,8 +127,8 @@ define([
             }
             s.clear();
             return true;
-        },
-    };
+        }
+    });
 
     return Storage;
 });
