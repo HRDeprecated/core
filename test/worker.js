@@ -1,7 +1,6 @@
 require([
 	"hr/worker",
-	"hr/promise",
-	"hr/requests"
+	"hr/promise"
 ], function(TaskWorker, Q) {
 	var worker = new TaskWorker();
 
