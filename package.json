@@ -2,7 +2,7 @@
     "author": "Samy Pesse",
     "name": "happyrhino",
     "description": "Client-side framework for structured applications.",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "keywords": [
         "clientside"
     ],
