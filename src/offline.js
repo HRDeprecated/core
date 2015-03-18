@@ -1,8 +1,9 @@
 define([
     "hr/dom",
+    "hr/promise",
     "hr/logger",
     "hr/class"
-], function($, Logger, Class) {
+], function($, Q, Logger, Class) {
     var logging = Logger.addNamespace("offline");
 
     var OfflineManager = Class.extend({
